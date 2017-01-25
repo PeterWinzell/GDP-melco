@@ -5,6 +5,8 @@
 #include <QList>
 #include <QByteArray>
 
+//TODO add license header: Peter Winzell
+
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
