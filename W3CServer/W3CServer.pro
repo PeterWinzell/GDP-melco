@@ -17,3 +17,6 @@ HEADERS += \
 
 target.path = /home/pi
 INSTALLS += target
+
+RESOURCES += \
+    ssl.qrc
