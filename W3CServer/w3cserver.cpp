@@ -1,10 +1,12 @@
 #include "w3cserver.h"
+#include "processrequesttask.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QDebug>
 #include <QFile>
 #include <QSslCertificate>
 #include <QSslKey>
+#include <QThreadPool>
 
 QT_USE_NAMESPACE
 
@@ -48,6 +50,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
 
     }
+
     if (m_pWebSocketServer -> listen(QHostAddress::Any, port)){
         if (m_debug)
             qDebug() << "W3CServer is listening on port " << port;
@@ -91,10 +94,10 @@ void W3CServer::processTextMessage(QString message){
 
     if (m_debug)
         qDebug() << "Message recieved: " << message;
-    if (zeClient){
-        zeClient -> sendTextMessage(" Message returned from server to client " );
-
-    }
+    if (zeClient)
+        startRequestProcess(zeClient,message);
+    else if (m_debug)
+        qDebug() << "fatal error , websocket client is null ";
 }
 
 void W3CServer::socketDisconnected()
@@ -106,7 +109,7 @@ void W3CServer::socketDisconnected()
      //remove from client list and delete from heap
      if (zeClient){
          m_clients.removeAll(zeClient);
-         zeClient -> deleteLater();
+         zeClient -> deleteLater(); // what if a request is being processed ???
      }
 
 }
@@ -114,4 +117,10 @@ void W3CServer::socketDisconnected()
 void W3CServer::onSslErrors(const QList<QSslError> &)
 {
     qDebug() << "Ssl error occurred";
+}
+
+void W3CServer::startRequestProcess(QWebSocket* cl,QString message){
+    ProcessRequestTask * requesttask = new ProcessRequestTask(cl,message,true);
+    // QThreadPool takes ownership and deletes 'requesttask' automatically
+    QThreadPool::globalInstance()->start(requesttask);
 }

@@ -10,10 +10,12 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    w3cserver.cpp
+    w3cserver.cpp \
+    processrequesttask.cpp
 
 HEADERS += \
-    w3cserver.h
+    w3cserver.h \
+    processrequesttask.h
 
 target.path = /home/pi
 INSTALLS += target
