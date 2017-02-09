@@ -12,7 +12,7 @@ TEST(MyClass, appendString)
     std::string str = mc.appendString("hello ", "test");
 
     EXPECT_EQ(str, "hello test");
-    ASSERT_THAT(10, Eq(str.length()));
+    ASSERT_THAT(11, Eq(str.length()));
 }
 
 TEST(MyClass, appendNumber)
