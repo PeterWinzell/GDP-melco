@@ -8,6 +8,7 @@ class MyClass
 public:
     MyClass();
 
+public:
     std::string appendString(const std::string& inString, const std::string& append);
     std::string appendNumber(const std::string& inString, int number);
 };
