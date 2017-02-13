@@ -8,20 +8,40 @@ QT_USE_NAMESPACE
 W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
     QObject(parent)
 {
-    // add connection setup code here...
+    connect(&m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
+    typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
+    connect(&m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors),
+            this, &W3cTestClient::onSslErrors);
+    m_webSocket.open(QUrl(url));
 }
 
 void W3cTestClient::onConnected()
 {
-    // add on connected code here...
+    qDebug() << "WebSocket connected";
+    connect(&m_webSocket, &QWebSocket::textMessageReceived,
+            this, &W3cTestClient::onTextMessageReceived);
+    m_webSocket.sendTextMessage(QStringLiteral("Hello, world!"));
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    // add onTextMessageRecieved code here
+    qDebug() << "Message received:" << message;
+    qApp->quit();
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
 {
-   // add onSSlErrors code here
+    Q_UNUSED(errors);
+
+    // WARNING: Never ignore SSL errors in production code.
+    // The proper way to handle self-signed certificates is to add a custom root
+    // to the CA store.
+
+    foreach( const QSslError &error, errors )
+    {
+        qDebug() << "SSL Error: " << error.errorString();
+    }
+
+
+    m_webSocket.ignoreSslErrors();
 }

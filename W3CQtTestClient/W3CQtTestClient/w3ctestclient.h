@@ -8,7 +8,8 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 
-//QT_FORWARD_DECLARE_CLASS(QWebSocket)
+
+QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
 class W3cTestClient : public QObject
 {
