@@ -28,6 +28,7 @@ private  Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
+  void startRequestProcess(QWebSocket* cl,QString message);
   QWebSocketServer *m_pWebSocketServer;
   QList<QWebSocket *> m_clients;
   bool m_debug;

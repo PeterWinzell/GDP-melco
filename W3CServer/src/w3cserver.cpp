@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QSslCertificate>
 #include <QSslKey>
+#include<QThreadPool>
+#include "request-handler/processrequesttask.h"
 
 QT_USE_NAMESPACE
 
@@ -114,4 +116,11 @@ void W3CServer::socketDisconnected()
 void W3CServer::onSslErrors(const QList<QSslError> &)
 {
     qDebug() << "Ssl error occurred";
+}
+
+
+void W3CServer::startRequestProcess(QWebSocket* cl,QString message){
+    ProcessRequestTask * requesttask = new ProcessRequestTask(cl,message,true);
+    // QThreadPool takes ownership and deletes 'requesttask' automatically
+    QThreadPool::globalInstance()->start(requesttask);
 }
