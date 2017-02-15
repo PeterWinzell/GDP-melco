@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include "../../../src/myclass.h"
-#include "../../../src/myclass2.h"
+#include "myclass.h"
+#include "myclass2.h"
 
 using namespace testing;
 

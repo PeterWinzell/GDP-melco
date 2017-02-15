@@ -18,5 +18,5 @@ SOURCES += ../../../src/myclass2.cpp
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../src/debug/ -lGoogleTestProj
 #else:unix: LIBS += -L$$OUT_PWD/../../../src/ -lGoogleTestProj
 
-#INCLUDEPATH += $$PWD/../../../src
+INCLUDEPATH += $$PWD/../../../src
 #DEPENDPATH += $$PWD/../../../src
