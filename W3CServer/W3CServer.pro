@@ -11,11 +11,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     w3cserver.cpp \
-    processrequesttask.cpp
+    processrequesttask.cpp \
+    request-handler/requesthandler.cpp \
+    request-handler/subscriptionhandler.cpp
 
 HEADERS += \
     w3cserver.h \
-    processrequesttask.h
+    processrequesttask.h \
+    request-handler/requesthandler.h \
+    request-handler/subscriptionhandler.h
 
 target.path = /home/pi
 INSTALLS += target
