@@ -6,6 +6,8 @@
 #include <QByteArray>
 #include <QSslError>
 
+
+
 //TODO add license header: Peter Winzell
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)

@@ -9,3 +9,5 @@ HEADERS += tst_src.h
 
 SOURCES += main.cpp
 
+
+INCLUDEPATH += $$PWD/../../../src
