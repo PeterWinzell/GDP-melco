@@ -2,6 +2,7 @@
 #include "w3ctestclient.h"
 #include <QDebug>
 
+
 int main(int argc, char *argv[])
 {
     qDebug() << "Client: main started";

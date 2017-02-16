@@ -1,4 +1,5 @@
 #include "w3ctestclient.h"
+#include "getvisstestdatajson.h"
 #include <QtCore/QDebug>
 #include <QtWebSockets/QWebSocket>
 #include <QCoreApplication>
@@ -20,7 +21,8 @@ void W3cTestClient::onConnected()
     qDebug() << "WebSocket connected";
     connect(&m_webSocket, &QWebSocket::textMessageReceived,
             this, &W3cTestClient::onTextMessageReceived);
-    m_webSocket.sendTextMessage(QStringLiteral("Hello, world!"));
+
+    m_webSocket.sendTextMessage(GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE));
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
