@@ -74,7 +74,7 @@ VISSRequest* JSONRequestParser::getRequest(){
 */
 bool JSONRequestParser::validateGetRequest(){
     qDebug() << "validateGetRequest result" << (validatePath());
-    return validateId() && validatePath();
+    return validatePath();
 }
 
 /*
@@ -87,7 +87,7 @@ bool JSONRequestParser::validateGetRequest(){
 */
 bool JSONRequestParser::validateSetRequest(){
     qDebug() << "validateSetRequest result" << (validatePath() && validateValue());
-    return validateId() && validatePath() && validateValue();
+    return vvalidatePath() && validateValue();
 }
 
 /*
@@ -99,7 +99,7 @@ bool JSONRequestParser::validateSetRequest(){
 */
 bool JSONRequestParser::validateSubscribeRequest(){
     qDebug() << "validateSubscribeRequest result" << (validatePath());
-    return validateId() && validatePath();
+    return alidatePath();
 }
 
 /*
@@ -110,8 +110,8 @@ bool JSONRequestParser::validateSubscribeRequest(){
     }
 */
 bool JSONRequestParser::validateUnsubscribeRequest(){
-    qDebug() << "validateUnsubscribeRequest result" << (validatePath() && validateSubscriptionId());
-    return validateId() && validatePath() && validateSubscriptionId();
+    qDebug() << "validateUnsubscribeRequest result" << (validateSubscriptionId());
+    return validateSubscriptionId();
 }
 /*
     {
@@ -133,8 +133,8 @@ bool JSONRequestParser::validateUnsubscribeAllRequest(){
     }
 */
 bool JSONRequestParser::validateAuthorizeRequest(){
-    qDebug() << "validateAuthorizeRequest result" << (validatePath() && validateTokens());
-    return validateId() && validatePath() && validateTokens();
+    qDebug() << "validateAuthorizeRequest result" << (validateTokens());
+    return validateTokens();
 }
 
 /*
@@ -146,7 +146,7 @@ bool JSONRequestParser::validateAuthorizeRequest(){
 */
 bool JSONRequestParser::validateGetVSSRequest(){
     qDebug() << "validateAuthorizeRequest result" << (validatePath());
-    return validateId() && validatePath();
+    return validatePath();
 }
 
 
@@ -158,7 +158,7 @@ bool JSONRequestParser::validateAction(){
 
 bool JSONRequestParser::validatePath(){
     QString path = jsonObject["path"].toString();
-    //QVariant v = path.split('.');
+
     foreach(QString item, path.split('.')){
            // Check for empty string. Caused by ex. two dots.
            if(item.isEmpty()) {
