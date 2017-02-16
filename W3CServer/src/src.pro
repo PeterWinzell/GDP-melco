@@ -10,10 +10,14 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    w3cserver.cpp
+    w3cserver.cpp \
+    jsonrequestparser.cpp \
+    vissrequest.cpp
 
 HEADERS += \
-    w3cserver.h
+    w3cserver.h \
+    jsonrequestparser.h \
+    vissrequest.h
 
 target.path = /home/pi
 INSTALLS += target
