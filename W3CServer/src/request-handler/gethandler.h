@@ -5,7 +5,7 @@
 class GetHandler : public RequestHandler
 {
 public:
-    GetHandler();
+    explicit GetHandler(QObject *parent = 0);
     void processRequest();
 };
 

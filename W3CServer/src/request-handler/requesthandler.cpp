@@ -5,3 +5,4 @@
 RequestHandler* RequestHandler::makeRequestHandler(QString message){
     return new GetHandler();
 }
+

@@ -7,7 +7,7 @@ class RequestHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit RequestHandler(QObject *parent = 0);
+    explicit RequestHandler(QObject *parent = 0):QObject(parent){};
     static RequestHandler* makeRequestHandler(QString message);
     virtual void processRequest()=0;
 signals:
