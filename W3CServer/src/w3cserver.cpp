@@ -23,7 +23,6 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         QFile keyFile(QStringLiteral(":/server.key"));
         QFile certFile(QStringLiteral(":/server.crt"));
 
-
         certFile.open(QIODevice::ReadOnly);
         const QByteArray bytes = certFile.readAll();
 
