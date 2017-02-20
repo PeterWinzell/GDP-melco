@@ -5,16 +5,22 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG += thread
 
+QT += core websockets
+QT -= gui
+
 HEADERS += tst_src.h \
-    tst_jsonrequestparser.h
+    tst_jsonrequestparser.h \
+    tst_w3cserver.h
 
 HEADERS += ../../../src/jsonrequestparser.h
 HEADERS += ../../../src/vissrequest.h
+HEADERS += ../../../src/w3cserver.h
 #HEADERS += ../../../src/myclass2.h
 
 SOURCES += main.cpp
 SOURCES += ../../../src/jsonrequestparser.cpp
 SOURCES += ../../../src/vissrequest.cpp
+SOURCES += ../../../src/w3cserver.cpp
 #SOURCES += ../../../src/myclass2.cpp
 
 #if testing a lib
