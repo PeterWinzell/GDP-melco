@@ -14,9 +14,9 @@ and open the template in the editor.
             <button onClick="initWebSocket();">Connect</button>
             <button onClick="stopWebSocket();">Disconnect</button>
             <button onClick="checkSocket();">State</button>
-        </p>
-        <p>
-            <textarea id="debugTextArea" style="width:400px;height:200px;"></textarea>
+.        </p>
+.        <p>
+ .           <textarea id="debugTextArea" style="width:400px;height:200px;"></textarea>
         </p>
         <p>
             <input type="text" id="inputText" onkeydown="if(event.keyCode==13)sendMessage();"/>
@@ -40,7 +40,7 @@ and open the template in the editor.
                 }
             }
 
-            var wsUri = "wss://192.168.31.125:8080";
+            var wsUri = "wss://169.254.239.76:8080";
             var websocket = null;
 
             function initWebSocket() {

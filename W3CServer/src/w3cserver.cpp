@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QSslCertificate>
 #include <QSslKey>
+#include "jsonrequestparser.h"
 
 QT_USE_NAMESPACE
 
@@ -90,10 +91,49 @@ void W3CServer::processTextMessage(QString message){
 
     if (m_debug)
         qDebug() << "Message recieved: " << message;
-    if (zeClient){
-        zeClient -> sendTextMessage(" Message returned from server to client " );
 
+    if (!zeClient) return;
+
+    JSONRequestParser parser(message, m_debug);
+    VISSRequest* request = parser.getRequest();
+
+    switch (request->getAction()) {
+        case GET:
+            zeClient -> sendTextMessage(" Get Request Received " );
+            // getRequestHandler(&request);
+            break;
+        case SET:
+            zeClient -> sendTextMessage(" Set Request Received  " );
+            // stRequestHandler(&request);
+            break;
+        case SUBSCRIBE:
+            zeClient -> sendTextMessage(" Subscribe Request Received  " );
+            // subcribeRequestHandler(&request);
+            break;
+        case UNSUBSCRIBE:
+            zeClient -> sendTextMessage(" Unsubscribe Request Received " );
+            // unsubscribeRequestHandler(&request);
+            break;
+        case UNSUBSCRIBEALL:
+            zeClient -> sendTextMessage(" Unsubscribe All Request Received  " );
+            // unsubscribeAllRequestHandler(&request);
+            break;
+        case AUTHORIZE:
+            zeClient -> sendTextMessage(" Authorization Request Received  " );
+            // athorizeRequestHandler(&request);
+            break;
+        case GETVSS:
+            zeClient -> sendTextMessage(" Get VSS Request Received  " );
+            // getVSSRequestHandler(&request);
+            break;
+        case ERROR:
+            zeClient -> sendTextMessage(" Error in Request  " );
+            // errorRequestHandler(&request);
+            break;
     }
+
+
+
 }
 
 void W3CServer::socketDisconnected()
