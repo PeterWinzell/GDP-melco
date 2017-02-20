@@ -151,9 +151,6 @@ TEST(JSONRequestParser, getRequest_path_with_asterisk){
 TEST(JSONRequestParser, getRequest_viss_get_request){
     GetRequestHelper("{\"action\": \"get\",\"path\": \"Signal.Drivetrain.InternalCombustionEngine.RPM\",\"requestId\": \"8756\"}");
 
-    //
-    //GetRequestHelper("{\"action\": \"get\",\"path\": \"Signal.Drivetrain.InternalCombustionEngine.RPM\",\"requestId\": \"8756\"}");
-
 }
 
 TEST(JSONRequestParser, getRequest_viss_set_request){

@@ -51,6 +51,9 @@ void JSONRequestParser::parseJson(){
         case GETVSS:
             if(!validateGetVSSRequest()) request->invalidateRequest();
             break;
+        case ERROR: // Just to remove compilation warning.
+            request->invalidateRequest();
+            break;
     }
 
     request->setRequestValues();
@@ -176,8 +179,7 @@ bool JSONRequestParser::validatePath(){
            // Check if string contains only text.
            QRegExp regex("^[a-zA-Z]+$");
            if(!regex.exactMatch(item)) {
-               qDebug() << item;
-               qDebug() << "validatePath string is not just simple text";
+               if(m_debug) qDebug() << "validatePath string is not just simple text";
                return false;
            }
 
