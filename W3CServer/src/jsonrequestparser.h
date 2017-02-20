@@ -13,12 +13,13 @@
 class JSONRequestParser : public QObject
 {
 public:
-    JSONRequestParser(QString json, QObject *parent = Q_NULLPTR);
+    JSONRequestParser(QString json, bool debug, QObject *parent = Q_NULLPTR);
     ~JSONRequestParser();
 
     VISSRequest* getRequest();
 
 private:
+    bool m_debug;
     VISSRequest* request;
 
     void parseJson();

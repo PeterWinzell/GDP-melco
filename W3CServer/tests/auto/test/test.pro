@@ -5,12 +5,16 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG += thread
 
-HEADERS += tst_src.h
-#HEADERS += ../../../src/myclass.h
+HEADERS += tst_src.h \
+    tst_jsonrequestparser.h
+
+HEADERS += ../../../src/jsonrequestparser.h
+HEADERS += ../../../src/vissrequest.h
 #HEADERS += ../../../src/myclass2.h
 
 SOURCES += main.cpp
-#SOURCES += ../../../src/myclass.cpp
+SOURCES += ../../../src/jsonrequestparser.cpp
+SOURCES += ../../../src/vissrequest.cpp
 #SOURCES += ../../../src/myclass2.cpp
 
 #if testing a lib

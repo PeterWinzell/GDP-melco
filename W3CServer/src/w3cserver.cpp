@@ -95,7 +95,7 @@ void W3CServer::processTextMessage(QString message){
 
     if (!zeClient) return;
 
-    JSONRequestParser parser(message);
+    JSONRequestParser parser(message, m_debug);
     VISSRequest* request = parser.getRequest();
 
     switch (request->getAction()) {

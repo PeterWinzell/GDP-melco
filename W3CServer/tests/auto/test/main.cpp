@@ -1,4 +1,5 @@
 #include "tst_src.h"
+#include "tst_jsonrequestparser.h"
 
 #include <gtest/gtest.h>
 
