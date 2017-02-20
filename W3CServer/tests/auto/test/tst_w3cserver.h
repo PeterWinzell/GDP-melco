@@ -9,7 +9,9 @@
 using namespace testing;
 
 
-TEST(W3CServer, woop){
+TEST(W3CServer, creation){
+    W3CServer server(8080);
+    ASSERT_EQ(typeid(server), typeid(W3CServer));
 
 }
 
