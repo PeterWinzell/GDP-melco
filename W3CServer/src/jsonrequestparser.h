@@ -20,7 +20,7 @@ public:
 
 private:
     bool m_debug;
-    VISSRequest* request;
+    VISSRequest* m_request;
 
     void parseJson();
     bool isValidJson();
@@ -42,9 +42,9 @@ private:
     bool validateFilters();
     bool validateTokens();
 
-    QJsonParseError parseError;
-    QJsonDocument jsonDocument;
-    QJsonObject jsonObject;
+    QJsonParseError m_parseError;
+    QJsonDocument m_jsonDocument;
+    QJsonObject m_jsonObject;
 
 };
 #endif // JSONREQUESTPARSER_H

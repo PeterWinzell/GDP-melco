@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
 
     // check if we are running the server in secure mode (wss)
     bool sec = false;
-    if (argc > 0){
+    if (argc > 0)
+    {
         QString str(argv[1]);
         if (str == "-secure")
             sec = true;

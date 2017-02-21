@@ -15,10 +15,11 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     m_debug(debug),
     m_secure(usesecureprotocol)
 {
-    if (usesecureprotocol){
-         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
-                                                                           QWebSocketServer::SecureMode,
-                                                                           this);
+    if (usesecureprotocol)
+    {
+        m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
+                QWebSocketServer::SecureMode,
+                this);
         QSslConfiguration sslConfiguration;
 
         QFile keyFile(QStringLiteral(":/server.key"));
@@ -44,11 +45,12 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
         m_pWebSocketServer->setSslConfiguration(sslConfiguration);
     }
-    else{
+    else
+    {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
-
     }
-    if (m_pWebSocketServer -> listen(QHostAddress::Any, port)){
+    if (m_pWebSocketServer -> listen(QHostAddress::Any, port))
+    {
         if (m_debug)
             qDebug() << "W3CServer is listening on port " << port;
 
@@ -58,9 +60,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
         //SSL error handler
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
-                        this, &W3CServer::onSslErrors);
+                this, &W3CServer::onSslErrors);
     }
-
 }
 
 W3CServer::~W3CServer()
@@ -70,7 +71,8 @@ W3CServer::~W3CServer()
     qDeleteAll(m_clients.begin(),m_clients.end());
 }
 
-void W3CServer::onNewConnection(){
+void W3CServer::onNewConnection()
+{
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
 
     qDebug() << " attempting to connect ";
@@ -84,8 +86,8 @@ void W3CServer::onNewConnection(){
     m_clients << pSocket;
 }
 
-
-void W3CServer::processTextMessage(QString message){
+void W3CServer::processTextMessage(QString message)
+{
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
@@ -97,57 +99,55 @@ void W3CServer::processTextMessage(QString message){
     JSONRequestParser parser(message, m_debug);
     VISSRequest* request = parser.getRequest();
 
-    switch (request->getAction()) {
-        case GET:
-            zeClient -> sendTextMessage(" Get Request Received " );
-            // getRequestHandler(&request);
-            break;
-        case SET:
-            zeClient -> sendTextMessage(" Set Request Received  " );
-            // stRequestHandler(&request);
-            break;
-        case SUBSCRIBE:
-            zeClient -> sendTextMessage(" Subscribe Request Received  " );
-            // subcribeRequestHandler(&request);
-            break;
-        case UNSUBSCRIBE:
-            zeClient -> sendTextMessage(" Unsubscribe Request Received " );
-            // unsubscribeRequestHandler(&request);
-            break;
-        case UNSUBSCRIBEALL:
-            zeClient -> sendTextMessage(" Unsubscribe All Request Received  " );
-            // unsubscribeAllRequestHandler(&request);
-            break;
-        case AUTHORIZE:
-            zeClient -> sendTextMessage(" Authorization Request Received  " );
-            // athorizeRequestHandler(&request);
-            break;
-        case GETVSS:
-            zeClient -> sendTextMessage(" Get VSS Request Received  " );
-            // getVSSRequestHandler(&request);
-            break;
-        case ERROR:
-            zeClient -> sendTextMessage(" Error in Request  " );
-            // errorRequestHandler(&request);
-            break;
+    switch (request->getAction())
+    {
+    case GET:
+        zeClient -> sendTextMessage(" Get Request Received " );
+        // getRequestHandler(&request);
+        break;
+    case SET:
+        zeClient -> sendTextMessage(" Set Request Received  " );
+        // stRequestHandler(&request);
+        break;
+    case SUBSCRIBE:
+        zeClient -> sendTextMessage(" Subscribe Request Received  " );
+        // subcribeRequestHandler(&request);
+        break;
+    case UNSUBSCRIBE:
+        zeClient -> sendTextMessage(" Unsubscribe Request Received " );
+        // unsubscribeRequestHandler(&request);
+        break;
+    case UNSUBSCRIBEALL:
+        zeClient -> sendTextMessage(" Unsubscribe All Request Received  " );
+        // unsubscribeAllRequestHandler(&request);
+        break;
+    case AUTHORIZE:
+        zeClient -> sendTextMessage(" Authorization Request Received  " );
+        // athorizeRequestHandler(&request);
+        break;
+    case GETVSS:
+        zeClient -> sendTextMessage(" Get VSS Request Received  " );
+        // getVSSRequestHandler(&request);
+        break;
+    case ERROR:
+        zeClient -> sendTextMessage(" Error in Request  " );
+        // errorRequestHandler(&request);
+        break;
     }
-
-
-
 }
 
 void W3CServer::socketDisconnected()
 {
-     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
-     if (m_debug)
-         qDebug() << " socket disconnected: " << zeClient;
+    QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
+    if (m_debug)
+        qDebug() << " socket disconnected: " << zeClient;
 
-     //remove from client list and delete from heap
-     if (zeClient){
-         m_clients.removeAll(zeClient);
-         zeClient -> deleteLater();
-     }
-
+    //remove from client list and delete from heap
+    if (zeClient)
+    {
+        m_clients.removeAll(zeClient);
+        zeClient -> deleteLater();
+    }
 }
 
 void W3CServer::onSslErrors(const QList<QSslError> &)

@@ -2,83 +2,121 @@
 
 VISSRequest::VISSRequest()
 {
-    action = ERROR;
+    m_action = ERROR;
 }
 VISSRequest::VISSRequest(QJsonObject& json)
 {
-    jsonObject = json;
+    m_jsonObject = json;
 
-    QString val = jsonObject["action"].toString();
+    QString val = m_jsonObject["action"].toString();
 
-    if      (val == "get")           { action = GET; }
-    else if (val == "set")           { action = SET; }
-    else if (val == "subscribe")     { action = SUBSCRIBE; }
-    else if (val == "unsubscribe")   { action = UNSUBSCRIBE; }
-    else if (val == "unsubscribeAll"){ action = UNSUBSCRIBEALL; }
-    else if (val == "authorize")     { action = AUTHORIZE; }
-    else if (val == "getVSS")        { action = GETVSS; }
-    else                             { action = ERROR; }
+    if (val == "get")
+    {
+        m_action = GET;
+    }
+    else if (val == "set")
+    {
+        m_action = SET;
+    }
+    else if (val == "subscribe")
+    {
+        m_action = SUBSCRIBE;
+    }
+    else if (val == "unsubscribe")
+    {
+        m_action = UNSUBSCRIBE;
+    }
+    else if (val == "unsubscribeAll")
+    {
+        m_action = UNSUBSCRIBEALL;
+    }
+    else if (val == "authorize")
+    {
+        m_action = AUTHORIZE;
+    }
+    else if (val == "getVSS")
+    {
+        m_action = GETVSS;
+    }
+    else
+    {
+        m_action = ERROR;
+    }
 
-    requestId = jsonObject["requestId"].toString();
+    m_requestId = m_jsonObject["requestId"].toString();
 }
 
-QJsonObject VISSRequest::getJsonObject(){
-    return jsonObject;
+QJsonObject VISSRequest::getJsonObject()
+{
+    return m_jsonObject;
 }
 
-void VISSRequest::invalidateRequest(){
-    action = ERROR;
+void VISSRequest::invalidateRequest()
+{
+    m_action = ERROR;
 }
-void VISSRequest::setRequestValues(){
+void VISSRequest::setRequestValues()
+{
 
-    switch (action) {
-        case GET:
-            signalPath = jsonObject["path"].toString();
-            break;
-        case SET:
-            signalPath = jsonObject["path"].toString();
-            value = jsonObject["value"].toVariant();
-            break;
-        case SUBSCRIBE:
-            signalPath = jsonObject["path"].toString();
-            if(!jsonObject["filters"].isUndefined())
-                filters = jsonObject["filters"].toVariant();
-            break;
-        case UNSUBSCRIBE:
-            subscriptionId = jsonObject["subscriptionId"].toString();
-            break;
-        case UNSUBSCRIBEALL:
-            break;
-        case AUTHORIZE:
-            tokens = jsonObject["tokens"].toObject();
-            break;
-        case GETVSS:
-            signalPath = jsonObject["path"].toString();
-            break;
+    switch (m_action)
+    {
+    case GET:
+        m_signalPath = m_jsonObject["path"].toString();
+        break;
+    case SET:
+        m_signalPath = m_jsonObject["path"].toString();
+        m_value = m_jsonObject["value"].toVariant();
+        break;
+    case SUBSCRIBE:
+        m_signalPath = m_jsonObject["path"].toString();
+
+        if(!m_jsonObject["filters"].isUndefined())
+            m_filters = m_jsonObject["filters"].toVariant();
+
+        break;
+    case UNSUBSCRIBE:
+        m_subscriptionId = m_jsonObject["subscriptionId"].toString();
+        break;
+    case UNSUBSCRIBEALL:
+        break;
+    case AUTHORIZE:
+        m_tokens = m_jsonObject["tokens"].toObject();
+        break;
+    case GETVSS:
+        m_signalPath = m_jsonObject["path"].toString();
+        break;
+    case ERROR:
+    default:
+        break;
     }
 }
 
-
-vss_request VISSRequest::getAction(){
-    return action;
+vss_request VISSRequest::getAction()
+{
+    return m_action;
 }
 
-QString VISSRequest::getRequestId(){
-    return requestId;
+QString VISSRequest::getRequestId()
+{
+    return m_requestId;
 }
 
-QString VISSRequest::getSignalPath(){
-    return signalPath;
+QString VISSRequest::getSignalPath()
+{
+    return m_signalPath;
 }
 
-QVariant VISSRequest::getValue(){
-    return value;
+QVariant VISSRequest::getValue()
+{
+    return m_value;
 }
 
-QString VISSRequest::getSubscriptionId(){
-    return subscriptionId;
+QString VISSRequest::getSubscriptionId()
+{
+    return m_subscriptionId;
 }
 
-QVariant VISSRequest::getTokens(){
-    return tokens;
+QVariant VISSRequest::getTokens()
+{
+    return m_tokens;
 }
