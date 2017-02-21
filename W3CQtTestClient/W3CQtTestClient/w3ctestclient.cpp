@@ -22,7 +22,10 @@ void W3cTestClient::onConnected()
     connect(&m_webSocket, &QWebSocket::textMessageReceived,
             this, &W3cTestClient::onTextMessageReceived);
 
-    m_webSocket.sendTextMessage(GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE));
+    QString jsonMess = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
+    qDebug() << " JSON SENT TO SEVER IS: " + jsonMess;
+
+    m_webSocket.sendTextMessage(jsonMess);
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)

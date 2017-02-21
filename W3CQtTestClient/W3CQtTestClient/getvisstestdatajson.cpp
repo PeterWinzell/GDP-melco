@@ -46,13 +46,14 @@ QString GetVissTestDataJson::getAuthJson(){
 
     QJsonWebToken l_jwtObj;
 
+    // How should this be distributed in production.
     l_jwtObj.setSecret("mydirtysecret");
         // set a default payload
     l_jwtObj.appendClaim("iss", "MelcoGot");
     l_jwtObj.appendClaim("ValidFrom", QString::number(QDateTime::currentDateTime().toTime_t()));
-    l_jwtObj.appendClaim("ValidTo", QString::number(QDateTime::currentDateTime().addDays(7).toTime_t()));
+    l_jwtObj.appendClaim("ValidTo", QString::number(QDateTime::currentDateTime().addDays(365).toTime_t()));
     l_jwtObj.appendClaim("path", "Vehicle.*");
-    l_jwtObj.appendClaim("actions", "GET,SET,GETVSS,SUBSCRIBE,UNSUBSCRIBE");
+    l_jwtObj.appendClaim("actions", "GET,SET,GETVSS,SUBSCRIBE,UNSUBSCRIBE,USUBSCRIBEALL");
 
     QString zeToken = l_jwtObj.getToken();
 

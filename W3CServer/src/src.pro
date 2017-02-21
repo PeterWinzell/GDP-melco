@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     jwt-utility/visstokenvalidator.cpp \
     jwt-utility/qjsonwebtoken.cpp \
     request-handler/processrequesttask.cpp \
-    request-handler/gethandler.cpp
+    request-handler/gethandler.cpp \
+    request-handler/authorizationhandler.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -23,7 +24,8 @@ HEADERS += \
     jwt-utility/visstokenvalidator.h \
     jwt-utility/qjsonwebtoken.h \
     request-handler/processrequesttask.h \
-    request-handler/gethandler.h
+    request-handler/gethandler.h \
+    request-handler/authorizationhandler.h
 
 target.path = /home/pi
 INSTALLS += target

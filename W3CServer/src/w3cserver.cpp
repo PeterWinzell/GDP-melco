@@ -6,7 +6,12 @@
 #include <QSslCertificate>
 #include <QSslKey>
 #include<QThreadPool>
+#include<QJsonDocument>
+#include<QJsonObject>
+#include<QJsonArray>
 #include "request-handler/processrequesttask.h"
+#include "jwt-utility/qjsonwebtoken.h"
+#include "jwt-utility/visstokenvalidator.h"
 
 QT_USE_NAMESPACE
 
@@ -93,6 +98,55 @@ void W3CServer::processTextMessage(QString message){
 
     if (m_debug)
         qDebug() << "Message recieved: " << message;
+
+    //testing
+    QJsonDocument doc;
+    doc = QJsonDocument::fromJson(message.toUtf8());
+
+    qDebug() << " doc is " + doc.toJson();
+
+    QJsonObject obj = doc.object();
+    QString str = obj["action"].toString();
+    qDebug() <<  " action is : " + str ;
+
+    QString str2 = obj["requestId"].toString();
+    qDebug() << " requestID is : " + str2;
+
+    QJsonObject tokensObject = obj["tokens"].toObject();
+    QString token = tokensObject["authorization"].toString();
+
+    qDebug() << " token is : " + token;
+
+    VissTokenValidator tokenValidator(token);
+    if (tokenValidator.validateToken("mydirtysecret"))
+        qDebug() << " TOKEN IS VERIFIED \n";
+    else
+        qDebug() << " TOKEN IS NOT VERIFIED \n";
+
+    QString zePayload = tokenValidator.getJsonPayload();
+
+    qDebug() << " token payload is " + zePayload;
+
+    QJsonDocument doc2;
+    doc2 = QJsonDocument::fromJson(zePayload.toUtf8());
+
+    QJsonObject tokenpl = doc2.object();
+    QString issuer = tokenpl["iss"].toString();
+    qDebug() << " Token issuer is : " + issuer;
+
+    QString valid_from = tokenpl["ValidFrom"].toString();
+    qDebug() << " ValidFrom : " + valid_from;
+
+    QString valid_to = tokenpl["ValidTo"].toString();
+    qDebug() << " Valid To : " + valid_to;
+
+    QString path = tokenpl["path"].toString();
+    qDebug() << " Signal path is : " + path;
+
+    QString actions = tokenpl["actions"].toString();
+    qDebug() << " Actions are : " + actions;
+
+
     if (zeClient){
         zeClient -> sendTextMessage(" Message returned from server to client " );
 
