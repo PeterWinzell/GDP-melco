@@ -10,7 +10,9 @@ QT -= gui
 
 HEADERS += tst_src.h \
     tst_jsonrequestparser.h \
-    tst_w3cserver.h
+    tst_w3cserver.h \
+    ../../../../W3CQtTestClient/W3CQtTestClient/w3ctestclient.h \
+    clientthread.h
 
 HEADERS += ../../../src/jsonrequestparser.h
 HEADERS += ../../../src/vissrequest.h
@@ -22,6 +24,8 @@ SOURCES += ../../../src/jsonrequestparser.cpp
 SOURCES += ../../../src/vissrequest.cpp
 SOURCES += ../../../src/w3cserver.cpp
 #SOURCES += ../../../src/myclass2.cpp
+SOURCES += ../../../../W3CQtTestClient/W3CQtTestClient/w3ctestclient.cpp \
+    clientthread.cpp
 
 #if testing a lib
 #win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../src/release/ -lGoogleTestProj
