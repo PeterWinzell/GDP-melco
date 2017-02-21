@@ -11,10 +11,9 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     w3cserver.cpp \
+<<<<<<< HEAD
     request-handler/requesthandler.cpp \
     jwt-utility/visstokenvalidator.cpp \
-    jsonrequestparser.cpp \
-    vissrequest.cpp
     jwt-utility/qjsonwebtoken.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/gethandler.cpp \
@@ -24,12 +23,19 @@ HEADERS += \
     w3cserver.h \
     request-handler/requesthandler.h \
     jwt-utility/visstokenvalidator.h \
-    jsonrequestparser.h \
-    vissrequest.h
     jwt-utility/qjsonwebtoken.h \
     request-handler/processrequesttask.h \
     request-handler/gethandler.h \
     request-handler/authorizationhandler.h
+=======
+    jsonrequestparser.cpp \
+    vissrequest.cpp
+
+HEADERS += \
+    w3cserver.h \
+    jsonrequestparser.h \
+    vissrequest.h
+>>>>>>> master
 
 target.path = /home/pi
 INSTALLS += target

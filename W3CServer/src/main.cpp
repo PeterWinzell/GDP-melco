@@ -19,5 +19,4 @@ int main(int argc, char *argv[])
     QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
 
     return a.exec(); // start exec loop
-
 }

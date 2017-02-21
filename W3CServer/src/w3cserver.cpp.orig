@@ -5,14 +5,17 @@
 #include <QFile>
 #include <QSslCertificate>
 #include <QSslKey>
+<<<<<<< HEAD
 #include<QThreadPool>
-#include "jsonrequestparser.h"
 #include<QJsonDocument>
 #include<QJsonObject>
 #include<QJsonArray>
 #include "request-handler/processrequesttask.h"
 #include "jwt-utility/qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
+=======
+#include "jsonrequestparser.h"
+>>>>>>> master
 
 QT_USE_NAMESPACE
 
@@ -98,6 +101,7 @@ void W3CServer::processTextMessage(QString message){
 
     if (m_debug)
         qDebug() << "Message recieved: " << message;
+<<<<<<< HEAD
 
     //testing
     QJsonDocument doc;
@@ -147,6 +151,10 @@ void W3CServer::processTextMessage(QString message){
     qDebug() << " Actions are : " + actions;
 
 
+    if (zeClient){
+        zeClient -> sendTextMessage(" Message returned from server to client " );
+=======
+>>>>>>> master
 
     if (!zeClient) return;
 
