@@ -11,7 +11,7 @@ void JSONRequestParser::parseJson()
 {
     if(!isValidJson())
     {
-        if(m_debug) qDebug() << "json invalid";
+        if(m_debug) { qDebug() << "json invalid"; }
         m_request = new VISSRequest();
         return;
     }
@@ -20,14 +20,14 @@ void JSONRequestParser::parseJson()
 
     if(!validateAction())
     {
-        if(m_debug) qDebug() << "action invalid";
+        if(m_debug) { qDebug() << "action invalid"; }
         m_request = new VISSRequest();
         return;
     }
 
     if(!validateId())
     {
-        if(m_debug) qDebug() << "requestId invalid";
+        if(m_debug) { qDebug() << "requestId invalid"; }
         m_request = new VISSRequest();
         return;
     }
@@ -37,25 +37,25 @@ void JSONRequestParser::parseJson()
     switch (m_request->getAction())
     {
     case GET:
-        if(!validateGetRequest()) m_request->invalidateRequest();
+        if(!validateGetRequest()) { m_request->invalidateRequest(); }
         break;
     case SET:
-        if(!validateSetRequest()) m_request->invalidateRequest();
+        if(!validateSetRequest()) { m_request->invalidateRequest(); }
         break;
     case SUBSCRIBE:
-        if(!validateSubscribeRequest()) m_request->invalidateRequest();
+        if(!validateSubscribeRequest()) { m_request->invalidateRequest(); }
         break;
     case UNSUBSCRIBE:
-        if(!validateUnsubscribeRequest()) m_request->invalidateRequest();
+        if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
         break;
     case UNSUBSCRIBEALL:
-        if(!validateUnsubscribeRequest()) m_request->invalidateRequest();
+        if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
         break;
     case AUTHORIZE:
-        if(!validateAuthorizeRequest()) m_request->invalidateRequest();
+        if(!validateAuthorizeRequest()) { m_request->invalidateRequest(); }
         break;
     case GETVSS:
-        if(!validateGetVSSRequest()) m_request->invalidateRequest();
+        if(!validateGetVSSRequest()) { m_request->invalidateRequest(); }
         break;
     case ERROR: // Just to remove compilation warning.
         m_request->invalidateRequest();
@@ -82,7 +82,7 @@ VISSRequest* JSONRequestParser::getRequest()
 */
 bool JSONRequestParser::validateGetRequest()
 {
-    if(m_debug) qDebug() << "validateGetRequest result" << (validatePath());
+    if(m_debug) { qDebug() << "validateGetRequest result" << (validatePath()); }
     return validatePath();
 }
 
@@ -96,7 +96,7 @@ bool JSONRequestParser::validateGetRequest()
 */
 bool JSONRequestParser::validateSetRequest()
 {
-    if(m_debug) qDebug() << "validateSetRequest result" << (validatePath() && validateValue());
+    if(m_debug) { qDebug() << "validateSetRequest result" << (validatePath() && validateValue()); }
     return validatePath() && validateValue();
 }
 
@@ -109,7 +109,7 @@ bool JSONRequestParser::validateSetRequest()
 */
 bool JSONRequestParser::validateSubscribeRequest()
 {
-    if(m_debug) qDebug() << "validateSubscribeRequest result" << (validatePath());
+    if(m_debug) { qDebug() << "validateSubscribeRequest result" << (validatePath()); }
     return validatePath();
 }
 
@@ -122,7 +122,7 @@ bool JSONRequestParser::validateSubscribeRequest()
 */
 bool JSONRequestParser::validateUnsubscribeRequest()
 {
-    if(m_debug) qDebug() << "validateUnsubscribeRequest result" << (validateSubscriptionId());
+    if(m_debug) { qDebug() << "validateUnsubscribeRequest result" << (validateSubscriptionId()); }
     return validateSubscriptionId();
 }
 /*
@@ -147,7 +147,7 @@ bool JSONRequestParser::validateUnsubscribeAllRequest()
 */
 bool JSONRequestParser::validateAuthorizeRequest()
 {
-    if(m_debug) qDebug() << "validateAuthorizeRequest result" << (validateTokens());
+    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (validateTokens()); }
     return validateTokens();
 }
 
@@ -160,7 +160,7 @@ bool JSONRequestParser::validateAuthorizeRequest()
 */
 bool JSONRequestParser::validateGetVSSRequest()
 {
-    if(m_debug) qDebug() << "validateAuthorizeRequest result" << (validatePath());
+    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (validatePath()); }
     return validatePath();
 }
 
@@ -168,14 +168,14 @@ bool JSONRequestParser::validateGetVSSRequest()
 // Validate each of the different parts of a request
 bool JSONRequestParser::validateAction()
 {
-    if(m_debug) qDebug() << m_jsonObject["action"];
+    if(m_debug) { qDebug() << m_jsonObject["action"]; }
     return m_jsonObject["action"].isString();
 }
 
 bool JSONRequestParser::validatePath()
 {
     QString path = m_jsonObject["path"].toString();
-    if(path.isEmpty()) return false;
+    if(path.isEmpty()) { return false; }
 
     QStringList splitPath = path.split('.');
 
@@ -184,14 +184,14 @@ bool JSONRequestParser::validatePath()
         // Check for empty string. Caused by ex. two dots.
         if(item.isEmpty())
         {
-            if(m_debug) qDebug() << "validatePath string is empty";
+            if(m_debug) { qDebug() << "validatePath string is empty"; }
             return false;
         }
 
         // Check if string is single asterisk.
         if(item.length() == 1 && item[0] != '*')
         {
-            if(m_debug) qDebug() << "validatePath string contains several asterisks";
+            if(m_debug) { qDebug() << "validatePath string contains several asterisks"; }
             return false;
         }
 
@@ -199,7 +199,7 @@ bool JSONRequestParser::validatePath()
         QRegExp regex("^[a-zA-Z]+$");
         if(!regex.exactMatch(item))
         {
-            if(m_debug) qDebug() << "validatePath string is not just simple text";
+            if(m_debug) { qDebug() << "validatePath string is not just simple text"; }
             return false;
         }
     }
@@ -221,7 +221,7 @@ bool JSONRequestParser::validateId()
 {
     QVariant id = m_jsonObject["requestId"].toVariant();
 
-    if(id == QVariant().Invalid) return false;
+    if(id == QVariant().Invalid) { return false; }
     bool parseOk = false;
     id.toInt(&parseOk);
 
@@ -242,8 +242,13 @@ bool JSONRequestParser::validateSubscriptionId()
 bool JSONRequestParser::validateFilters()
 {
     if(!m_jsonObject["filters"].isUndefined())
+    {
         return m_jsonObject["filters"].isObject();
-    else return true;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 bool JSONRequestParser::validateTokens()

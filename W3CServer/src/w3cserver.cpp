@@ -52,7 +52,9 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     if (m_pWebSocketServer -> listen(QHostAddress::Any, port))
     {
         if (m_debug)
+        {
             qDebug() << "W3CServer is listening on port " << port;
+        }
 
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
@@ -92,9 +94,11 @@ void W3CServer::processTextMessage(QString message)
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
     if (m_debug)
+    {
         qDebug() << "Message recieved: " << message;
+    }
 
-    if (!zeClient) return;
+    if (!zeClient) { return; }
 
     JSONRequestParser parser(message, m_debug);
     VISSRequest* request = parser.getRequest();
@@ -140,7 +144,9 @@ void W3CServer::socketDisconnected()
 {
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
     if (m_debug)
+    {
         qDebug() << " socket disconnected: " << zeClient;
+    }
 
     //remove from client list and delete from heap
     if (zeClient)
