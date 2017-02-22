@@ -7,7 +7,8 @@
 #include <QDebug>
 
 // What is the best way to represent these? enum with int or str? macro?
-enum vss_request{
+enum vss_request
+{
     GET,
     SET,
     SUBSCRIBE,

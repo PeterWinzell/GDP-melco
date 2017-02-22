@@ -105,38 +105,40 @@ void W3CServer::processTextMessage(QString message)
 
     switch (request->getAction())
     {
-    case GET:
-        zeClient -> sendTextMessage(" Get Request Received " );
-        // getRequestHandler(&request);
-        break;
-    case SET:
-        zeClient -> sendTextMessage(" Set Request Received  " );
-        // stRequestHandler(&request);
-        break;
-    case SUBSCRIBE:
-        zeClient -> sendTextMessage(" Subscribe Request Received  " );
-        // subcribeRequestHandler(&request);
-        break;
-    case UNSUBSCRIBE:
-        zeClient -> sendTextMessage(" Unsubscribe Request Received " );
-        // unsubscribeRequestHandler(&request);
-        break;
-    case UNSUBSCRIBEALL:
-        zeClient -> sendTextMessage(" Unsubscribe All Request Received  " );
-        // unsubscribeAllRequestHandler(&request);
-        break;
-    case AUTHORIZE:
-        zeClient -> sendTextMessage(" Authorization Request Received  " );
-        // athorizeRequestHandler(&request);
-        break;
-    case GETVSS:
-        zeClient -> sendTextMessage(" Get VSS Request Received  " );
-        // getVSSRequestHandler(&request);
-        break;
-    case ERROR:
-        zeClient -> sendTextMessage(" Error in Request  " );
-        // errorRequestHandler(&request);
-        break;
+        case GET:
+            zeClient -> sendTextMessage(" Get Request Received " );
+            // getRequestHandler(&request);
+            break;
+        case SET:
+            zeClient -> sendTextMessage(" Set Request Received  " );
+            // stRequestHandler(&request);
+            break;
+        case SUBSCRIBE:
+            zeClient -> sendTextMessage(" Subscribe Request Received  " );
+            // subcribeRequestHandler(&request);
+            break;
+        case UNSUBSCRIBE:
+            zeClient -> sendTextMessage(" Unsubscribe Request Received " );
+            // unsubscribeRequestHandler(&request);
+            break;
+        case UNSUBSCRIBEALL:
+            zeClient -> sendTextMessage(" Unsubscribe All Request Received  " );
+            // unsubscribeAllRequestHandler(&request);
+            break;
+        case AUTHORIZE:
+            zeClient -> sendTextMessage(" Authorization Request Received  " );
+            // athorizeRequestHandler(&request);
+            break;
+        case GETVSS:
+            zeClient -> sendTextMessage(" Get VSS Request Received  " );
+            // getVSSRequestHandler(&request);
+            break;
+        case ERROR:
+            zeClient -> sendTextMessage(" Error in Request  " );
+            // errorRequestHandler(&request);
+            break;
+        default:
+            break;
     }
 }
 

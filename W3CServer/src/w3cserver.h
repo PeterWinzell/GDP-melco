@@ -30,10 +30,10 @@ private  Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
-  QWebSocketServer *m_pWebSocketServer;
-  QList<QWebSocket *> m_clients;
-  bool m_debug;
-  bool m_secure;
+    QWebSocketServer *m_pWebSocketServer;
+    QList<QWebSocket *> m_clients;
+    bool m_debug;
+    bool m_secure;
 };
 
 #endif // W3CSERVER_H

@@ -36,30 +36,30 @@ void JSONRequestParser::parseJson()
 
     switch (m_request->getAction())
     {
-    case GET:
-        if(!validateGetRequest()) { m_request->invalidateRequest(); }
-        break;
-    case SET:
-        if(!validateSetRequest()) { m_request->invalidateRequest(); }
-        break;
-    case SUBSCRIBE:
-        if(!validateSubscribeRequest()) { m_request->invalidateRequest(); }
-        break;
-    case UNSUBSCRIBE:
-        if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
-        break;
-    case UNSUBSCRIBEALL:
-        if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
-        break;
-    case AUTHORIZE:
-        if(!validateAuthorizeRequest()) { m_request->invalidateRequest(); }
-        break;
-    case GETVSS:
-        if(!validateGetVSSRequest()) { m_request->invalidateRequest(); }
-        break;
-    case ERROR: // Just to remove compilation warning.
-        m_request->invalidateRequest();
-        break;
+        case GET:
+            if(!validateGetRequest()) { m_request->invalidateRequest(); }
+            break;
+        case SET:
+            if(!validateSetRequest()) { m_request->invalidateRequest(); }
+            break;
+        case SUBSCRIBE:
+            if(!validateSubscribeRequest()) { m_request->invalidateRequest(); }
+            break;
+        case UNSUBSCRIBE:
+            if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
+            break;
+        case UNSUBSCRIBEALL:
+            if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
+            break;
+        case AUTHORIZE:
+            if(!validateAuthorizeRequest()) { m_request->invalidateRequest(); }
+            break;
+        case GETVSS:
+            if(!validateGetVSSRequest()) { m_request->invalidateRequest(); }
+            break;
+        case ERROR: // Just to remove compilation warning.
+            m_request->invalidateRequest();
+            break;
     }
 
     m_request->setRequestValues();

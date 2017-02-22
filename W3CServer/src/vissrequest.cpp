@@ -60,34 +60,36 @@ void VISSRequest::setRequestValues()
 
     switch (m_action)
     {
-    case GET:
-        m_signalPath = m_jsonObject["path"].toString();
-        break;
-    case SET:
-        m_signalPath = m_jsonObject["path"].toString();
-        m_value = m_jsonObject["value"].toVariant();
-        break;
-    case SUBSCRIBE:
-        m_signalPath = m_jsonObject["path"].toString();
+        case GET:
+            m_signalPath = m_jsonObject["path"].toString();
+            break;
+        case SET:
+            m_signalPath = m_jsonObject["path"].toString();
+            m_value = m_jsonObject["value"].toVariant();
+            break;
+        case SUBSCRIBE:
+            m_signalPath = m_jsonObject["path"].toString();
 
-        if(!m_jsonObject["filters"].isUndefined())
-            m_filters = m_jsonObject["filters"].toVariant();
+            if(!m_jsonObject["filters"].isUndefined())
+            {
+                m_filters = m_jsonObject["filters"].toVariant();
+            }
 
-        break;
-    case UNSUBSCRIBE:
-        m_subscriptionId = m_jsonObject["subscriptionId"].toString();
-        break;
-    case UNSUBSCRIBEALL:
-        break;
-    case AUTHORIZE:
-        m_tokens = m_jsonObject["tokens"].toObject();
-        break;
-    case GETVSS:
-        m_signalPath = m_jsonObject["path"].toString();
-        break;
-    case ERROR:
-    default:
-        break;
+            break;
+        case UNSUBSCRIBE:
+            m_subscriptionId = m_jsonObject["subscriptionId"].toString();
+            break;
+        case UNSUBSCRIBEALL:
+            break;
+        case AUTHORIZE:
+            m_tokens = m_jsonObject["tokens"].toObject();
+            break;
+        case GETVSS:
+            m_signalPath = m_jsonObject["path"].toString();
+            break;
+        case ERROR:
+        default:
+            break;
     }
 }
 

@@ -13,7 +13,9 @@ int main(int argc, char *argv[])
     {
         QString str(argv[1]);
         if (str == "-secure")
+        {
             sec = true;
+        }
     }
 
     W3CServer *server = new W3CServer(8080,sec,true);
