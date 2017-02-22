@@ -18,13 +18,13 @@
 *
 *
 ***************************************************************************************************************/
-#include "authorizationhandler.h"
-#include <QDebug>
+#include "getvsshandler.h"
 
-AuthorizationHandler::AuthorizationHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
+GetVSSHandler::GetVSSHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
     RequestHandler(parent,vissrequest,client){
 }
 
-void AuthorizationHandler::processRequest(){
+void GetVSSHandler::processRequest(){
     qDebug() << " processing get handler requests";
+
 }

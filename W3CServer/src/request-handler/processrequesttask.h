@@ -9,7 +9,7 @@ public:
     ProcessRequestTask(QWebSocket* client,QString message,bool debug=false);
     void run();
 private:
-    QWebSocket* m_client;
+    QWebSocket* p_client;
     bool m_debug;
     QString m_jsonRequestMessage;
 };

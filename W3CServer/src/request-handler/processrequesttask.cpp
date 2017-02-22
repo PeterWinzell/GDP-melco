@@ -4,7 +4,7 @@
 #include <QUrl>
 
 ProcessRequestTask::ProcessRequestTask(QWebSocket* client, QString message, bool debug):
-    m_client(client),
+    p_client(client),
     m_debug(debug),
     m_jsonRequestMessage(message)
 {
@@ -13,10 +13,12 @@ ProcessRequestTask::ProcessRequestTask(QWebSocket* client, QString message, bool
 
 void ProcessRequestTask::run(){
     if (m_debug)
-        qDebug() << "processRequestTask is running " << m_client ->requestUrl().host() << m_jsonRequestMessage;
+        qDebug() << "processRequestTask is running " << p_client ->requestUrl().host() << m_jsonRequestMessage;
 
-    RequestHandler* aHandler = RequestHandler::makeRequestHandler(m_jsonRequestMessage);
-    //blocking
-    aHandler -> processRequest();
-    delete aHandler;
+    auto aHandler = RequestHandler::makeRequestHandler(m_jsonRequestMessage,p_client);
+    if(aHandler)
+    {
+        //blocking
+        aHandler -> processRequest();
+    }
 }

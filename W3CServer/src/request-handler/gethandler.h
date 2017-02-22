@@ -1,11 +1,13 @@
 #ifndef GETHANDLER_H
 #define GETHANDLER_H
-#include "gethandler.h"
 #include "requesthandler.h"
+#include "vissrequest.h"
+#include <QWebSocket>
+
 class GetHandler : public RequestHandler
 {
 public:
-    explicit GetHandler(QObject *parent = 0);
+    explicit GetHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
     void processRequest();
 };
 

@@ -11,25 +11,34 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     w3cserver.cpp \
-    request-handler/requesthandler.cpp \
-    jwt-utility/visstokenvalidator.cpp \
     jsonrequestparser.cpp \
-    vissrequest.cpp
-    jwt-utility/qjsonwebtoken.cpp \
+    vissrequest.cpp \
+    request-handler/requesthandler.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/gethandler.cpp \
-    request-handler/authorizationhandler.cpp
-
+    request-handler/authorizationhandler.cpp \
+    jwt-utility/visstokenvalidator.cpp \
+    jwt-utility/qjsonwebtoken.cpp \
+    request-handler/sethandler.cpp \
+    request-handler/subscribehandler.cpp \
+    request-handler/unsubscribeallhandler.cpp \
+    request-handler/getvsshandler.cpp \
+    request-handler/unsubscribehandler.cpp
 HEADERS += \
     w3cserver.h \
     request-handler/requesthandler.h \
     jwt-utility/visstokenvalidator.h \
     jsonrequestparser.h \
-    vissrequest.h
+    vissrequest.h \
     jwt-utility/qjsonwebtoken.h \
     request-handler/processrequesttask.h \
     request-handler/gethandler.h \
-    request-handler/authorizationhandler.h
+    request-handler/authorizationhandler.h \
+    request-handler/sethandler.h \
+    request-handler/subscribehandler.h \
+    request-handler/unsubscribeallhandler.h \
+    request-handler/getvsshandler.h \
+    request-handler/unsubscribehandler.h
 
 target.path = /home/pi
 INSTALLS += target

@@ -18,13 +18,13 @@
 *
 *
 ***************************************************************************************************************/
-#include "authorizationhandler.h"
-#include <QDebug>
+#include "unsubscribeallhandler.h"
 
-AuthorizationHandler::AuthorizationHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
+UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
     RequestHandler(parent,vissrequest,client){
 }
 
-void AuthorizationHandler::processRequest(){
+void UnsubscribeAllHandler::processRequest(){
     qDebug() << " processing get handler requests";
+
 }

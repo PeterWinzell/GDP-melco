@@ -13,7 +13,7 @@
 class JSONRequestParser : public QObject
 {
 public:
-    JSONRequestParser(QString json, bool debug, QObject *parent = Q_NULLPTR);
+    JSONRequestParser(QString json, bool debug = false, QObject *parent = Q_NULLPTR);
     ~JSONRequestParser();
 
     VISSRequest* getRequest();
