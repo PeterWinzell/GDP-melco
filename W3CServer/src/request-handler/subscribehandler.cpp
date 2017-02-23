@@ -18,19 +18,26 @@
 *
 *
 ***************************************************************************************************************/
+#include <QThread>
 #include "subscribehandler.h"
 
 
+
 SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client){
+    RequestHandler(parent,vissrequest,client),m_dosubscription(true){
 }
 
 void SubscribeHandler::processRequest(){
     connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
     qDebug() << " processing get handler requests";
 
+    while (m_dosubscription){
+        p_client->sendTextMessage(" you are subscribing ");
+        QThread::currentThread()->sleep(1);
+    }
+    qDebug() << " subscription cancelled ";
 }
 
 void SubscribeHandler::socketDisconnected(){
-
+    m_dosubscription = false;
 }

@@ -55,6 +55,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
 
     }
+
     if (m_pWebSocketServer -> listen(QHostAddress::Any, port)){
         if (m_debug)
             qDebug() << "W3CServer is listening on port " << port;
@@ -79,7 +80,7 @@ W3CServer::~W3CServer()
 
 void W3CServer::onNewConnection(){
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-
+    // pSocket ->
     qDebug() << " attempting to connect ";
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
@@ -100,7 +101,7 @@ void W3CServer::processTextMessage(QString message){
         qDebug() << "Message recieved: " << message;
 
     //testing
-    QJsonDocument doc;
+    /*QJsonDocument doc;
     doc = QJsonDocument::fromJson(message.toUtf8());
 
     qDebug() << " doc is " + doc.toJson();
@@ -144,8 +145,9 @@ void W3CServer::processTextMessage(QString message){
     qDebug() << " Signal path is : " + path;
 
     QString actions = tokenpl["actions"].toString();
-    qDebug() << " Actions are : " + actions;
+    qDebug() << " Actions are : " + actions;*/
 
+    startRequestProcess(zeClient,message);
 
 }
 
@@ -153,7 +155,7 @@ void W3CServer::socketDisconnected()
 {
      QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
      if (m_debug)
-         qDebug() << " socket disconnected: " << zeClient;
+         qDebug() << " socket disconnected ";
 
      //remove from client list and delete from heap
      if (zeClient){

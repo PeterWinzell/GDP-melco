@@ -32,6 +32,8 @@ public:
      void processRequest();
 public slots:
      void socketDisconnected();
+protected:
+    bool m_dosubscription;
 };
 
 #endif // SUBSCRIBEHANDLER_H

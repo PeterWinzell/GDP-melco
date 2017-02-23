@@ -26,5 +26,5 @@ AuthorizationHandler::AuthorizationHandler(QObject* parent,VISSRequest* vissrequ
 }
 
 void AuthorizationHandler::processRequest(){
-    qDebug() << " processing get handler requests";
+    qDebug() << " processing  handler requests";
 }
