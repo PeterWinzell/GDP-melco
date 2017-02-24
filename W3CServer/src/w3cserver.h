@@ -31,10 +31,10 @@ private  Q_SLOTS:
 
 private:
   void startRequestProcess(QWebSocket* cl,QString message);
-  QWebSocketServer *m_pWebSocketServer;
-  QList<QWebSocket *> m_clients;
-  bool m_debug;
-  bool m_secure;
+    QWebSocketServer *m_pWebSocketServer;
+    QList<QWebSocket *> m_clients;
+    bool m_debug;
+    bool m_secure;
 };
 
 #endif // W3CSERVER_H

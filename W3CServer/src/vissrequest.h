@@ -7,7 +7,8 @@
 #include <QDebug>
 
 // What is the best way to represent these? enum with int or str? macro?
-enum vss_request{
+enum vss_request
+{
     GET,
     SET,
     SUBSCRIBE,
@@ -42,19 +43,19 @@ public:
     void setRequestValues();
 
 private:
-    vss_request action;
+    vss_request m_action;
 
-    QString requestId;
-    QString signalPath;
+    QString m_requestId;
+    QString m_signalPath;
 
-    QVariant value;
+    QVariant m_value;
 
-    QString subscriptionId;
-    QVariant filters;
+    QString m_subscriptionId;
+    QVariant m_filters;
 
-    QVariant tokens;
+    QVariant m_tokens;
 
-    QJsonObject jsonObject;
+    QJsonObject m_jsonObject;
 
 
 };
