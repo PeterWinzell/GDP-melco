@@ -74,3 +74,6 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+
+# git diff
+*.swp
