@@ -22,10 +22,14 @@ void W3cTestClient::onConnected()
     connect(&m_webSocket, &QWebSocket::textMessageReceived,
             this, &W3cTestClient::onTextMessageReceived);
 
-    QString jsonMess = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
-    qDebug() << " JSON SENT TO SEVER IS: " + jsonMess;
+    //QString authMess = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
+    //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
+    // m_webSocket.sendTextMessage(authMess);
 
-    m_webSocket.sendTextMessage(jsonMess);
+   QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+   m_webSocket.sendTextMessage(subMess);
+
+   qDebug() << " JSON SENT TO SERVER IS: " + subMess;
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)

@@ -21,7 +21,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type){
             testJSON = "SET";
             break;
         case requesttype::SUBSCRIBE:
-            testJSON = "SUBSCRIBE";
+            testJSON = getSubscriptionJson();
             break;
         case requesttype::UNSUBSCRIBE:
             testJSON = "UNSUBSCRIBE";
@@ -40,6 +40,17 @@ QString GetVissTestDataJson::getTestDataString(requesttype type){
     return testJSON;
 }
 
+
+QString GetVissTestDataJson::getSubscriptionJson(){
+    QJsonObject jsonObject;
+    jsonObject.insert("action","subscribe");
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.TripMeter");
+    jsonObject.insert("requestId","1");
+    jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
 
 // { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }'
 QString GetVissTestDataJson::getAuthJson(){
