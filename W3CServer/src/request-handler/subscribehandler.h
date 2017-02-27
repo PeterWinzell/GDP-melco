@@ -32,6 +32,7 @@ public:
      void processRequest();
 public slots:
      void socketDisconnected();
+     void unsubscribe();
 protected:
     bool m_dosubscription;
 };

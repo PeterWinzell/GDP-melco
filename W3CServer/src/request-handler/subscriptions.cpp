@@ -18,35 +18,33 @@
 *
 *
 ***************************************************************************************************************/
-#include <QThread>
-#include "subscribehandler.h"
 #include "subscriptions.h"
 
-
-SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client),m_dosubscription(true){
-}
-
-void SubscribeHandler::processRequest(){
-    connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
-
-    Subscriptions* subscriptions = Subscriptions::getInstance();
-    subscriptions ->addSubcription(this);
-
-    qDebug() << " processing get handler requests";
-
-    while (m_dosubscription){
-        p_client->sendTextMessage(" you are subscribing ");
-        QThread::currentThread()->sleep(1);
-    }
-    qDebug() << " subscription cancelled ";
-}
-
-void SubscribeHandler::socketDisconnected(){
-    m_dosubscription = false;
-}
-
-void SubscribeHandler::unsubscribe()
+int Subscriptions::addSubcription(SubscribeHandler* handler)
 {
+    QMutexLocker lock(m_mutex);
 
+    m_subscriptionIdCounter++;
+    m_subcriptions.insert(m_subscriptionIdCounter,handler);
+    return m_subscriptionIdCounter;
+}
+
+void Subscriptions::unsubscribe(int subscriptionId)
+{
+    m_mutex.lock();
+    SubscribeHandler* handler = m_subcriptions.find(subscriptionId);
+    if (handler)
+    {
+        handler -> unsubscribe();
+    }
+
+    m_subcriptions.remove(subscriptionId);
+    m_mutex.unlock();
+}
+
+void Subscriptions::unsubscribeAll(){
+    m_mutex.lock();
+    //traverse all subscriptions and stop subscribing and remove all
+    m_subcriptions.clear();
+    m_mutex.unlock();
 }

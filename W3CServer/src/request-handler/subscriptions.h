@@ -18,35 +18,45 @@
 *
 *
 ***************************************************************************************************************/
-#include <QThread>
+#ifndef SUBSCRIPTIONS_H
+#define SUBSCRIPTIONS_H
+#include <QMutex>
+#include <QMutexLocker>
+#include <QHash>
 #include "subscribehandler.h"
-#include "subscriptions.h"
 
-
-SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client),m_dosubscription(true){
-}
-
-void SubscribeHandler::processRequest(){
-    connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
-
-    Subscriptions* subscriptions = Subscriptions::getInstance();
-    subscriptions ->addSubcription(this);
-
-    qDebug() << " processing get handler requests";
-
-    while (m_dosubscription){
-        p_client->sendTextMessage(" you are subscribing ");
-        QThread::currentThread()->sleep(1);
-    }
-    qDebug() << " subscription cancelled ";
-}
-
-void SubscribeHandler::socketDisconnected(){
-    m_dosubscription = false;
-}
-
-void SubscribeHandler::unsubscribe()
+class Subscriptions : public QObject
 {
+    Q_OBJECT
+public:
+    static Subscriptions* getInstance()
+    {
+        QMutexLocker mutexlock(m_mutex);
+        if (m_instance == nullptr)
+        {
+            m_subscriptionIdCounter = 0;
+            m_instance = new Subscriptions();
+         }
+        return m_instance;
+    }
 
-}
+    int addSubcription(SubscribeHandler handler);
+    void unsubscribe(int subscriptionId);
+
+private:
+    static Subscriptions * m_instance;
+    //There can be only one accces at a time
+    static QMutex m_mutex;
+
+    //Keep track of subscriptions
+    static int m_subscriptionIdCounter;
+    QHash<int,SubscribeHandler> m_subcriptions;
+
+    Subscriptions(QObject *parent=0):QObject(parent)
+    {
+
+    }
+
+};
+
+#endif // SUBSCRIPTIONS_H
