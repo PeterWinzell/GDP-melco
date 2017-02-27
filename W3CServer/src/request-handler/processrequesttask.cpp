@@ -1,3 +1,4 @@
+#include  <memory>
 #include "processrequesttask.h"
 #include "requesthandler.h"
 #include <QWebSocket>

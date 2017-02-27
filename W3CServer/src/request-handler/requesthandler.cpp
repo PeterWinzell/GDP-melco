@@ -1,3 +1,4 @@
+#include <memory>
 #include "requesthandler.h"
 #include "gethandler.h"
 #include "sethandler.h"
