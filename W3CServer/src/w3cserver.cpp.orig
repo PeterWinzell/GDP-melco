@@ -5,17 +5,14 @@
 #include <QFile>
 #include <QSslCertificate>
 #include <QSslKey>
-<<<<<<< HEAD
 #include<QThreadPool>
+#include "jsonrequestparser.h"
 #include<QJsonDocument>
 #include<QJsonObject>
 #include<QJsonArray>
 #include "request-handler/processrequesttask.h"
 #include "jwt-utility/qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
-=======
-#include "jsonrequestparser.h"
->>>>>>> master
 
 QT_USE_NAMESPACE
 
@@ -25,10 +22,11 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     m_debug(debug),
     m_secure(usesecureprotocol)
 {
-    if (usesecureprotocol){
-         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
-                                                                           QWebSocketServer::SecureMode,
-                                                                           this);
+    if (usesecureprotocol)
+    {
+        m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
+                QWebSocketServer::SecureMode,
+                this);
         QSslConfiguration sslConfiguration;
 
         QFile keyFile(QStringLiteral(":/server.key"));
@@ -54,13 +52,21 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
         m_pWebSocketServer->setSslConfiguration(sslConfiguration);
     }
-    else{
+    else
+    {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
-
     }
+<<<<<<< HEAD
+
     if (m_pWebSocketServer -> listen(QHostAddress::Any, port)){
+=======
+    if (m_pWebSocketServer -> listen(QHostAddress::Any, port))
+    {
+>>>>>>> master
         if (m_debug)
+        {
             qDebug() << "W3CServer is listening on port " << port;
+        }
 
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
@@ -68,9 +74,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
         //SSL error handler
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
-                        this, &W3CServer::onSslErrors);
+                this, &W3CServer::onSslErrors);
     }
-
 }
 
 W3CServer::~W3CServer()
@@ -80,9 +85,10 @@ W3CServer::~W3CServer()
     qDeleteAll(m_clients.begin(),m_clients.end());
 }
 
-void W3CServer::onNewConnection(){
+void W3CServer::onNewConnection()
+{
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-
+    // pSocket ->
     qDebug() << " attempting to connect ";
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
@@ -94,17 +100,19 @@ void W3CServer::onNewConnection(){
     m_clients << pSocket;
 }
 
-
-void W3CServer::processTextMessage(QString message){
+void W3CServer::processTextMessage(QString message)
+{
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
     if (m_debug)
+    {
         qDebug() << "Message recieved: " << message;
-<<<<<<< HEAD
+    }
 
+<<<<<<< HEAD
     //testing
-    QJsonDocument doc;
+    /*QJsonDocument doc;
     doc = QJsonDocument::fromJson(message.toUtf8());
 
     qDebug() << " doc is " + doc.toJson();
@@ -148,20 +156,18 @@ void W3CServer::processTextMessage(QString message){
     qDebug() << " Signal path is : " + path;
 
     QString actions = tokenpl["actions"].toString();
-    qDebug() << " Actions are : " + actions;
+    qDebug() << " Actions are : " + actions;*/
 
+    startRequestProcess(zeClient,message);
 
-    if (zeClient){
-        zeClient -> sendTextMessage(" Message returned from server to client " );
 =======
->>>>>>> master
-
-    if (!zeClient) return;
+    if (!zeClient) { return; }
 
     JSONRequestParser parser(message, m_debug);
     VISSRequest* request = parser.getRequest();
 
-    switch (request->getAction()) {
+    switch (request->getAction())
+    {
         case GET:
             zeClient -> sendTextMessage(" Get Request Received " );
             // getRequestHandler(&request);
@@ -194,24 +200,38 @@ void W3CServer::processTextMessage(QString message){
             zeClient -> sendTextMessage(" Error in Request  " );
             // errorRequestHandler(&request);
             break;
+        default:
+            break;
     }
-
-
-
+>>>>>>> master
 }
 
 void W3CServer::socketDisconnected()
 {
+<<<<<<< HEAD
      QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
      if (m_debug)
-         qDebug() << " socket disconnected: " << zeClient;
+         qDebug() << " socket disconnected ";
 
      //remove from client list and delete from heap
      if (zeClient){
          m_clients.removeAll(zeClient);
          zeClient -> deleteLater();
      }
+=======
+    QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
+    if (m_debug)
+    {
+        qDebug() << " socket disconnected: " << zeClient;
+    }
+>>>>>>> master
 
+    //remove from client list and delete from heap
+    if (zeClient)
+    {
+        m_clients.removeAll(zeClient);
+        zeClient -> deleteLater();
+    }
 }
 
 void W3CServer::onSslErrors(const QList<QSslError> &)
