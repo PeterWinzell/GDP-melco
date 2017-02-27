@@ -1,7 +1,7 @@
 #ifndef REQUESTHANDLER_H
 #define REQUESTHANDLER_H
 
-#include <memory>
+
 #include <QObject>
 #include <QWebSocket>
 #include "vissrequest.h"
