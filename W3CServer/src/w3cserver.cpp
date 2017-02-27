@@ -177,8 +177,8 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
 }
 
 
-void W3CServer::startRequestProcess(QWebSocket* cl,QString message){
-    ProcessRequestTask * requesttask = new ProcessRequestTask(cl,message,true);
+void W3CServer::startRequestProcess(QWebSocket* cl, QString message){
+    ProcessRequestTask* requesttask = new ProcessRequestTask(cl, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
     QThreadPool::globalInstance()->start(requesttask);
 }

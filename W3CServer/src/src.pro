@@ -14,7 +14,6 @@ SOURCES += main.cpp \
     jsonrequestparser.cpp \
     vissrequest.cpp \
     request-handler/requesthandler.cpp \
-    request-handler/processrequesttask.cpp \
     request-handler/gethandler.cpp \
     request-handler/authorizationhandler.cpp \
     jwt-utility/visstokenvalidator.cpp \
@@ -23,7 +22,9 @@ SOURCES += main.cpp \
     request-handler/subscribehandler.cpp \
     request-handler/unsubscribeallhandler.cpp \
     request-handler/getvsshandler.cpp \
-    request-handler/unsubscribehandler.cpp
+    request-handler/unsubscribehandler.cpp \
+    request-handler/processrequesttask.cpp
+
 HEADERS += \
     w3cserver.h \
     request-handler/requesthandler.h \
@@ -31,14 +32,15 @@ HEADERS += \
     jsonrequestparser.h \
     vissrequest.h \
     jwt-utility/qjsonwebtoken.h \
-    request-handler/processrequesttask.h \
     request-handler/gethandler.h \
     request-handler/authorizationhandler.h \
     request-handler/sethandler.h \
     request-handler/subscribehandler.h \
     request-handler/unsubscribeallhandler.h \
     request-handler/getvsshandler.h \
-    request-handler/unsubscribehandler.h
+    request-handler/unsubscribehandler.h \
+    request-handler/processrequesttask.h
+
 
 target.path = /home/pi
 INSTALLS += target

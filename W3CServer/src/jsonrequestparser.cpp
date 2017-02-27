@@ -1,6 +1,6 @@
 #include "jsonrequestparser.h"
 
-JSONRequestParser::JSONRequestParser(QString json, bool debug = false, QObject *parent) : QObject(parent)
+JSONRequestParser::JSONRequestParser(QString json, bool debug, QObject *parent) : QObject(parent)
 {
     m_debug = debug;
     m_jsonDocument = QJsonDocument::fromJson(json.toUtf8(), &m_parseError);
