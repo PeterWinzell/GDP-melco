@@ -21,10 +21,12 @@
 #include "sethandler.h"
 
 SetHandler::SetHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client){
+    RequestHandler(parent,vissrequest,client)
+{
 }
 
-void SetHandler::processRequest(){
+void SetHandler::processRequest()
+{
     qDebug() << " processing get handler requests";
 
 }

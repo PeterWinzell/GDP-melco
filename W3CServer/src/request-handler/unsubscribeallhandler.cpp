@@ -21,10 +21,12 @@
 #include "unsubscribeallhandler.h"
 
 UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client){
+    RequestHandler(parent,vissrequest,client)
+{
 }
 
-void UnsubscribeAllHandler::processRequest(){
+void UnsubscribeAllHandler::processRequest()
+{
     qDebug() << " processing get handler requests";
 
 }

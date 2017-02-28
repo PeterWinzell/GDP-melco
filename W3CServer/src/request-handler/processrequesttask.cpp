@@ -11,14 +11,17 @@ ProcessRequestTask::ProcessRequestTask(QWebSocket* client, QString message, bool
 
 }
 
-void ProcessRequestTask::run(){
+void ProcessRequestTask::run()
+{
     if (m_debug)
+    {
         qDebug() << "processRequestTask is running " << p_client ->requestUrl().host() << m_jsonRequestMessage;
+    }
 
     auto aHandler = RequestHandler::makeRequestHandler(m_jsonRequestMessage,p_client);
     if(aHandler)
     {
         //blocking
-        aHandler -> processRequest();
+        aHandler->processRequest();
     }
 }

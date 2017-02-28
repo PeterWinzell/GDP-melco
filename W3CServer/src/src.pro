@@ -41,7 +41,6 @@ HEADERS += \
     request-handler/unsubscribehandler.h \
     request-handler/processrequesttask.h
 
-
 target.path = /home/pi
 INSTALLS += target
 

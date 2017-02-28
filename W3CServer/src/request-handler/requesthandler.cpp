@@ -15,7 +15,7 @@ std::shared_ptr<RequestHandler> RequestHandler::makeRequestHandler(QString messa
     JSONRequestParser jsonParser(message);
     VISSRequest* parsedRequest = jsonParser.getRequest();
 
-   std::shared_ptr<RequestHandler> handler = nullptr;
+    std::shared_ptr<RequestHandler> handler = nullptr;
 
 
     switch(parsedRequest->getAction())
