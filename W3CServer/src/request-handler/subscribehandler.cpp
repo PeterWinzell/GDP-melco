@@ -19,25 +19,87 @@
 *
 ***************************************************************************************************************/
 #include <QThread>
+#include <QJsonArray>
+#include <QDateTime>
 #include "subscribehandler.h"
 
-
-
 SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client),m_dosubscription(true){
+    RequestHandler(parent,vissrequest,client),m_dosubscription(true)
+{
 }
 
-void SubscribeHandler::processRequest(){
+void SubscribeHandler::processRequest()
+{
     connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
     qDebug() << " processing get handler requests";
 
-    while (m_dosubscription){
-        p_client->sendTextMessage(" you are subscribing ");
+    //Get filter/time
+
+    //Add to subscriptions and store subscriptions ID
+    m_subId = 42; //Subscriptions::GetInstance()->add(this);
+
+    //Send subscription response
+    //Format response on JSON format
+    QString successMessage = getSubscriptionSuccessJson();
+
+    //Send message to client
+    p_client->sendTextMessage(successMessage);
+
+    while (m_dosubscription)
+    {
+        //Get latest value of subscribed signal
+        QString value = getVehicleData(p_vissrequest->getSignalPath());
+
+        //Format response on JSON format
+        QString message = getSubscriptionNotificationJson(value);
+
+        //Send message to client
+        p_client->sendTextMessage(message);
+
+        //Sleep for the period defined by filter
         QThread::currentThread()->sleep(1);
     }
+
     qDebug() << " subscription cancelled ";
 }
 
-void SubscribeHandler::socketDisconnected(){
+void SubscribeHandler::socketDisconnected()
+{
     m_dosubscription = false;
 }
+
+void SubscribeHandler::unsubscribe()
+{
+    m_dosubscription = false;
+}
+
+QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("subscriptionId", m_subId);
+    jsonObject.insert("value", signalValue);
+    jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString SubscribeHandler::getSubscriptionSuccessJson()
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("action", "subscribe");
+    jsonObject.insert("requestId", p_vissrequest->getRequestId());
+    jsonObject.insert("subscriptionId", m_subId);
+    jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString SubscribeHandler::getVehicleData(QString path)
+{
+    //Dummy function, just return a random number 0 - 320
+    return QString::number(qrand() % 320);
+}
+
+
