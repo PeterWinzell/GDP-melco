@@ -22,9 +22,11 @@
 #include <QDebug>
 
 AuthorizationHandler::AuthorizationHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client){
+    RequestHandler(parent,vissrequest,client)
+{
 }
 
-void AuthorizationHandler::processRequest(){
+void AuthorizationHandler::processRequest()
+{
     qDebug() << " processing  handler requests";
 }

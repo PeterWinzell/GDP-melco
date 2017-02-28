@@ -16,6 +16,8 @@
 
 QT_USE_NAMESPACE
 
+class W3CServer;
+
 W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients(),
@@ -56,7 +58,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
     }
-    if (m_pWebSocketServer -> listen(QHostAddress::Any, port))
+    if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
         if (m_debug)
         {
@@ -75,7 +77,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
 W3CServer::~W3CServer()
 {
-    m_pWebSocketServer -> close();
+    m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
 }
@@ -167,7 +169,7 @@ void W3CServer::socketDisconnected()
     if (zeClient)
     {
         m_clients.removeAll(zeClient);
-        zeClient -> deleteLater();
+        zeClient->deleteLater();
     }
 }
 
@@ -177,8 +179,9 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
 }
 
 
-void W3CServer::startRequestProcess(QWebSocket* cl,QString message){
-    ProcessRequestTask * requesttask = new ProcessRequestTask(cl,message,true);
+void W3CServer::startRequestProcess(QWebSocket* cl, QString message)
+{
+    ProcessRequestTask* requesttask = new ProcessRequestTask(cl, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
     QThreadPool::globalInstance()->start(requesttask);
 }

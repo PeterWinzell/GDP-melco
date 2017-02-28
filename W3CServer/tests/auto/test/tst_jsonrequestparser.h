@@ -12,7 +12,7 @@ using namespace testing;
 void ErrorHelper(QString jsonString, QString errorMsg)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     EXPECT_EQ(request->getAction(), ERROR) << errorMsg.toStdString();
 
@@ -23,7 +23,7 @@ void ErrorHelper(QString jsonString, QString errorMsg)
 void GetRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), GET);
     EXPECT_EQ(request->getRequestId(), "8756");
@@ -35,7 +35,7 @@ void GetRequestHelper(QString jsonString)
 void SetRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), SET);
     EXPECT_EQ(request->getRequestId(), "8912");
@@ -48,7 +48,7 @@ void SetRequestHelper(QString jsonString)
 void SubscribeRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), SUBSCRIBE);
     EXPECT_EQ(request->getRequestId(), "5264");
@@ -60,7 +60,7 @@ void SubscribeRequestHelper(QString jsonString)
 void UnsubscribeRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), UNSUBSCRIBE);
     EXPECT_EQ(request->getRequestId(), "5264");
@@ -72,7 +72,7 @@ void UnsubscribeRequestHelper(QString jsonString)
 void UnsubscribeAllRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), UNSUBSCRIBEALL);
     EXPECT_EQ(request->getRequestId(), "5264");
@@ -83,7 +83,7 @@ void UnsubscribeAllRequestHelper(QString jsonString)
 void AuthorizeRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), AUTHORIZE);
     //EXPECT_EQ(request->getTokens(), "");  // TODO
@@ -95,7 +95,7 @@ void AuthorizeRequestHelper(QString jsonString)
 void GetVSSRequestHelper(QString jsonString)
 {
     JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json -> getRequest();
+    VISSRequest* request = json->getRequest();
 
     ASSERT_EQ(request->getAction(), GETVSS);
     EXPECT_EQ(request->getRequestId(), "3874");

@@ -65,6 +65,7 @@ void SubscribeHandler::processRequest()
 
 void SubscribeHandler::socketDisconnected()
 {
+{
     m_dosubscription = false;
 }
 

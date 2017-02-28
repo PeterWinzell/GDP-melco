@@ -6,7 +6,7 @@
 class ProcessRequestTask : public QRunnable
 {
 public:
-    ProcessRequestTask(QWebSocket* client,QString message,bool debug=false);
+    ProcessRequestTask(QWebSocket* client, QString message, bool debug = false);
     void run();
 private:
     QWebSocket* p_client;
