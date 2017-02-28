@@ -3,6 +3,7 @@
 
 
 #include <QObject>
+#include <memory>
 #include <QWebSocket>
 #include "vissrequest.h"
 
