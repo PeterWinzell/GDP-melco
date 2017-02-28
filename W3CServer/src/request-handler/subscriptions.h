@@ -26,20 +26,16 @@
 #include "subscribehandler.h"
 #include "unsubnotifier.h"
 
+
+
+
 class Subscriptions : public QObject
 {
     Q_OBJECT
+
 public:
-    static Subscriptions* getInstance()
-    {
-        QMutexLocker mutexlock(&m_mutex);
-        if (m_instance == nullptr)
-        {
-            m_subscriptionIdCounter = 0;
-            m_instance = new Subscriptions();
-         }
-        return m_instance;
-    }
+
+    static Subscriptions* getInstance();
 
     int addSubcription(SubscribeHandler* handler);
     bool unsubscribe(int subscriptionId,QWebSocket* client);
@@ -49,12 +45,14 @@ signals:
     void unsubscribe();
 
 private:
-    static Subscriptions * m_instance;
+
     //There can be only one accces at a time
+   // static QMutex m_mutex;
+    //Keep track of subscriptions
+    static Subscriptions * m_instance;
+    static int m_subscriptionIdCounter;
     static QMutex m_mutex;
 
-    //Keep track of subscriptions
-    static int m_subscriptionIdCounter;
     QMap<int,UnsubNotifier*> m_notifiers;
     QMultiMap<QWebSocket*,int>  m_clientsubscriptions;
 
@@ -64,5 +62,7 @@ private:
     }
 
 };
+
+
 
 #endif // SUBSCRIPTIONS_H

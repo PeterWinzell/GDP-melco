@@ -40,7 +40,7 @@ void SubscribeHandler::processRequest()
 
     while (m_dosubscription)
     {
-        p_client->sendTextMessage(" you are subscribing " + subscriptionId);
+        p_client->sendTextMessage(" you are subscribing ");
         QThread::currentThread()->sleep(1);
     }
     qDebug() << " subscription cancelled ";

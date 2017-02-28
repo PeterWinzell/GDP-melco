@@ -21,6 +21,21 @@
 #include "subscriptions.h"
 #include "unsubnotifier.h"
 
+Subscriptions* Subscriptions::m_instance = nullptr;
+int Subscriptions::m_subscriptionIdCounter = 0;
+QMutex Subscriptions::m_mutex;
+
+Subscriptions* Subscriptions::getInstance()
+{
+    QMutexLocker mutexlock(&m_mutex);
+    if (m_instance == nullptr)
+    {
+        m_subscriptionIdCounter = 0;
+        m_instance = new Subscriptions();
+     }
+    return m_instance;
+}
+
 int Subscriptions::addSubcription(SubscribeHandler* handler)
 {
     QMutexLocker lock(&m_mutex);
