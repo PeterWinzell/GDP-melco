@@ -18,19 +18,9 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef UNSUBNOFITIER_H
-#define UNSUBNOFITIER_H
+#include "unsubnotifier.h"
 
-#include <QObject>
-
-class UnsubNotifier: public QObject
+UnsubNotifier::UnsubNotifier()
 {
-    Q_OBJECT
-public:
-    explicit UnsubNotifier(QObject* parent = nullptr);
-    void unsubScribe();
-signals:
-    void unsubscribe();
-};
 
-#endif // UNSUBNOFITIER_H
+}

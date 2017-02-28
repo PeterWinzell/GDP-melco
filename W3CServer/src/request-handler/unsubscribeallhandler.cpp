@@ -18,6 +18,8 @@
 *
 *
 ***************************************************************************************************************/
+#include <QJsonObject>
+#include <QJsonDocument>
 #include "unsubscribeallhandler.h"
 #include "subscriptions.h"
 
@@ -26,7 +28,7 @@ UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent,VISSRequest* vissre
 {
 }
 
-QString UsubscribeAllHandler::responseBuilder(bool valid)
+QString UnsubscribeAllHandler::responseBuilder(bool valid)
 {
     QJsonObject jsonresponse;
     jsonresponse.insert("action","unsubscribeAll");
@@ -42,9 +44,9 @@ QString UsubscribeAllHandler::responseBuilder(bool valid)
         jsonresponse.insert("error",errorObject);
     }
 
-    jsonresponse.insert("timestamp",QDateTime::currentDateTime().toTime_t() );
+    jsonresponse.insert("timestamp",(int)QDateTime::currentDateTime().toTime_t() );
 
-    QJsonDocument jsonDoc(jsonObject);
+    QJsonDocument jsonDoc(jsonresponse);
     return jsonDoc.toJson();
 }
 

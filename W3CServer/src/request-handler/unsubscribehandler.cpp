@@ -46,9 +46,9 @@ QString UnsubscribeHandler::Responsebuilder(bool valid)
         jsonresponse.insert("error",errorObject);
     }
 
-    jsonresponse.insert("timestamp",QDateTime::currentDateTime().toTime_t() );
+    jsonresponse.insert("timestamp",(int)QDateTime::currentDateTime().toTime_t() );
 
-    QJsonDocument jsonDoc(jsonObject);
+    QJsonDocument jsonDoc(jsonresponse);
     return jsonDoc.toJson();
 }
 
@@ -59,10 +59,10 @@ void UnsubscribeHandler::processRequest(){
     Subscriptions* subs = Subscriptions::getInstance();
     bool valid = true;
     if (subs){
-        int subId = p_vissrequest -> getSubscriptionId();
+        int subId = p_vissrequest -> getSubscriptionId().toInt();
         valid = subs -> unsubscribe(subId,p_client); // should kill subscription thread
     }
 
     // send response to client
-    p_client -> sendTextMessage( responseBuilder(valid) );
+    p_client -> sendTextMessage( Responsebuilder(valid) );
 }
