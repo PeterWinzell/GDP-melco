@@ -39,7 +39,8 @@ HEADERS += \
     request-handler/unsubscribeallhandler.h \
     request-handler/getvsshandler.h \
     request-handler/unsubscribehandler.h \
-    request-handler/processrequesttask.h
+    request-handler/processrequesttask.h \
+    VSSSignalinterface/vsssignalinterface.h
 
 target.path = /home/pi
 INSTALLS += target
