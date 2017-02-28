@@ -19,32 +19,68 @@
 *
 ***************************************************************************************************************/
 #include "subscriptions.h"
+#include "unsubnotifier.h"
 
 int Subscriptions::addSubcription(SubscribeHandler* handler)
 {
     QMutexLocker lock(m_mutex);
 
     m_subscriptionIdCounter++;
-    m_subcriptions.insert(m_subscriptionIdCounter,handler);
+    QWebSocket* client = handler -> getSocketClient();
+    UnsubNotifier usubNotifer = new UnsubNotifier();
+    // connect unsubscription
+    connect(usubNotifier,&UnsubNofitier::unsubscribe(),handler,&SubscribeHandler::unsubscribe());
+    // handle unsubscribe
+    m_notifiers.insert(m_subscriptionIdCounter,usubNotifer);
+    //handle unsubscribe all
+    m_clientsubscriptions.insert(client,m_subscriptionIdCounter);
+
     return m_subscriptionIdCounter;
 }
 
-void Subscriptions::unsubscribe(int subscriptionId)
+bool Subscriptions::unsubscribe(int subscriptionId,QWebSocket* client)
 {
-    m_mutex.lock();
-    SubscribeHandler* handler = m_subcriptions.find(subscriptionId);
-    if (handler)
+    QMutexLocker lock(m_mutex);
+
+    UnsubNotifier* notifier = m_subcriptions.find(subscriptionId);
+    if (notifier)
     {
-        handler -> unsubscribe();
+        notifier -> unsubScribe();
+    }
+    else
+    {
+        return false;
     }
 
-    m_subcriptions.remove(subscriptionId);
-    m_mutex.unlock();
+    m_notifiers.remove(subscriptionId);
+    m_clientsubscriptions.remove(client);
+
+    return true;
 }
 
-void Subscriptions::unsubscribeAll(){
-    m_mutex.lock();
-    //traverse all subscriptions and stop subscribing and remove all
-    m_subcriptions.clear();
-    m_mutex.unlock();
+void Subscriptions::unsubscribeAll(QWebSocket* client)
+{
+    QMutexLocker lock(m_mutex);
+
+    QList<int> ids = m_clientsubscriptions.values(client);
+
+    if (ids.size() == 0)
+    {
+        return false;
+    }
+
+    for (int i = 0; i < ids.size(); ++i)
+    {
+        UnsubNotifier* notifier = m_notifiers.find(ids.value(i));
+        notifier -> unsubScribe();
+    }
+
+    for(int i = 0; i < ids.size(); ++i)
+    {
+        m_notifiers.remove(ids.value(i));
+    }
+
+    m_clientsubscriptions.remove(client);
+
+    return true;
 }

@@ -41,7 +41,11 @@ public:
     }
 
     int addSubcription(SubscribeHandler handler);
-    void unsubscribe(int subscriptionId);
+    bool unsubscribe(int subscriptionId,QWebSocket* client);
+    bool unsubscribeAll(QWebSocket* client);
+
+signals:
+    void unsubscribe();
 
 private:
     static Subscriptions * m_instance;
@@ -50,7 +54,8 @@ private:
 
     //Keep track of subscriptions
     static int m_subscriptionIdCounter;
-    QHash<int,SubscribeHandler> m_subcriptions;
+    QHash<int,SubscribeHandler> m_notifiers;
+    QMultiMap<QWebSocket*,int>  m_clientsubscriptions;
 
     Subscriptions(QObject *parent=0):QObject(parent)
     {

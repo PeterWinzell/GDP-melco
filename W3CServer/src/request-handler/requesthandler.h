@@ -14,6 +14,7 @@ public:
         p_vissrequest(vissrequest),p_client(client) {}
     static std::shared_ptr<RequestHandler> makeRequestHandler(QString message,QWebSocket* aClient);
     virtual void processRequest()=0;
+    // virtual QString responseBuilder()=0;
 signals:
 
 public slots:

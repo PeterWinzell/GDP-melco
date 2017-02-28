@@ -29,6 +29,7 @@ class UnsubscribeHandler : public RequestHandler
 public:
     explicit UnsubscribeHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
     void processRequest();
+    QString Responsebuilder(bool valid);
 };
 
 #endif // UNSUBSCRIBEHANDLER_H
