@@ -28,13 +28,13 @@ class SubscribeHandler : public RequestHandler
 {
     Q_OBJECT
 public:
-     explicit SubscribeHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
+    explicit SubscribeHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
 
-     void processRequest();
+    void processRequest();
      QWebSocket* getSocketClient();
 
 public slots:
-     void socketDisconnected();
+    void socketDisconnected();
      void unsubscribe();
 protected:
     bool m_dosubscription;

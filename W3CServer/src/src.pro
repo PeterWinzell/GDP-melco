@@ -45,7 +45,6 @@ HEADERS += \
     request-handler/subscriptions.h \
     request-handler/unsubnotifier.h
 
-
 target.path = /home/pi
 INSTALLS += target
 

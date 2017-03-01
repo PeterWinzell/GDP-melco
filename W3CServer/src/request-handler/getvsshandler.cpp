@@ -21,10 +21,12 @@
 #include "getvsshandler.h"
 
 GetVSSHandler::GetVSSHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client){
+    RequestHandler(parent,vissrequest,client)
+{
 }
 
-void GetVSSHandler::processRequest(){
+void GetVSSHandler::processRequest()
+{
     qDebug() << " processing get handler requests";
 
 }

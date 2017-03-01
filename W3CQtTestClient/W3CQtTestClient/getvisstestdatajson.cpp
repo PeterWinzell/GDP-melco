@@ -44,9 +44,30 @@ QString GetVissTestDataJson::getTestDataString(requesttype type){
 QString GetVissTestDataJson::getSubscriptionJson(){
     QJsonObject jsonObject;
     jsonObject.insert("action","subscribe");
-    jsonObject.insert("path","Signal.Drivetrain.Transmission.TripMeter");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
+    jsonObject.insert("requestId",1);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString GetVissTestDataJson::getUnsubscribe(int subscriptionId)
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("action","unsubscribe");
+    jsonObject.insert("subscriptionId",subscriptionId);
+    jsonObject.insert("requestId",1);
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString GetVissTestDataJson::getUnsubscribeAll()
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("action","unsubscribeAll");
+    jsonObject.insert("requestId",1);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();

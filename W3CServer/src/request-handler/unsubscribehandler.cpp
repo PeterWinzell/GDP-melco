@@ -52,13 +52,15 @@ QString UnsubscribeHandler::Responsebuilder(bool valid)
     return jsonDoc.toJson();
 }
 
-void UnsubscribeHandler::processRequest(){
+void UnsubscribeHandler::processRequest()
+{
     qDebug() << " processing unsubscribe handler requests";
 
     // retrive on ongoing subscriptions
     Subscriptions* subs = Subscriptions::getInstance();
     bool valid = true;
-    if (subs){
+    if (subs)
+    {
         int subId = p_vissrequest -> getSubscriptionId().toInt();
         valid = subs -> unsubscribe(subId,p_client); // should kill subscription thread
     }

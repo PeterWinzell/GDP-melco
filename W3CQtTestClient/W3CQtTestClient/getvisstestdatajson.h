@@ -13,6 +13,8 @@ public:
     // return a JSON {"action":"authorize...}
     static QString getAuthJson();
     static QString getSubscriptionJson();
+    static QString getUnsubscribe(int subscriptionId);
+    static QString getUnsubscribeAll();
 };
 
 #endif // GETVISSTESTDATAJSON_H

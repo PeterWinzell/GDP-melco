@@ -50,7 +50,8 @@ QString UnsubscribeAllHandler::responseBuilder(bool valid)
     return jsonDoc.toJson();
 }
 
-void UnsubscribeAllHandler::processRequest(){
+void UnsubscribeAllHandler::processRequest()
+{
     qDebug() << " processing usubscribe All request";
 
     Subscriptions* subs = Subscriptions::getInstance();
