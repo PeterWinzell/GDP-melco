@@ -35,7 +35,7 @@ void W3cTestClient::onConnected()
 void W3cTestClient::onTextMessageReceived(QString message)
 {
     qDebug() << "Message received:" << message;
-    qApp->quit();
+    //qApp->quit();
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)

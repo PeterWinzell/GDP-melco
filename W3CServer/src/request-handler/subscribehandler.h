@@ -43,7 +43,7 @@ private:
 
     QString getSubscriptionNotificationJson(QString signalValue);
     QString getSubscriptionSuccessJson();
-    QString getVehicleData(QString path);
+    QString getSignalValue(QString path);
 };
 
 #endif // SUBSCRIBEHANDLER_H

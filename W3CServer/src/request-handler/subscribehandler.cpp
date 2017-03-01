@@ -53,7 +53,7 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        QString value = getVehicleData(p_vissrequest->getSignalPath());
+        QString value = getSignalValue(p_vissrequest->getSignalPath());
 
         //Format response on JSON format
         QString message = getSubscriptionNotificationJson(value);
@@ -106,7 +106,7 @@ QString SubscribeHandler::getSubscriptionSuccessJson()
     return jsonDoc.toJson();
 }
 
-QString SubscribeHandler::getVehicleData(QString path)
+QString SubscribeHandler::getSignalValue(QString path)
 {
     //Dummy function, just return a random number 0 - 320
     return QString::number(qrand() % 320);
