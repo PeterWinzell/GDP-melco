@@ -33,7 +33,6 @@ SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWeb
 
 void SubscribeHandler::processRequest()
 {
-
     connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
 
     //Add to subscriptions and store subscriptions ID
