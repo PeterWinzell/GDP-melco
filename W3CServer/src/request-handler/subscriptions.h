@@ -18,18 +18,51 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef UNSUBSCRIBEALLHANDLER_H
-#define UNSUBSCRIBEALLHANDLER_H
-#include "requesthandler.h"
-#include "vissrequest.h"
-#include <QWebSocket>
+#ifndef SUBSCRIPTIONS_H
+#define SUBSCRIPTIONS_H
+#include <QMutex>
+#include <QMutexLocker>
+#include <QHash>
+#include "subscribehandler.h"
+#include "unsubnotifier.h"
 
-class UnsubscribeAllHandler : public RequestHandler
+
+
+
+class Subscriptions : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit UnsubscribeAllHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
-    void processRequest();
-    QString responseBuilder(bool valid);
+
+    static Subscriptions* getInstance();
+
+    int addSubcription(SubscribeHandler* handler);
+    bool unsubscribe(int subscriptionId,QWebSocket* client);
+    bool unsubscribeAll(QWebSocket* client);
+
+signals:
+    void unsubscribe();
+
+private:
+
+    //There can be only one accces at a time
+   // static QMutex m_mutex;
+    //Keep track of subscriptions
+    static Subscriptions * m_instance;
+    static int m_subscriptionIdCounter;
+    static QMutex m_mutex;
+
+    QMap<int,UnsubNotifier*> m_notifiers;
+    QMultiMap<QWebSocket*,int>  m_clientsubscriptions;
+
+    Subscriptions(QObject *parent=0):QObject(parent)
+    {
+
+    }
+
 };
 
-#endif // UNSUBSCRIBEALLHANDLER_H
+
+
+#endif // SUBSCRIPTIONS_H

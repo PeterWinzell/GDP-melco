@@ -19,9 +19,12 @@
 *
 ***************************************************************************************************************/
 #include <QThread>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QJsonArray>
 #include <QDateTime>
 #include "subscribehandler.h"
+#include "subscriptions.h"
 
 SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
     RequestHandler(parent,vissrequest,client),m_dosubscription(true)
@@ -30,13 +33,16 @@ SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWeb
 
 void SubscribeHandler::processRequest()
 {
+
     connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
+
+    //Add to subscriptions and store subscriptions ID
+    Subscriptions* subscriptions = Subscriptions::getInstance();
+    m_subId = subscriptions -> addSubcription(this);
+
     qDebug() << " processing get handler requests";
 
     //Get filter/time
-
-    //Add to subscriptions and store subscriptions ID
-    m_subId = 42; //Subscriptions::GetInstance()->add(this);
 
     //Send subscription response
     //Format response on JSON format
@@ -65,13 +71,17 @@ void SubscribeHandler::processRequest()
 
 void SubscribeHandler::socketDisconnected()
 {
-{
     m_dosubscription = false;
 }
 
 void SubscribeHandler::unsubscribe()
 {
     m_dosubscription = false;
+}
+
+QWebSocket* SubscribeHandler::getSocketClient()
+{
+    return p_client;
 }
 
 QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)

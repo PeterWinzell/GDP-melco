@@ -18,18 +18,19 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef UNSUBSCRIBEALLHANDLER_H
-#define UNSUBSCRIBEALLHANDLER_H
-#include "requesthandler.h"
-#include "vissrequest.h"
-#include <QWebSocket>
+#ifndef UNSUBNOFITIER_H
+#define UNSUBNOFITIER_H
 
-class UnsubscribeAllHandler : public RequestHandler
+#include <QObject>
+
+class UnsubNotifier: public QObject
 {
+    Q_OBJECT
 public:
-    explicit UnsubscribeAllHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
-    void processRequest();
-    QString responseBuilder(bool valid);
+    explicit UnsubNotifier(QObject* parent = nullptr);
+    void unsubScribe();
+signals:
+    void unsubscribe();
 };
 
-#endif // UNSUBSCRIBEALLHANDLER_H
+#endif // UNSUBNOFITIER_H

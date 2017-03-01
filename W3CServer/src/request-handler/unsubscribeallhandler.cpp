@@ -18,15 +18,46 @@
 *
 *
 ***************************************************************************************************************/
+#include <QJsonObject>
+#include <QJsonDocument>
 #include "unsubscribeallhandler.h"
+#include "subscriptions.h"
 
 UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
     RequestHandler(parent,vissrequest,client)
 {
 }
 
+QString UnsubscribeAllHandler::responseBuilder(bool valid)
+{
+    QJsonObject jsonresponse;
+    jsonresponse.insert("action","unsubscribeAll");
+    jsonresponse.insert("subscriptionId","null");
+    jsonresponse.insert("requestId",p_vissrequest -> getRequestId());
+
+    if (!valid)
+    {
+        QJsonObject errorObject;
+        errorObject.insert("number",404);
+        errorObject.insert("reason","invalid_unsubscription"); // should probably collect error info here, adding failed unsub/subId
+        errorObject.insert("message","The specified subscription was not found. ");
+        jsonresponse.insert("error",errorObject);
+    }
+
+    jsonresponse.insert("timestamp",(int)QDateTime::currentDateTime().toTime_t() );
+
+    QJsonDocument jsonDoc(jsonresponse);
+    return jsonDoc.toJson();
+}
+
 void UnsubscribeAllHandler::processRequest()
 {
-    qDebug() << " processing get handler requests";
+    qDebug() << " processing usubscribe All request";
 
+    Subscriptions* subs = Subscriptions::getInstance();
+    bool valid = true;
+    if (subs)
+    {
+        valid = subs -> unsubscribeAll(p_client); // should kill subscription thread
+    }
 }

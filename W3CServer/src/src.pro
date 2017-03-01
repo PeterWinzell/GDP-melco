@@ -23,7 +23,9 @@ SOURCES += main.cpp \
     request-handler/unsubscribeallhandler.cpp \
     request-handler/getvsshandler.cpp \
     request-handler/unsubscribehandler.cpp \
-    request-handler/processrequesttask.cpp
+    request-handler/processrequesttask.cpp \
+    request-handler/subscriptions.cpp \
+    request-handler/unsubnofitier.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -39,7 +41,9 @@ HEADERS += \
     request-handler/unsubscribeallhandler.h \
     request-handler/getvsshandler.h \
     request-handler/unsubscribehandler.h \
-    request-handler/processrequesttask.h
+    request-handler/processrequesttask.h \
+    request-handler/subscriptions.h \
+    request-handler/unsubnotifier.h
 
 target.path = /home/pi
 INSTALLS += target
