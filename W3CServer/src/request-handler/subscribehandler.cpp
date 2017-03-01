@@ -19,9 +19,12 @@
 *
 ***************************************************************************************************************/
 #include <QThread>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDateTime>
 #include "subscribehandler.h"
 #include "subscriptions.h"
-
 
 SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
     RequestHandler(parent,vissrequest,client),m_dosubscription(true)
@@ -30,19 +33,38 @@ SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWeb
 
 void SubscribeHandler::processRequest()
 {
-
     connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
 
+    //Add to subscriptions and store subscriptions ID
     Subscriptions* subscriptions = Subscriptions::getInstance();
-    int subscriptionId = subscriptions -> addSubcription(this);
+    m_subId = subscriptions -> addSubcription(this);
 
     qDebug() << " processing get handler requests";
 
+    //Get filter/time
+
+    //Send subscription response
+    //Format response on JSON format
+    QString successMessage = getSubscriptionSuccessJson();
+
+    //Send message to client
+    p_client->sendTextMessage(successMessage);
+
     while (m_dosubscription)
     {
-        p_client->sendTextMessage(" you are subscribing ");
+        //Get latest value of subscribed signal
+        QString value = getSignalValue(p_vissrequest->getSignalPath());
+
+        //Format response on JSON format
+        QString message = getSubscriptionNotificationJson(value);
+
+        //Send message to client
+        p_client->sendTextMessage(message);
+
+        //Sleep for the period defined by filter
         QThread::currentThread()->sleep(1);
     }
+
     qDebug() << " subscription cancelled ";
 }
 
@@ -60,3 +82,34 @@ QWebSocket* SubscribeHandler::getSocketClient()
 {
     return p_client;
 }
+
+QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("subscriptionId", m_subId);
+    jsonObject.insert("value", signalValue);
+    jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString SubscribeHandler::getSubscriptionSuccessJson()
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("action", "subscribe");
+    jsonObject.insert("requestId", p_vissrequest->getRequestId());
+    jsonObject.insert("subscriptionId", m_subId);
+    jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString SubscribeHandler::getSignalValue(QString path)
+{
+    //Dummy function, just return a random number 0 - 320
+    return QString::number(qrand() % 320);
+}
+
+

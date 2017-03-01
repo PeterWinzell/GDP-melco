@@ -38,6 +38,12 @@ public slots:
      void unsubscribe();
 protected:
     bool m_dosubscription;
+private:
+    int m_subId;
+
+    QString getSubscriptionNotificationJson(QString signalValue);
+    QString getSubscriptionSuccessJson();
+    QString getSignalValue(QString path);
 };
 
 #endif // SUBSCRIBEHANDLER_H

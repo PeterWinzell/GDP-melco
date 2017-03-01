@@ -3,6 +3,9 @@
 #include <QtCore/QDebug>
 #include <QtWebSockets/QWebSocket>
 #include <QCoreApplication>
+#include <QJsonParseError>
+#include <QTime>
+#include <QJsonObject>
 
 QT_USE_NAMESPACE
 
@@ -34,8 +37,48 @@ void W3cTestClient::onConnected()
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    qDebug() << "Message received:" << message;
-    qApp->quit();
+    // qDebug() << "Message received:" << message << "\n";
+    //parse message
+    QJsonParseError parseError;
+    QJsonDocument  jsonDocument;
+    QJsonObject    jsonObject;
+
+    jsonDocument = QJsonDocument::fromJson(message.toUtf8(),&parseError);
+    jsonObject = jsonDocument.object();
+    if (parseError.error == QJsonParseError::NoError)
+    {
+        QString actionString =jsonObject["action"].toString();
+
+        if (actionString == "subscribe")
+        {
+            QString path = jsonObject["path"].toString();
+            m_subscriptionid  = jsonObject["subscriptionId"].toInt();
+            qDebug() << path + "succesfully subscribed to";
+        }
+        else if (actionString == "unsubscribe")
+        {
+
+        }
+        else if (actionString == "unsubscibeAll")
+        {
+
+        }
+        else
+        {
+
+            int subId = jsonObject["subscriptionId"].toInt();
+            QString valueStr  =  jsonObject["value"].toString();
+            int value = valueStr.toInt();
+            QString timeString  = jsonObject["timestamp"].toString();
+            QDateTime time_t = QDateTime::fromTime_t(timeString.toInt());
+
+            if (subId == m_subscriptionid)
+            {
+                qDebug() << " currentTime is : " + time_t.toString();
+                qDebug() << " The value is :   " << value;
+            }
+        }
+    }
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)

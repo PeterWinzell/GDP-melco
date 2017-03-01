@@ -23,6 +23,7 @@ private Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
+    int m_subscriptionid;
     QWebSocket m_webSocket;
 };
 

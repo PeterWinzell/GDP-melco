@@ -43,6 +43,7 @@ HEADERS += \
     request-handler/unsubscribehandler.h \
     request-handler/processrequesttask.h \
     request-handler/subscriptions.h \
+    VSSSignalinterface/vsssignalinterface.h \
     request-handler/unsubnotifier.h
 
 target.path = /home/pi
