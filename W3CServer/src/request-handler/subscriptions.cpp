@@ -21,6 +21,7 @@
 #include "subscriptions.h"
 #include "unsubnotifier.h"
 
+//Initialize static members
 Subscriptions* Subscriptions::m_instance = nullptr;
 int Subscriptions::m_subscriptionIdCounter = 0;
 QMutex Subscriptions::m_mutex;
