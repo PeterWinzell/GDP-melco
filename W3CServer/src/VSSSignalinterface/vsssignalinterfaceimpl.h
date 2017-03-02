@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "vsssignalinterface.h"
+#include <QMutex>
 
 class VSSSignalInterfaceImpl : public VSSSignalInterface
 {

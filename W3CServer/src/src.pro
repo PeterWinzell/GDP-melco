@@ -26,7 +26,6 @@ SOURCES += main.cpp \
     request-handler/processrequesttask.cpp \
     messaging/websocketwrapper.cpp \
     OpenDSTCPClient/opendstcpclient.cpp \
-    OpenDSTCPClient/opendstcpclient.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp
 
 HEADERS += \

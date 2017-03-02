@@ -47,6 +47,7 @@ HEADERS += \
     ../../../src/messaging/websocketwrapper.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging
+INCLUDEPATH += $$PWD/../../../src/OpenDSTCPClient
 INCLUDEPATH += $$PWD/../../../src/request-handler
 INCLUDEPATH += $$PWD/../../../src/jwt-utility
 INCLUDEPATH += $$PWD/../../../src
