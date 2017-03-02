@@ -26,7 +26,7 @@ void W3cTestClient::onConnected()
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
     // m_webSocket.sendTextMessage(authMess);
 
-   QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+   QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
    m_webSocket.sendTextMessage(subMess);
 
    qDebug() << " JSON SENT TO SERVER IS: " + subMess;

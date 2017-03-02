@@ -15,7 +15,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type){
     QString testJSON;
     switch(type){
         case requesttype::GET:
-            testJSON = "GET";
+            testJSON = getGetJson();
             break;
         case requesttype::SET:
             testJSON = "SET";
@@ -47,6 +47,16 @@ QString GetVissTestDataJson::getSubscriptionJson(){
     jsonObject.insert("path","Signal.Drivetrain.Transmission.TripMeter");
     jsonObject.insert("requestId","1");
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString GetVissTestDataJson::getGetJson(){
+    QJsonObject jsonObject;
+    jsonObject.insert("action","get");
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.TripMeter");
+    jsonObject.insert("requestId","1");
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
