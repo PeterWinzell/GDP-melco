@@ -43,9 +43,9 @@ int Subscriptions::addSubcription(SubscribeHandler* handler)
 
     m_subscriptionIdCounter++;
     QWebSocket* client = handler -> getSocketClient();
-    UnsubNotifier* usubNotifier = new UnsubNotifier();
+    UnsubNotifier* usubNotifier = new UnsubNotifier(nullptr,handler);
     // connect unsubscription
-    connect(usubNotifier,&UnsubNotifier::unsubscribe,handler,&SubscribeHandler::unsubscribe);
+    connect(usubNotifier,&UnsubNotifier::unsubscribe,handler,&SubscribeHandler::unsubscribe,Qt::QueuedConnection);
     // handle unsubscribe
     m_notifiers.insert(m_subscriptionIdCounter,usubNotifier);
     //handle unsubscribe all
@@ -59,9 +59,10 @@ bool Subscriptions::unsubscribe(int subscriptionId,QWebSocket* client)
     QMutexLocker lock(&m_mutex);
 
 
-    UnsubNotifier* notifier = m_notifiers.find(subscriptionId).value();
-    if (notifier)
+
+    if (m_notifiers.contains(subscriptionId))
     {
+        UnsubNotifier* notifier = m_notifiers.find(subscriptionId).value();
         notifier -> unsubScribe();
     }
     else

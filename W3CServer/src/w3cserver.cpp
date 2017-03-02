@@ -29,6 +29,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
                 QWebSocketServer::SecureMode,
                 this);
+        // m_pWebSocketServer ->
         QSslConfiguration sslConfiguration;
 
         QFile keyFile(QStringLiteral(":/server.key"));
@@ -68,7 +69,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
         //Connect QWebsocketServer signal with W3CServer signal closed
-        connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
+       // connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
         //SSL error handler
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &W3CServer::onSslErrors);

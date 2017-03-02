@@ -6,6 +6,7 @@
 #include <QJsonParseError>
 #include <QTime>
 #include <QJsonObject>
+#include <QTimer>
 
 QT_USE_NAMESPACE
 
@@ -29,10 +30,11 @@ void W3cTestClient::onConnected()
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
     // m_webSocket.sendTextMessage(authMess);
 
-   QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-   m_webSocket.sendTextMessage(subMess);
+  // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+  //  m_webSocket.sendTextMessage(subMess);
 
-   qDebug() << " JSON SENT TO SERVER IS: " + subMess;
+   RunSubscribeUnsubscribeTest();
+
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
@@ -57,13 +59,21 @@ void W3cTestClient::onTextMessageReceived(QString message)
         }
         else if (actionString == "unsubscribe")
         {
-
+            int  subscriptionId = jsonObject["subscriptionId"].toInt();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty()){
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " subId: " << subscriptionId;
+            }
+            else{
+                qDebug() << "succesfully unsuscribed to : " << subscriptionId;
+            }
         }
         else if (actionString == "unsubscibeAll")
         {
 
         }
-        else
+        else if (actionString == "subscribing")
         {
 
             int subId = jsonObject["subscriptionId"].toInt();
@@ -79,6 +89,47 @@ void W3cTestClient::onTextMessageReceived(QString message)
             }
         }
     }
+}
+
+
+/**
+ * @brief W3cTestClient::RunSubscribeUnsubscribeTest
+ * Testing subscribe and unsubscribe and unsubscribeall scenario
+ */
+void W3cTestClient::RunSubscribeUnsubscribeTest()
+{
+    qDebug() << " running usubscribe test \n";
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    m_webSocket.sendTextMessage(subMess);
+    QTimer::singleShot(10000,this,SLOT(unsubscribe()));
+
+}
+
+void W3cTestClient::RunSubscribeUnsubscribeAllTest()
+{
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    //do 3 subscriptions
+    m_webSocket.sendTextMessage(subMess);
+    m_webSocket.sendTextMessage(subMess);
+    m_webSocket.sendTextMessage(subMess);
+
+    QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
+
+}
+
+void W3cTestClient::unsubscribe()
+{
+    qDebug() << " sending usubscribe to server \n";
+
+    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE);
+    m_webSocket.sendTextMessage(unsubMess);
+}
+
+void W3cTestClient::unsubscribeAll()
+{
+    QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL);
+    m_webSocket.sendTextMessage(usubscribeAllMess);
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)

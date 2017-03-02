@@ -23,6 +23,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDateTime>
+#include "unsubnotifier.h"
 #include "subscribehandler.h"
 #include "subscriptions.h"
 
@@ -86,6 +87,7 @@ QWebSocket* SubscribeHandler::getSocketClient()
 QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)
 {
     QJsonObject jsonObject;
+    jsonObject.insert("action", "subscribing");
     jsonObject.insert("subscriptionId", m_subId);
     jsonObject.insert("value", signalValue);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));

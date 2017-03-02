@@ -20,13 +20,16 @@
 ***************************************************************************************************************/
 #include "unsubnotifier.h"
 
-UnsubNotifier::UnsubNotifier(QObject *parent):QObject(parent)
+UnsubNotifier::UnsubNotifier(QObject *parent,SubscribeHandler* handler):QObject(parent),m_psubscriber(handler)
 {
 
 }
 
 
 void UnsubNotifier::unsubScribe(){
-    emit unsubscribe();
+    if (m_psubscriber == nullptr)
+        emit unsubscribe();
+    else
+        m_psubscriber -> unsubscribe();
 }
 

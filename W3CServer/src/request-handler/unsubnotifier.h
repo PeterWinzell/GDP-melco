@@ -22,15 +22,18 @@
 #define UNSUBNOFITIER_H
 
 #include <QObject>
+#include "subscribehandler.h"
 
 class UnsubNotifier: public QObject
 {
     Q_OBJECT
 public:
-    explicit UnsubNotifier(QObject* parent = nullptr);
+    explicit UnsubNotifier(QObject* parent = nullptr,SubscribeHandler* handler = nullptr);
     void unsubScribe();
 signals:
     void unsubscribe();
+private:
+    SubscribeHandler* m_psubscriber;
 };
 
 #endif // UNSUBNOFITIER_H
