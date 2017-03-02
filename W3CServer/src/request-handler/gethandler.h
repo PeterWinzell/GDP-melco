@@ -7,7 +7,7 @@
 class GetHandler : public RequestHandler
 {
 public:
-    explicit GetHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
+    explicit GetHandler(QObject *parent = 0,VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
     void processRequest();
 };
 

@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     request-handler/unsubscribeallhandler.cpp \
     request-handler/getvsshandler.cpp \
     request-handler/unsubscribehandler.cpp \
-    request-handler/processrequesttask.cpp
+    request-handler/processrequesttask.cpp \
+    messaging/websocketwrapper.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -40,7 +41,8 @@ HEADERS += \
     request-handler/getvsshandler.h \
     request-handler/unsubscribehandler.h \
     request-handler/processrequesttask.h \
-    VSSSignalinterface/vsssignalinterface.h
+    VSSSignalinterface/vsssignalinterface.h \
+    messaging/websocketwrapper.h
 
 target.path = /home/pi
 INSTALLS += target

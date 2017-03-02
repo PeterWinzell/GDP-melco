@@ -25,7 +25,7 @@
 class GetVSSHandler : public RequestHandler
 {
 public:
-    explicit GetVSSHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
+    explicit GetVSSHandler(QObject *parent = 0,VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
     void processRequest();
 
 };

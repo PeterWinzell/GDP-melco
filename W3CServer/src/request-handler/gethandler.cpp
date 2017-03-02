@@ -2,7 +2,7 @@
 #include <QDebug>
 
 
-GetHandler::GetHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
+GetHandler::GetHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,vissrequest,client)
 {
 }

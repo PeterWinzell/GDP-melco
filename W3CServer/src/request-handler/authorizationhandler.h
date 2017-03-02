@@ -25,7 +25,7 @@
 class AuthorizationHandler: public RequestHandler
 {
 public:
-    explicit AuthorizationHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
+    explicit AuthorizationHandler(QObject *parent = 0,VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
     void processRequest();
 };
 

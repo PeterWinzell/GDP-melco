@@ -3,13 +3,15 @@
 #include <QWebSocket>
 #include <QRunnable>
 
+class WebSocketWrapper;
+
 class ProcessRequestTask : public QRunnable
 {
 public:
-    ProcessRequestTask(QWebSocket* client, QString message, bool debug = false);
+    ProcessRequestTask(WebSocketWrapper* wsw, QString message, bool debug = false);
     void run();
 private:
-    QWebSocket* p_client;
+    WebSocketWrapper* m_pClient;
     bool m_debug;
     QString m_jsonRequestMessage;
 };

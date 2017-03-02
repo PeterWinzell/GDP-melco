@@ -10,7 +10,7 @@
 #include "vissrequest.h"
 
 //factory method for requestHandler
-QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(QString message,QWebSocket* client)
+QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString& message, WebSocketWrapper* client)
 {
     JSONRequestParser jsonParser(message);
     VISSRequest* parsedRequest = jsonParser.getRequest();

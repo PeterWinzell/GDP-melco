@@ -20,7 +20,7 @@
 ***************************************************************************************************************/
 #include "unsubscribeallhandler.h"
 
-UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
+UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,vissrequest,client)
 {
 }

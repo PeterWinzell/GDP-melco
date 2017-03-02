@@ -13,6 +13,8 @@
 #include "request-handler/processrequesttask.h"
 #include "jwt-utility/qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
+#include "messaging/websocketwrapper.h"
+#include <QPointer>
 
 QT_USE_NAMESPACE
 
@@ -97,10 +99,13 @@ void W3CServer::onNewConnection()
     m_clients << pSocket;
 }
 
-void W3CServer::processTextMessage(QString message)
+void W3CServer::processTextMessage(const QString& message)
 {
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
+
+    QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient);
+
 
     if (m_debug)
     {
@@ -154,7 +159,7 @@ void W3CServer::processTextMessage(QString message)
     QString actions = tokenpl["actions"].toString();
     qDebug() << " Actions are : " + actions;*/
 
-    startRequestProcess(zeClient,message);
+    startRequestProcess(socketWrapper, message);
 }
 
 void W3CServer::socketDisconnected()
@@ -179,9 +184,9 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
 }
 
 
-void W3CServer::startRequestProcess(QWebSocket* cl, QString message)
+void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
-    ProcessRequestTask* requesttask = new ProcessRequestTask(cl, message, true);
+    ProcessRequestTask* requesttask = new ProcessRequestTask(sw, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
     QThreadPool::globalInstance()->start(requesttask);
 }

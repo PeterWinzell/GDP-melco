@@ -27,7 +27,7 @@
 class UnsubscribeAllHandler : public RequestHandler
 {
 public:
-    explicit UnsubscribeAllHandler(QObject *parent = 0,VISSRequest* vissrequest=0,QWebSocket* client=0);
+    explicit UnsubscribeAllHandler(QObject *parent = 0,VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
     void processRequest();
 };
 
