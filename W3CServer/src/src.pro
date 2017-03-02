@@ -23,7 +23,9 @@ SOURCES += main.cpp \
     request-handler/unsubscribeallhandler.cpp \
     request-handler/getvsshandler.cpp \
     request-handler/unsubscribehandler.cpp \
-    request-handler/processrequesttask.cpp
+    request-handler/processrequesttask.cpp \
+    OpenDSTCPClient/opendstcpclient.cpp \
+    VSSSignalinterface/vsssignalinterfaceimpl.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -40,7 +42,9 @@ HEADERS += \
     request-handler/getvsshandler.h \
     request-handler/unsubscribehandler.h \
     request-handler/processrequesttask.h \
-    VSSSignalinterface/vsssignalinterface.h
+    VSSSignalinterface/vsssignalinterface.h \
+    OpenDSTCPClient/opendstcpclient.h \
+    VSSSignalinterface/vsssignalinterfaceimpl.h
 
 target.path = /home/pi
 INSTALLS += target
