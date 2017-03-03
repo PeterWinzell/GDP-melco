@@ -38,7 +38,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
 {
     qDebug() << "Message received:" << message;
 
-    QThread::msleep(100);
+    QThread::msleep(10);
 
     m_webSocket.sendTextMessage(GetVissTestDataJson::getTestDataString(requesttype::GET));
 

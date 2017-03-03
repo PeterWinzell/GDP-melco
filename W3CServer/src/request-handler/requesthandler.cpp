@@ -48,3 +48,16 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
     return handler;
 
 }
+
+RequestHandler::~RequestHandler()
+{
+    if (m_pClient != 0)
+    {
+        delete m_pClient;
+    }
+
+    if (m_pVissrequest != 0)
+    {
+        delete m_pVissrequest;
+    }
+}

@@ -4,7 +4,12 @@
 WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QObject *parent)
     : QObject(parent), m_pSocket(socket)
 {
+    qDebug() << "WebSocketWrapper created.";
+}
 
+WebSocketWrapper::~WebSocketWrapper()
+{
+    qDebug() << "WebSocketWrapper is dying...";
 }
 
 qint64 WebSocketWrapper::sendTextMessage(const QString &message)

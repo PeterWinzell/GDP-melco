@@ -17,6 +17,8 @@ public:
                            ):QObject(parent),
         m_pVissrequest(vissrequest), m_pClient(client), m_pSignalInterface(signalInterface) {}
     static QSharedPointer<RequestHandler> makeRequestHandler(const QString &message, WebSocketWrapper* aClient, QSharedPointer<VSSSignalInterface> signalInterface);
+    virtual ~RequestHandler();
+
     virtual void processRequest()=0;
 
 signals:

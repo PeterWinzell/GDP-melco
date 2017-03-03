@@ -10,7 +10,12 @@ ProcessRequestTask::ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSS
     m_jsonRequestMessage(message),
     m_pSignalInterface(signalInterface)
 {
+    qDebug() << "ProcessRequestTask created";
+}
 
+ProcessRequestTask::~ProcessRequestTask()
+{
+    qDebug() << "ProcessRequestTask dying...";
 }
 
 void ProcessRequestTask::run()

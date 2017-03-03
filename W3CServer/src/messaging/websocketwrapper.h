@@ -9,6 +9,7 @@ class WebSocketWrapper : public QObject
     Q_OBJECT
 public:
     explicit WebSocketWrapper(QWebSocket* socket, QObject *parent = Q_NULLPTR);
+    virtual ~WebSocketWrapper();
 
     QWebSocket *getSocket() const;
     qint64 sendTextMessage(const QString& message);

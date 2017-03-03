@@ -16,6 +16,7 @@
 #include "messaging/websocketwrapper.h"
 #include <QPointer>
 #include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+#include <memory>
 
 QT_USE_NAMESPACE
 
@@ -109,8 +110,7 @@ void W3CServer::processTextMessage(const QString& message)
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
-    QPointer<WebSocketWrapper> socketWrapper;
-    socketWrapper = new WebSocketWrapper(zeClient);
+    QPointer<WebSocketWrapper> socketWrapper( new WebSocketWrapper(zeClient));
 
 
     if (m_debug)

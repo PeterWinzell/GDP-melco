@@ -8,6 +8,7 @@ class GetHandler : public RequestHandler
 {
 public:
     explicit GetHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
+    virtual ~GetHandler();
     void processRequest();
 };
 
