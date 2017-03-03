@@ -1,6 +1,8 @@
 #include "vsssignalinterfaceimpl.h"
 #include <QJsonObject>
 #include <QString>
+#include <QMutexLocker>
+#include <QPointer>
 
 VSSSignalInterfaceImpl::VSSSignalInterfaceImpl()
 {
@@ -10,18 +12,21 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl()
 
 QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
 {
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
     QString result = "not implemented";
 
     if(path == "vehicle.engine.rpm")
     {
-        mutex.lock();
-        result = rpm;
-        mutex.unlock();
+
+        result = m_rpm;
+
     } else if (path == "vehicle.engine.speed")
     {
-        mutex.lock();
-        result = speed;
-        mutex.unlock();
+
+        result = m_speed;
+
     }
 
     return result;

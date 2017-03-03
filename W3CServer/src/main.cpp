@@ -2,44 +2,48 @@
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QCommandLineOption>
 #include "w3cserver.h"
+#include <QSettings>
+#include <QPointer>
+#include <QFileInfo>
+#include <QFile>
+
+#include <OpenDSHandler/opendshandler.h>
+
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    //initiating QSettings
     QCoreApplication::setApplicationName("W3CServer");
     QCoreApplication::setOrganizationName("MelcoGOT");
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QPointer<QSettings> settings = new QSettings();
+    std::auto_ptr<QFileInfo> checkFile(new QFileInfo(settings->fileName()));
 
-    /* ToDo exchange QStandardPaths::HomeLocation to QStandardPaths::AppConfigLocation in order to save the INI file on a writable area */
-    m_sSettingsFile = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/w3cserver.ini";
-
-    //check if path is empty
-    if (m_sSettingsFile.isEmpty())
+    //check if settings file exists on local filesystem otherwise copy
+    //the default settings file from resources
+    if(!checkFile->isFile())
     {
-        qFatal("Cannot determine settings storage location");
-    }
-
-    //check if the settings file exists
-    std::auto_ptr<QFileInfo> checkFile(new QFileInfo(m_sSettingsFile));
-    if(!checkFile->exists())
-    {
-       createDefaultSettings();
-    }
-
-
-    // check if we are running the server in secure mode (wss)
-    bool sec = false;
-    if (argc > 0)
-    {
-        QString str(argv[1]);
-        if (str == "-secure")
+        //could we copy?
+        if (QFile::copy(":/W3CServer.ini",settings->fileName()))
         {
-            sec = true;
+            //waits for settings file to become available and loads content
+            while(!checkFile->isFile());
+            settings->sync();
         }
     }
 
+    // reads W3CServer settings values
+    settings->beginGroup("W3CServer");
+    qint16 serverPort = settings->value("server_port").toInt();
+    bool serverWSS = settings->value("server_wss").toBool();
+    bool serverDebug = settings->value("server_debug").toBool();
+    settings->endGroup();
 
+    OpenDSHandler handler;
 
-    W3CServer *server = new W3CServer(8080,sec,true);
+    W3CServer *server = new W3CServer(serverPort,serverWSS,serverDebug);
     QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
 
     return a.exec(); // start exec loop

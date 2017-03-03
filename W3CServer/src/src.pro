@@ -25,8 +25,8 @@ SOURCES += main.cpp \
     request-handler/unsubscribehandler.cpp \
     request-handler/processrequesttask.cpp \
     messaging/websocketwrapper.cpp \
-    OpenDSTCPClient/opendstcpclient.cpp \
-    VSSSignalinterface/vsssignalinterfaceimpl.cpp
+    VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    OpenDSHandler/opendshandler.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -45,8 +45,8 @@ HEADERS += \
     request-handler/processrequesttask.h \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
-    OpenDSTCPClient/opendstcpclient.h \
-    VSSSignalinterface/vsssignalinterfaceimpl.h
+    VSSSignalinterface/vsssignalinterfaceimpl.h \
+    OpenDSHandler/opendshandler.h
 
 target.path = /home/pi
 INSTALLS += target
