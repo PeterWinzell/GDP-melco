@@ -20,8 +20,8 @@
 ***************************************************************************************************************/
 #include "getvsshandler.h"
 
-GetVSSHandler::GetVSSHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent,vissrequest,client)
+GetVSSHandler::GetVSSHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest, client)
 {
 }
 

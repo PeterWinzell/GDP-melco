@@ -3,6 +3,7 @@
 #include <QtCore/QDebug>
 #include <QtWebSockets/QWebSocket>
 #include <QCoreApplication>
+#include <QThread>
 
 QT_USE_NAMESPACE
 
@@ -26,16 +27,22 @@ void W3cTestClient::onConnected()
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
     // m_webSocket.sendTextMessage(authMess);
 
-   QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
-   m_webSocket.sendTextMessage(subMess);
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
 
-   qDebug() << " JSON SENT TO SERVER IS: " + subMess;
+    m_webSocket.sendTextMessage(subMess);
+
+    qDebug() << " JSON SENT TO SERVER IS: " + subMess;
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
     qDebug() << "Message received:" << message;
-    qApp->quit();
+
+    QThread::msleep(100);
+
+    m_webSocket.sendTextMessage(GetVissTestDataJson::getTestDataString(requesttype::GET));
+
+    //qApp->quit();
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)

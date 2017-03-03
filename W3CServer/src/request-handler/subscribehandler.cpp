@@ -23,8 +23,8 @@
 
 
 
-SubscribeHandler::SubscribeHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent,vissrequest,client),m_dosubscription(true)
+SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
 }
 

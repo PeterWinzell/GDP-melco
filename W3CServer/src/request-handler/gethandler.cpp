@@ -3,8 +3,8 @@
 #include <QJsonDocument>
 
 
-GetHandler::GetHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent,vissrequest,client)
+GetHandler::GetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest,client)
 {
 }
 
@@ -14,11 +14,7 @@ void GetHandler::processRequest()
 
 
     QString key = m_pVissrequest->getSignalPath();
-
-    // TODO: get value from Signal VSSS implementation
-
-    QString value = "1234";
-
+    QString value = m_pSignalInterface->getSignalValue(key);
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
 
     QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
@@ -30,5 +26,5 @@ void GetHandler::processRequest()
     QString message = jsonDoc.toJson();
 
     m_pClient->sendTextMessage(message);
-
 }
+

@@ -6,14 +6,15 @@
 #include <QByteArray>
 #include <QSslError>
 //#include <messaging/websocketwrapper.h>
+#include "VSSSignalinterface/vsssignalinterface.h"
 
 class WebSocketWrapper;
+class VSSSignalInterface;
 
 //TODO add license header: Peter Winzell
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
-
 
 class W3CServer : public QObject
 {
@@ -35,6 +36,7 @@ private:
     void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
     QList<QWebSocket *> m_clients;
+    QSharedPointer<VSSSignalInterface> m_vsssInterface;
     bool m_debug;
     bool m_secure;
 };

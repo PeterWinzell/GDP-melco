@@ -9,38 +9,38 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl()
     speed = "70";
 }
 
-QString VSSSignalInterfaceImpl::getSignalValue(QString path)
+QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
 {
-    if(path.compare("car.engine.rpm"))
+    QString result = "not implemented";
+
+    if(path == "vehicle.engine.rpm")
     {
         mutex.lock();
-        return rpm;
+        result = rpm;
         mutex.unlock();
 
-    } else if (path.compare("car.engine.speed"))
+    } else if (path == "vehicle.engine.speed")
     {
         mutex.lock();
-        return speed;
+        result = speed;
         mutex.unlock();
-    } else
-    {
-        return "not implemented";
     }
 
+    return result;
 }
 
-qint8 VSSSignalInterfaceImpl::setSignalValue(QString path)
+qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path)
 {
     return 0;
 }
 
-QJsonObject VSSSignalInterfaceImpl::getVSSNode(QString path)
+QJsonObject VSSSignalInterfaceImpl::getVSSNode(const QString& path)
 {
     QJsonObject obj;
     return obj;
 }
 
-QJsonObject VSSSignalInterfaceImpl::getVSSTree(QString path)
+QJsonObject VSSSignalInterfaceImpl::getVSSTree(const QString& path)
 {
     QJsonObject tree;
     return tree;
