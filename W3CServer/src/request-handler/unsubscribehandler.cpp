@@ -21,8 +21,8 @@
 #include "unsubscribehandler.h"
 
 
-UnsubscribeHandler::UnsubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client)
+UnsubscribeHandler::UnsubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest, client)
 {
 }
 

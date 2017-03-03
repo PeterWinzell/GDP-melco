@@ -23,19 +23,19 @@
 
 
 
-SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client),m_dosubscription(true)
+SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
 }
 
 void SubscribeHandler::processRequest()
 {
-    connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
+    connect(m_pClient->getSocket(), &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
     qDebug() << " processing get handler requests";
 
     while (m_dosubscription)
     {
-        p_client->sendTextMessage(" you are subscribing ");
+        m_pClient->sendTextMessage(" you are subscribing ");
         QThread::currentThread()->sleep(1);
     }
     qDebug() << " subscription cancelled ";

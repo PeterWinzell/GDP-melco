@@ -21,8 +21,9 @@
 #include "authorizationhandler.h"
 #include <QDebug>
 
-AuthorizationHandler::AuthorizationHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
-    RequestHandler(parent,vissrequest,client)
+
+AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest,client)
 {
 }
 

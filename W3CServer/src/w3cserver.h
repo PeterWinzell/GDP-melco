@@ -5,8 +5,11 @@
 #include <QList>
 #include <QByteArray>
 #include <QSslError>
+//#include <messaging/websocketwrapper.h>
+#include "VSSSignalinterface/vsssignalinterface.h"
 
-
+class WebSocketWrapper;
+class VSSSignalInterface;
 
 //TODO add license header: Peter Winzell
 
@@ -25,14 +28,15 @@ Q_SIGNALS:
 
 private  Q_SLOTS:
     void onNewConnection();
-    void processTextMessage(QString message);
+    void processTextMessage(const QString& message);
     void socketDisconnected();
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
-  void startRequestProcess(QWebSocket* cl,QString message);
+    void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
     QList<QWebSocket *> m_clients;
+    QSharedPointer<VSSSignalInterface> m_vsssInterface;
     bool m_debug;
     bool m_secure;
 };

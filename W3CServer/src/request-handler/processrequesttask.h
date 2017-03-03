@@ -3,15 +3,19 @@
 #include <QWebSocket>
 #include <QRunnable>
 
+class WebSocketWrapper;
+class VSSSignalInterface;
+
 class ProcessRequestTask : public QRunnable
 {
 public:
-    ProcessRequestTask(QWebSocket* client, QString message, bool debug = false);
+    ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSSSignalInterface> signalInterface, QString message, bool debug = false);
     void run();
 private:
-    QWebSocket* p_client;
+    WebSocketWrapper* m_pClient;
     bool m_debug;
     QString m_jsonRequestMessage;
+    QSharedPointer<VSSSignalInterface> m_pSignalInterface;
 };
 
 #endif // PROCESSREQUESTTASK_H

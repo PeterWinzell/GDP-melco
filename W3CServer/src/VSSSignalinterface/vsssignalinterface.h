@@ -2,13 +2,13 @@
 #define VSSSIGNALINTERFACE_H
 
 
-class VSSSignalInterface
+class VSSSignalInterface : public QObject
 {
 public:
-    virtual QString getSignalValue(QString path) = 0;
-    virtual qint8   setSignalValue(QString path) = 0;
-    virtual QJsonObject getVSSNode(QString path) = 0;
-    virtual QJsonObject getVSSTree(QString path) = 0;
+    virtual QString getSignalValue(const QString& path) = 0;
+    virtual qint8   setSignalValue(const QString& path) = 0;
+    virtual QJsonObject getVSSNode(const QString& path) = 0;
+    virtual QJsonObject getVSSTree(const QString& path) = 0;
 };
 
 #endif // VSSSIGNALINTERFACE_H
