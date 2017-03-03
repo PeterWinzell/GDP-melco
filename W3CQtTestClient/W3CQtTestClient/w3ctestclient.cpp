@@ -33,8 +33,8 @@ void W3cTestClient::onConnected()
   // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
   //  m_webSocket.sendTextMessage(subMess);
 
-   RunSubscribeUnsubscribeTest();
-
+   //RunSubscribeUnsubscribeTest();
+   RunSubscribeUnsubscribeAllTest();
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
@@ -55,38 +55,53 @@ void W3cTestClient::onTextMessageReceived(QString message)
         {
             QString path = jsonObject["path"].toString();
             m_subscriptionid  = jsonObject["subscriptionId"].toInt();
-            qDebug() << path + "succesfully subscribed to";
+            QString requestid = jsonObject["requestId"].toString();
+            qDebug() << path + "succesfully subscribed to \n ";
+            qDebug() << " subscriptionId is : " << m_subscriptionid << " \n";
+            qDebug() << " requestId is : " + requestid << " \n";
         }
         else if (actionString == "unsubscribe")
         {
-            int  subscriptionId = jsonObject["subscriptionId"].toInt();
+            QString  subscriptionId = jsonObject["subscriptionId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty()){
+            if (!errorObject.empty())
+            {
                 QString errorMessage = errorObject["message"].toString();
                 qDebug() << errorMessage + " subId: " << subscriptionId;
             }
-            else{
+            else
+            {
                 qDebug() << "succesfully unsuscribed to : " << subscriptionId;
             }
         }
-        else if (actionString == "unsubscibeAll")
+        else if (actionString == "unsubscribeAll")
         {
+            QString requestId = jsonObject["requestId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " request was :" << requestId;
+            }
+            else
+            {
+                qDebug() << " succesfully performed unsubscribe all ";
+            }
 
         }
         else if (actionString == "subscribing")
         {
 
-            int subId = jsonObject["subscriptionId"].toInt();
+            QString subId = jsonObject["subscriptionId"].toString();
             QString valueStr  =  jsonObject["value"].toString();
             int value = valueStr.toInt();
             QString timeString  = jsonObject["timestamp"].toString();
             QDateTime time_t = QDateTime::fromTime_t(timeString.toInt());
 
-            if (subId == m_subscriptionid)
-            {
-                qDebug() << " currentTime is : " + time_t.toString();
-                qDebug() << " The value is :   " << value;
-            }
+            qDebug() << " subscriptionId is : " + subId << " \n";
+            qDebug() << " currentTime is : " + time_t.toString() << " \n";
+            qDebug() << " The value is :   " << value << " \n";
+
         }
     }
 }
@@ -108,11 +123,14 @@ void W3cTestClient::RunSubscribeUnsubscribeTest()
 
 void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 {
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+
     //do 3 subscriptions
-    m_webSocket.sendTextMessage(subMess);
-    m_webSocket.sendTextMessage(subMess);
-    m_webSocket.sendTextMessage(subMess);
+    m_webSocket.sendTextMessage(subMess1);
+    m_webSocket.sendTextMessage(subMess2);
+  //  m_webSocket.sendTextMessage(subMess3);
 
     QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
 

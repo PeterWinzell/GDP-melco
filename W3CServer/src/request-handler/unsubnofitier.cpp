@@ -25,7 +25,10 @@ UnsubNotifier::UnsubNotifier(QObject *parent,SubscribeHandler* handler):QObject(
 
 }
 
-
+/**
+ * @brief UnsubNotifier::unsubScribe
+ * the emit needs to be done from the ownership thread ???
+ */
 void UnsubNotifier::unsubScribe(){
     if (m_psubscriber == nullptr)
         emit unsubscribe();

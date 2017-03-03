@@ -62,8 +62,7 @@ void UnsubscribeHandler::processRequest()
     if (subs)
     {
         QString subIdStr = p_vissrequest -> getSubscriptionId();
-        int subId = subIdStr.toInt();
-        valid = subs -> unsubscribe(subId,p_client); // should kill subscription thread
+        valid = subs -> unsubscribe(subIdStr,p_client); // should kill subscription thread
     }
 
     // send response to client

@@ -37,8 +37,8 @@ public:
 
     static Subscriptions* getInstance();
 
-    int addSubcription(SubscribeHandler* handler);
-    bool unsubscribe(int subscriptionId,QWebSocket* client);
+    QString addSubcription(SubscribeHandler* handler);
+    bool unsubscribe(QString subscriptionId,QWebSocket* client);
     bool unsubscribeAll(QWebSocket* client);
 
 signals:
@@ -53,8 +53,8 @@ private:
     static int m_subscriptionIdCounter;
     static QMutex m_mutex;
 
-    QMap<int,UnsubNotifier*> m_notifiers;
-    QMultiMap<QWebSocket*,int>  m_clientsubscriptions;
+    QMap<QString,UnsubNotifier*> m_notifiers;
+    QMultiMap<QWebSocket*,QString>  m_clientsubscriptions;
 
     Subscriptions(QObject *parent=0):QObject(parent)
     {

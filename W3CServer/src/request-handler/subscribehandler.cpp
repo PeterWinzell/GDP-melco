@@ -27,6 +27,8 @@
 #include "subscribehandler.h"
 #include "subscriptions.h"
 
+QMutex SubscribeHandler::locking;
+
 SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
     RequestHandler(parent,vissrequest,client),m_dosubscription(true)
 {
@@ -40,7 +42,7 @@ void SubscribeHandler::processRequest()
     Subscriptions* subscriptions = Subscriptions::getInstance();
     m_subId = subscriptions -> addSubcription(this);
 
-    qDebug() << " processing get handler requests";
+    qDebug() << " processing subscribe handler requests";
 
     //Get filter/time
 
@@ -49,7 +51,9 @@ void SubscribeHandler::processRequest()
     QString successMessage = getSubscriptionSuccessJson();
 
     //Send message to client
+    locking.lock();
     p_client->sendTextMessage(successMessage);
+    locking.unlock();
 
     while (m_dosubscription)
     {
@@ -60,8 +64,9 @@ void SubscribeHandler::processRequest()
         QString message = getSubscriptionNotificationJson(value);
 
         //Send message to client
+        locking.lock();
         p_client->sendTextMessage(message);
-
+        locking.unlock();
         //Sleep for the period defined by filter
         QThread::currentThread()->sleep(1);
     }

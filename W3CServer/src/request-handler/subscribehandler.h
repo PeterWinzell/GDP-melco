@@ -23,6 +23,7 @@
 #include "requesthandler.h"
 #include "vissrequest.h"
 #include <QWebSocket>
+#include <QMutex>
 
 class SubscribeHandler : public RequestHandler
 {
@@ -39,11 +40,12 @@ public slots:
 protected:
     bool m_dosubscription;
 private:
-    int m_subId;
+    QString m_subId;
 
     QString getSubscriptionNotificationJson(QString signalValue);
     QString getSubscriptionSuccessJson();
     QString getSignalValue(QString path);
+    static QMutex locking;
 };
 
 #endif // SUBSCRIBEHANDLER_H

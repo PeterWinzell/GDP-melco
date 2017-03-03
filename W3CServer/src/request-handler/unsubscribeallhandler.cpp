@@ -60,4 +60,6 @@ void UnsubscribeAllHandler::processRequest()
     {
         valid = subs -> unsubscribeAll(p_client); // should kill subscription thread
     }
+
+     p_client -> sendTextMessage( responseBuilder(valid) );
 }

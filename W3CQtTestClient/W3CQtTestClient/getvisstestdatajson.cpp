@@ -4,15 +4,18 @@
 #include <QDebug>
 #include <QJsonArray>
 
+int GetVissTestDataJson::m_requestId = 0;
+
 GetVissTestDataJson::GetVissTestDataJson()
 {
 
 }
 
 
-QString GetVissTestDataJson::getTestDataString(requesttype type){
+QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
 
     QString testJSON;
+    m_requestId++;
     switch(type){
         case requesttype::GET:
             testJSON = "GET";
@@ -24,7 +27,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type){
             testJSON = getSubscriptionJson();
             break;
         case requesttype::UNSUBSCRIBE:
-            testJSON = getUnsubscribe(1);
+            testJSON = getUnsubscribe(subId);
             break;
         case requesttype::UNSUBSCRIBEALL:
             testJSON = getUnsubscribeAll();
@@ -45,19 +48,19 @@ QString GetVissTestDataJson::getSubscriptionJson(){
     QJsonObject jsonObject;
     jsonObject.insert("action","subscribe");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId",QString::number(m_requestId));
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getUnsubscribe(int subscriptionId)
+QString GetVissTestDataJson::getUnsubscribe(QString subscriptionId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","unsubscribe");
-    jsonObject.insert("subscriptionId","1");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("subscriptionId",subscriptionId);
+    jsonObject.insert("requestId",QString::number(m_requestId));
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
@@ -67,7 +70,7 @@ QString GetVissTestDataJson::getUnsubscribeAll()
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","unsubscribeAll");
-    jsonObject.insert("requestId",1);
+    jsonObject.insert("requestId",QString::number(m_requestId));
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
@@ -97,7 +100,7 @@ QString GetVissTestDataJson::getAuthJson(){
     QJsonObject jsonObject2;
     jsonObject2.insert("authorization",zeToken);
     jsonObject.insert("tokens",jsonObject2);
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId",QString::number(m_requestId));
 
     QJsonDocument jsonDoc(jsonObject);
     QString dataJson = jsonDoc.toJson();
