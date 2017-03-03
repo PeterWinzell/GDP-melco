@@ -51,3 +51,5 @@ INSTALLS += target
 
 RESOURCES += \
     ../ssl.qrc
+
+DISTFILES +=

@@ -2,6 +2,7 @@
 #define VSSSIGNALINTERFACEIMPL_H
 
 #include <QObject>
+#include <QMutex>
 #include "vsssignalinterface.h"
 
 class VSSSignalInterfaceImpl : public VSSSignalInterface
@@ -14,9 +15,9 @@ public:
     QJsonObject getVSSTree(QString path);
 
 private:
-    QString rpm;
-    QString speed;
-    QMutex mutex;
+    QString m_rpm;
+    QString m_speed;
+    QMutex m_mutex;
 };
 
 #endif // VSSSIGNALINTERFACEIMPL_H
