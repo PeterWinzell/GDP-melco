@@ -15,6 +15,9 @@ public:
     QJsonObject getVSSTree(const QString& path);
 
 private:
+    QJsonDocument loadJson(const QString& fileName);
+
+private:
     QString rpm;
     QString speed;
     QMutex mutex;
