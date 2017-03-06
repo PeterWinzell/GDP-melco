@@ -7,44 +7,37 @@
 #include <QJsonParseError>
 #include <QDebug>
 #include <QRegExp>
+#include <QSharedPointer>
 
 #include "vissrequest.h"
 
 class JSONRequestParser : public QObject
 {
 public:
-    JSONRequestParser(QString json, bool debug = false, QObject *parent = Q_NULLPTR);
+    JSONRequestParser(bool debug = false, QObject *parent = Q_NULLPTR);
     ~JSONRequestParser();
-
-    VISSRequest* getRequest();
-
+    QSharedPointer<VISSRequest> parseJson(QString json);
 private:
     bool m_debug;
-    VISSRequest* m_request;
-
-    void parseJson();
     bool isValidJson();
 
-    bool validateGetRequest();
-    bool validateSetRequest();
-    bool validateSubscribeRequest();
-    bool validateUnsubscribeRequest();
-    bool validateUnsubscribeAllRequest();
-    bool validateAuthorizeRequest();
-    bool validateGetVSSRequest();
+    bool validateGetRequest(VISSRequest* request);
+    bool validateSetRequest(VISSRequest* request);
+    bool validateSubscribeRequest(VISSRequest* request);
+    bool validateUnsubscribeRequest(VISSRequest* request);
+    bool validateUnsubscribeAllRequest(VISSRequest* request);
+    bool validateAuthorizeRequest(VISSRequest* request);
+    bool validateGetVSSRequest(VISSRequest* request);
 
-    bool validateAction();
-    bool validatePath();
-    bool validateId();
+    bool validateAction(VISSRequest* request);
+    bool validatePath(QJsonValue value);
+    bool validateId(QJsonValue value);
 
-    bool validateValue();
-    bool validateSubscriptionId();
-    bool validateFilters();
-    bool validateTokens();
+    bool validateValue(QJsonValue value);
+    bool validateSubscriptionId(QJsonValue value);
+    bool validateFilters(QJsonValue value);
+    bool validateTokens(QJsonValue value);
 
     QJsonParseError m_parseError;
-    QJsonDocument m_jsonDocument;
-    QJsonObject m_jsonObject;
-
 };
 #endif // JSONREQUESTPARSER_H
