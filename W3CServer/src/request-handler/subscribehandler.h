@@ -28,7 +28,7 @@ class SubscribeHandler : public RequestHandler
 {
     Q_OBJECT
 public:
-    explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest=0, WebSocketWrapper* client=0);
+    explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper* client=0);
     void processRequest();
 public slots:
     void socketDisconnected();
