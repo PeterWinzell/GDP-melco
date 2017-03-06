@@ -5,13 +5,16 @@
 #include <QList>
 #include <QByteArray>
 #include <QSslError>
+#include <QMutex>
+//#include <messaging/websocketwrapper.h>
 
-
+class WebSocketWrapper;
 
 //TODO add license header: Peter Winzell
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
+
 
 class W3CServer : public QObject
 {
@@ -25,14 +28,14 @@ Q_SIGNALS:
 
 private  Q_SLOTS:
     void onNewConnection();
-    void processTextMessage(QString message);
+    void processTextMessage(const QString& message);
     void socketDisconnected();
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
-  void startRequestProcess(QWebSocket* cl,QString message);
+    void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
-    QList<QWebSocket *> m_clients;
+    QMap<QWebSocket *,QMutex*> m_clients;
     bool m_debug;
     bool m_secure;
 };

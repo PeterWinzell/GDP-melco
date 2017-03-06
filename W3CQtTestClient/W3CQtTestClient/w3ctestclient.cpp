@@ -33,8 +33,8 @@ void W3cTestClient::onConnected()
   // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
   //  m_webSocket.sendTextMessage(subMess);
 
-   //RunSubscribeUnsubscribeTest();
-   RunSubscribeUnsubscribeAllTest();
+   RunSubscribeUnsubscribeTest();
+   //RunSubscribeUnsubscribeAllTest();
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
@@ -130,7 +130,7 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
     //do 3 subscriptions
     m_webSocket.sendTextMessage(subMess1);
     m_webSocket.sendTextMessage(subMess2);
-  //  m_webSocket.sendTextMessage(subMess3);
+    m_webSocket.sendTextMessage(subMess3);
 
     QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
 

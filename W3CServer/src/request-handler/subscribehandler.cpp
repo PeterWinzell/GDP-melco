@@ -29,14 +29,14 @@
 
 QMutex SubscribeHandler::locking;
 
-SubscribeHandler::SubscribeHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
+SubscribeHandler::SubscribeHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,vissrequest,client),m_dosubscription(true)
 {
 }
 
 void SubscribeHandler::processRequest()
 {
-    connect(p_client, &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
+    connect(m_pClient->getSocket(), &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
 
     //Add to subscriptions and store subscriptions ID
     Subscriptions* subscriptions = Subscriptions::getInstance();
@@ -51,9 +51,9 @@ void SubscribeHandler::processRequest()
     QString successMessage = getSubscriptionSuccessJson();
 
     //Send message to client
-    locking.lock();
-    p_client->sendTextMessage(successMessage);
-    locking.unlock();
+    //locking.lock();
+    m_pClient->sendTextMessage(successMessage);
+    //locking.unlock();
 
     while (m_dosubscription)
     {
@@ -64,9 +64,9 @@ void SubscribeHandler::processRequest()
         QString message = getSubscriptionNotificationJson(value);
 
         //Send message to client
-        locking.lock();
-        p_client->sendTextMessage(message);
-        locking.unlock();
+        //locking.lock();
+        m_pClient->sendTextMessage(message);
+        //locking.unlock();
         //Sleep for the period defined by filter
         QThread::currentThread()->sleep(1);
     }
@@ -84,9 +84,9 @@ void SubscribeHandler::unsubscribe()
     m_dosubscription = false;
 }
 
-QWebSocket* SubscribeHandler::getSocketClient()
+WebSocketWrapper* SubscribeHandler::getSocketClient()
 {
-    return p_client;
+    return m_pClient;
 }
 
 QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)

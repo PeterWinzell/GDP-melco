@@ -23,7 +23,7 @@
 #include "unsubscribeallhandler.h"
 #include "subscriptions.h"
 
-UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent,VISSRequest* vissrequest,QWebSocket *client):
+UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,vissrequest,client)
 {
 }
@@ -58,8 +58,8 @@ void UnsubscribeAllHandler::processRequest()
     bool valid = true;
     if (subs)
     {
-        valid = subs -> unsubscribeAll(p_client); // should kill subscription thread
+        valid = subs -> unsubscribeAll(m_pClient); // should kill subscription thread
     }
 
-     p_client -> sendTextMessage( responseBuilder(valid) );
+     m_pClient -> sendTextMessage( responseBuilder(valid) );
 }

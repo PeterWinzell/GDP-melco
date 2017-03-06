@@ -38,8 +38,8 @@ public:
     static Subscriptions* getInstance();
 
     QString addSubcription(SubscribeHandler* handler);
-    bool unsubscribe(QString subscriptionId,QWebSocket* client);
-    bool unsubscribeAll(QWebSocket* client);
+    bool unsubscribe(QString subscriptionId);
+    bool unsubscribeAll(WebSocketWrapper *client);
 
 signals:
     void unsubscribe();

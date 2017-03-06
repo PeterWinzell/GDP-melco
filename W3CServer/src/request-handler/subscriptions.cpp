@@ -45,7 +45,7 @@ QString Subscriptions::addSubcription(SubscribeHandler* handler)
     m_subscriptionIdCounter++;
 
     QString subidStr = QString::number(m_subscriptionIdCounter);
-    QWebSocket* client = handler -> getSocketClient();
+    QWebSocket* client = handler -> getSocketClient() -> getSocket();
     UnsubNotifier* usubNotifier = new UnsubNotifier(nullptr,handler);
     // connect unsubscription
     connect(usubNotifier,&UnsubNotifier::unsubscribe,handler,&SubscribeHandler::unsubscribe,Qt::QueuedConnection);
@@ -57,7 +57,7 @@ QString Subscriptions::addSubcription(SubscribeHandler* handler)
     return QString::number(m_subscriptionIdCounter);
 }
 
-bool Subscriptions::unsubscribe(QString subscriptionId,QWebSocket* client)
+bool Subscriptions::unsubscribe(QString subscriptionId)
 {
     QMutexLocker lock(&m_mutex);
 
@@ -75,16 +75,29 @@ bool Subscriptions::unsubscribe(QString subscriptionId,QWebSocket* client)
     }
 
     m_notifiers.remove(subscriptionId);
-    m_clientsubscriptions.remove(client);
+
+    for (auto it = m_clientsubscriptions.begin(); it != m_clientsubscriptions.end();)
+    {
+        if (it.value() == subscriptionId) {
+            it = m_clientsubscriptions.erase(it);
+        } else {
+            ++it;
+        }
+    }
 
     return true;
 }
 
-bool Subscriptions::unsubscribeAll(QWebSocket* client)
+bool Subscriptions::unsubscribeAll(WebSocketWrapper* client)
 {
     QMutexLocker lock(&m_mutex);
 
-    QList<QString> ids = m_clientsubscriptions.values(client);
+    QWebSocket* client_ws = client -> getSocket();
+
+    if (client_ws == nullptr)
+        return false;
+
+    QList<QString> ids = m_clientsubscriptions.values(client_ws);
 
     if (ids.size() == 0)
     {
@@ -102,7 +115,9 @@ bool Subscriptions::unsubscribeAll(QWebSocket* client)
         m_notifiers.remove(ids.value(i));
     }
 
-    m_clientsubscriptions.remove(client);
+   int removeditems = m_clientsubscriptions.remove(client_ws);
+   if (removeditems <= 0)
+       qDebug() << " error in removing subcriptions ";
 
-    return true;
+   return true;
 }
