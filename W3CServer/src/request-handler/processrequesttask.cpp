@@ -2,6 +2,8 @@
 #include <QUrl>
 #include "processrequesttask.h"
 #include "requesthandler.h"
+#include "messaging/websocketwrapper.h"
+#include "VSSSignalinterface/vsssignalinterface.h"
 
 ProcessRequestTask::ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSSSignalInterface> signalInterface, QString message, bool debug):
     m_pClient(wsw),

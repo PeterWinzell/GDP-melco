@@ -6,11 +6,9 @@
 #include <QByteArray>
 #include <QSslError>
 #include <QMutex>
-#include <messaging/websocketwrapper.h>
-#include <VSSSignalinterface/vsssignalinterface.h>
 
-//class WebSocketWrapper;
-//class VSSSignalInterface;
+class WebSocketWrapper;
+class VSSSignalInterface;
 
 //TODO add license header: Peter Winzell
 

@@ -2,11 +2,9 @@
 #define PROCESSREQUESTTASK_H
 #include <QWebSocket>
 #include <QRunnable>
-#include "messaging/websocketwrapper.h"
-#include "VSSSignalinterface/vsssignalinterface.h"
 
-//class WebSocketWrapper;
-//class VSSSignalInterface;
+class WebSocketWrapper;
+class VSSSignalInterface;
 
 class ProcessRequestTask : public QRunnable
 {
