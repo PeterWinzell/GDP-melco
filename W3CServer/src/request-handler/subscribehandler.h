@@ -32,7 +32,7 @@ public:
     explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper* client=0);
 
     void processRequest();
-     WebSocketWrapper* getSocketClient();
+    WebSocketWrapper* getSocketClient();
 
 public slots:
     void socketDisconnected();

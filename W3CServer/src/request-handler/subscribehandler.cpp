@@ -53,9 +53,7 @@ void SubscribeHandler::processRequest()
     QString successMessage = getSubscriptionSuccessJson();
 
     //Send message to client
-    //locking.lock();
     m_pClient->sendTextMessage(successMessage);
-    //locking.unlock();
 
     while (m_dosubscription)
     {
@@ -72,9 +70,9 @@ void SubscribeHandler::processRequest()
             qDebug() << "Sending message:" << message;
 
             //Send message to client
-            p_client->sendTextMessage(message);
+            m_pClient->sendTextMessage(message);
         }
-        //locking.unlock();
+
         //Sleep for the period defined by filter
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
@@ -143,7 +141,7 @@ void SubscribeHandler::initializeFilter()
     m_lastValue = 0;
 
     //Parse filter from request
-    QJsonObject jsonObject = p_vissrequest->getJsonObject();
+    QJsonObject jsonObject = m_pVissrequest->getJsonObject();
 
     //First, check that filter is included in the request
     if(!jsonObject["filters"].isNull())
