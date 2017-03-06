@@ -11,97 +11,82 @@ using namespace testing;
 
 void ErrorHelper(QString jsonString, QString errorMsg)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     EXPECT_EQ(request->getAction(), ERROR) << errorMsg.toStdString();
 
-    delete json;
-    delete request;
 }
 
 void GetRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), GET);
     EXPECT_EQ(request->getRequestId(), "8756");
     EXPECT_EQ(request->getSignalPath(), "Signal.Drivetrain.InternalCombustionEngine.RPM");
 
-    delete json;
-    delete request;
 }
 void SetRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), SET);
     EXPECT_EQ(request->getRequestId(), "8912");
     EXPECT_EQ(request->getSignalPath(), "Signal.Drivetrain.InternalCombustionEngine.RPM");
     EXPECT_EQ(request->getValue(), 2000);
 
-    delete json;
-    delete request;
 }
 void SubscribeRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), SUBSCRIBE);
     EXPECT_EQ(request->getRequestId(), "5264");
     EXPECT_EQ(request->getSignalPath(), "Signal.Drivetrain.Transmission.TripMeter");
 
-    delete json;
-    delete request;
 }
 void UnsubscribeRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), UNSUBSCRIBE);
     EXPECT_EQ(request->getRequestId(), "5264");
     EXPECT_EQ(request->getSubscriptionId(), "102");
 
-    delete json;
-    delete request;
 }
 void UnsubscribeAllRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), UNSUBSCRIBEALL);
     EXPECT_EQ(request->getRequestId(), "5264");
 
-    delete json;
-    delete request;
 }
 void AuthorizeRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), AUTHORIZE);
     //EXPECT_EQ(request->getTokens(), "");  // TODO
     EXPECT_EQ(request->getRequestId(), "1");
 
-    delete json;
-    delete request;
 }
 void GetVSSRequestHelper(QString jsonString)
 {
-    JSONRequestParser* json = new JSONRequestParser(jsonString, false);
-    VISSRequest* request = json->getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
     ASSERT_EQ(request->getAction(), GETVSS);
     EXPECT_EQ(request->getRequestId(), "3874");
     EXPECT_EQ(request->getSignalPath(), "Signal.Drivetrain.InternalCombustionEngine.RPM");
-    delete json;
-    delete request;
+
 }
 
 
@@ -181,7 +166,8 @@ TEST(JSONRequestParser, getRequest_viss_set_request_no_value)
 }
 TEST(JSONRequestParser, getRequest_viss_set_request_invalid_value)
 {
-    ErrorHelper("{\"action\": \"set\",\"path\": \"Signal.Drivetrain.InternalCombustionEngine.RPM\",\"value\": abc,\"requestId\": \"8912\"}",     "invalid value didn\'t return Error.");
+    ErrorHelper("{\"action\": \"set\",\"path\": \"Signal.Drivetrain.InternalCombustionEngine.RPM\",\"value\": abc,\"requestId\": \"8912\"}",
+                "invalid value didn\'t return Error.");
 }
 
 TEST(JSONRequestParser, getRequest_viss_subscribe_request)
