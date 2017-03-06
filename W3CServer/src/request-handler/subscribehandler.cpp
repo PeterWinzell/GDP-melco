@@ -58,10 +58,10 @@ void SubscribeHandler::processRequest()
         //Get latest value of subscribed signal
         QString value = getSignalValue(p_vissrequest->getSignalPath());
 
-//        qDebug() << "Unfiltered value: " << value;
-
         if (isFilterPass(value))
         {
+            m_lastValue = value.toInt();
+
             //Format response on JSON format
             QString message = getSubscriptionNotificationJson(value);
 
@@ -121,14 +121,7 @@ bool SubscribeHandler::isFilterPass(QString valueString)
 {
     int value = valueString.toInt();
     int diff = abs(value - m_lastValue);
-    m_lastValue = value;
-/*
-    qDebug() << " isFilterPass(): value = " << value << " isFilterPass(): diff = " << diff;;
 
-    qDebug() << " isFilterPass(): m_filter.rangeMin = " << m_filter.rangeMin
-             << " isFilterPass(): m_filter.rangeMax = " << m_filter.rangeMax
-             << " isFilterPass(): m_filter.minChange = " << m_filter.minChange;
-*/
     //Check whether value is within range and from last value is big enough
     return ((value >= m_filter.rangeMin) &&
             (value <= m_filter.rangeMax) &&
@@ -138,28 +131,18 @@ bool SubscribeHandler::isFilterPass(QString valueString)
 void SubscribeHandler::initializeFilter()
 {
     qDebug() << "initializeFilter(): Enter";
-    qDebug() << "std::numeric_limits<int>::max() = " << std::numeric_limits<int>::max();
-    qDebug() << "m_defaultIntervalMs = " << m_defaultIntervalMs;
 
     m_filter.intervalMs = m_defaultIntervalMs;
-
-    qDebug() << "m_filter.intervalMs = " << m_filter.intervalMs;
-
     m_filter.rangeMin = 0;
     m_filter.rangeMax = std::numeric_limits<int>::max();
     m_filter.minChange = 0;
+    m_lastValue = 0;
 
     //Parse filter from request
     QJsonObject jsonObject = p_vissrequest->getJsonObject();
 
-
-    qDebug() << "jsonObject = " << jsonObject;
-    qDebug() << "jsonObject[filters] = " << jsonObject["filters"];
-    qDebug() << "jsonObject[filters].isUndefined() = " << jsonObject["filters"].isUndefined();
-
-
     //First, check that filter is included in the request
-    if(!jsonObject["filters"].isUndefined())
+    if(!jsonObject["filters"].isNull())
     {
         qDebug() << "initializeFilter(): filters found";
 
@@ -179,51 +162,42 @@ void SubscribeHandler::initializeFilter()
         QJsonObject filterList = jsonObject["filters"].toObject();
 
         // Handle interval
-        if(!filterList["interval"].isUndefined())
+        if(!filterList["interval"].isNull())
         {
-            m_filter.intervalMs = filterList["interval"].toInt();
+            m_filter.intervalMs = filterList["interval"].toString().toInt();
 
             qDebug() << "initializeFilter(): interval = " << m_filter.intervalMs;
         }
 
         // Handle range
-        if(!filterList["range"].isUndefined())
+        if(!filterList["range"].isNull())
         {
             qDebug() << "initializeFilter(): range found";
 
             // Range can consist of "above", "below" or both
             QJsonObject range = filterList["range"].toObject();
 
-            if(!range["above"].isUndefined())
+            if(!range["above"].isNull())
             {
-                m_filter.rangeMin = range["above"].toInt();
+                m_filter.rangeMin = range["above"].toString().toInt();
 
                 qDebug() << "initializeFilter(): above = " << m_filter.rangeMin;
             }
-            if(!range["below"].isUndefined())
+            if(!range["below"].isNull())
             {
-                m_filter.rangeMax = range["below"].toInt();
+                m_filter.rangeMax = range["below"].toString().toInt();
 
                 qDebug() << "initializeFilter(): below = " << m_filter.rangeMax;
             }
         }
 
         // Handle minchange
-        if(!filterList["minChange"].isUndefined())
+        if(!filterList["minChange"].isNull())
         {
-            m_filter.minChange = filterList["minChange"].toInt();
+            m_filter.minChange = filterList["minChange"].toString().toInt();
 
             qDebug() << "initializeFilter(): minChange = " << m_filter.minChange;
         }
-
-        /*
-        QJsonObject::const_iterator it;
-        for (it = filterList.constBegin(); it != filterList.constEnd(); it++)
-        {
-          QString filter = it;
-        }
-         */
-
     }
 }
 
