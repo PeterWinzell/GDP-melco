@@ -15,7 +15,10 @@ public:
     static QString getSubscriptionJson();
     static QString getUnsubscribe(QString subscriptionId);
     static QString getUnsubscribeAll();
+    static QString getGetJson();
+
     static int m_requestId;
+
 };
 
 #endif // GETVISSTESTDATAJSON_H

@@ -23,8 +23,8 @@
 #include "unsubscribeallhandler.h"
 #include "subscriptions.h"
 
-UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent,vissrequest,client)
+UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest,client)
 {
 }
 
@@ -33,7 +33,7 @@ QString UnsubscribeAllHandler::responseBuilder(bool valid)
     QJsonObject jsonresponse;
     jsonresponse.insert("action","unsubscribeAll");
     jsonresponse.insert("subscriptionId","null");
-    jsonresponse.insert("requestId",p_vissrequest -> getRequestId());
+    jsonresponse.insert("requestId",m_pVissrequest -> getRequestId());
 
     if (!valid)
     {

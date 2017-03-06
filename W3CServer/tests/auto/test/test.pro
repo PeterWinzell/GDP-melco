@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     ../../../src/request-handler/getvsshandler.cpp \
     ../../../src/request-handler/unsubscribehandler.cpp \
     ../../../src/request-handler/processrequesttask.cpp \
-    ../../../src/messaging/websocketwrapper.cpp
+    ../../../src/messaging/websocketwrapper.cpp \
+    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp
 
 HEADERS += \
     ../../../src/w3cserver.h \
@@ -44,9 +45,13 @@ HEADERS += \
     ../../../src/request-handler/getvsshandler.h \
     ../../../src/request-handler/unsubscribehandler.h \
     ../../../src/request-handler/processrequesttask.h \
-    ../../../src/messaging/websocketwrapper.h
+    ../../../src/messaging/websocketwrapper.h \
+    ../../../src/VSSSignalinterface/vsssignalinterface.h \
+    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging
+INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface
+INCLUDEPATH += $$PWD/../../../src/OpenDSTCPClient
 INCLUDEPATH += $$PWD/../../../src/request-handler
 INCLUDEPATH += $$PWD/../../../src/jwt-utility
 INCLUDEPATH += $$PWD/../../../src

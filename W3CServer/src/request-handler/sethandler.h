@@ -27,7 +27,7 @@
 class SetHandler : public RequestHandler
 {
 public:
-    explicit SetHandler(QObject *parent = 0,VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
+    explicit SetHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest=0, WebSocketWrapper* client=0);
     void processRequest();
 };
 

@@ -20,8 +20,8 @@
 ***************************************************************************************************************/
 #include "sethandler.h"
 
-SetHandler::SetHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent,vissrequest,client)
+SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent,signalInterface, vissrequest,client)
 {
 }
 

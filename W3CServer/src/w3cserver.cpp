@@ -13,7 +13,7 @@
 #include "request-handler/processrequesttask.h"
 #include "jwt-utility/qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
-#include "messaging/websocketwrapper.h"
+#include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include <QPointer>
 
 QT_USE_NAMESPACE
@@ -76,6 +76,9 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &W3CServer::onSslErrors);
     }
+
+    // TODO: select implementation based on application configuration
+    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl());
 }
 
 W3CServer::~W3CServer()
@@ -83,6 +86,7 @@ W3CServer::~W3CServer()
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
+    m_vsssInterface.clear();
 }
 
 void W3CServer::onNewConnection()
@@ -146,7 +150,7 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
 
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
-    ProcessRequestTask* requesttask = new ProcessRequestTask(sw, message, true);
+    ProcessRequestTask* requesttask = new ProcessRequestTask(sw, m_vsssInterface, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
     QThreadPool::globalInstance()->start(requesttask);
 }

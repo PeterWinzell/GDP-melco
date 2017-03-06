@@ -25,8 +25,11 @@ SOURCES += main.cpp \
     request-handler/unsubscribehandler.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/subscriptions.cpp \
+    request-handler/unsubnofitier.cpp \
     messaging/websocketwrapper.cpp \
-    request-handler/unsubnofitier.cpp
+    OpenDSTCPClient/opendstcpclient.cpp \
+    VSSSignalinterface/vsssignalinterfaceimpl.cpp
+    
 
 HEADERS += \
     w3cserver.h \
@@ -46,7 +49,9 @@ HEADERS += \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
     request-handler/unsubnotifier.h \
-    request-handler/subscriptions.h
+    request-handler/subscriptions.h \
+    OpenDSTCPClient/opendstcpclient.h \
+    VSSSignalinterface/vsssignalinterfaceimpl.h
 
 target.path = /home/pi
 INSTALLS += target

@@ -6,9 +6,11 @@
 #include <QByteArray>
 #include <QSslError>
 #include <QMutex>
-//#include <messaging/websocketwrapper.h>
+#include <messaging/websocketwrapper.h>
+#include <VSSSignalinterface/vsssignalinterface.h>
 
-class WebSocketWrapper;
+//class WebSocketWrapper;
+//class VSSSignalInterface;
 
 //TODO add license header: Peter Winzell
 
@@ -36,6 +38,7 @@ private:
     void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
+    QSharedPointer<VSSSignalInterface> m_vsssInterface;
     bool m_debug;
     bool m_secure;
 };

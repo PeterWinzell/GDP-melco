@@ -29,7 +29,7 @@ class SubscribeHandler : public RequestHandler
 {
     Q_OBJECT
 public:
-    explicit SubscribeHandler(QObject *parent = 0,VISSRequest* vissrequest=0,WebSocketWrapper* client=0);
+    explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest=0, WebSocketWrapper* client=0);
 
     void processRequest();
      WebSocketWrapper* getSocketClient();

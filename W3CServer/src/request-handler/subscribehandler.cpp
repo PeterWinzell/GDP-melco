@@ -27,10 +27,11 @@
 #include "subscribehandler.h"
 #include "subscriptions.h"
 
-QMutex SubscribeHandler::locking;
+//QMutex SubscribeHandler::locking;
 
-SubscribeHandler::SubscribeHandler(QObject* parent, VISSRequest* vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent,vissrequest,client),m_dosubscription(true)
+
+SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+    RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
 }
 
@@ -58,7 +59,7 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        QString value = getSignalValue(p_vissrequest->getSignalPath());
+        QString value = getSignalValue(m_pVissrequest->getSignalPath());
 
         //Format response on JSON format
         QString message = getSubscriptionNotificationJson(value);
@@ -105,7 +106,7 @@ QString SubscribeHandler::getSubscriptionSuccessJson()
 {
     QJsonObject jsonObject;
     jsonObject.insert("action", "subscribe");
-    jsonObject.insert("requestId", p_vissrequest->getRequestId());
+    jsonObject.insert("requestId", m_pVissrequest->getRequestId());
     jsonObject.insert("subscriptionId", m_subId);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
 
