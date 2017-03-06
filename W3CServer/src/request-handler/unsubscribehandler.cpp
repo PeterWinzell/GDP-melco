@@ -18,17 +18,53 @@
 *
 *
 ***************************************************************************************************************/
+#include <QJsonObject>
+#include <QJsonDocument>
 #include "unsubscribehandler.h"
+#include "subscriptions.h"
 
 
-UnsubscribeHandler::UnsubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+UnsubscribeHandler::UnsubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest, client)
 {
 }
 
 
+QString UnsubscribeHandler::Responsebuilder(bool valid)
+{
+    QJsonObject jsonresponse;
+    jsonresponse.insert("action","unsubscribe");
+    jsonresponse.insert("subscriptionId",m_pVissrequest -> getSubscriptionId());
+    jsonresponse.insert("requestId",m_pVissrequest -> getRequestId());
+
+    if (!valid)
+    {
+        QJsonObject errorObject;
+        errorObject.insert("number",404);
+        errorObject.insert("reason","invalid_subcriptionId");
+        errorObject.insert("message","The specified subscription was not found. ");
+        jsonresponse.insert("error",errorObject);
+    }
+
+    jsonresponse.insert("timestamp",(int)QDateTime::currentDateTime().toTime_t() );
+
+    QJsonDocument jsonDoc(jsonresponse);
+    return jsonDoc.toJson();
+}
+
 void UnsubscribeHandler::processRequest()
 {
-    qDebug() << " processing get handler requests";
+    qDebug() << " processing unsubscribe handler requests";
 
+    // retrive on ongoing subscriptions
+    Subscriptions* subs = Subscriptions::getInstance();
+    bool valid = true;
+    if (subs)
+    {
+        QString subIdStr = m_pVissrequest -> getSubscriptionId();
+        valid = subs -> unsubscribe(subIdStr); // should kill subscription thread
+    }
+
+    // send response to client
+    m_pClient -> sendTextMessage( Responsebuilder(valid) );
 }

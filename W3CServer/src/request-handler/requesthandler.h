@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QWebSocket>
-#include "vissrequest.h"
 #include <QSharedPointer>
+#include "vissrequest.h"
 #include "messaging/websocketwrapper.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
 
@@ -13,7 +13,7 @@ class RequestHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit RequestHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest = 0, WebSocketWrapper* client = 0
+    explicit RequestHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper* client = 0
                            ):QObject(parent),
         m_pVissrequest(vissrequest), m_pClient(client), m_pSignalInterface(signalInterface) {}
     static QSharedPointer<RequestHandler> makeRequestHandler(const QString &message, WebSocketWrapper* aClient, QSharedPointer<VSSSignalInterface> signalInterface);
@@ -25,7 +25,7 @@ signals:
 
 public slots:
 protected:
-    VISSRequest* m_pVissrequest;
+    QSharedPointer<VISSRequest> m_pVissrequest;
     WebSocketWrapper* m_pClient;
     QSharedPointer<VSSSignalInterface> m_pSignalInterface;
 

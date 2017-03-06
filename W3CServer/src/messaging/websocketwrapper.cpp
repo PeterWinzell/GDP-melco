@@ -1,8 +1,8 @@
 #include "websocketwrapper.h"
 
 
-WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QObject *parent)
-    : QObject(parent), m_pSocket(socket)
+WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *parent)
+    : QObject(parent), m_pSocket(socket),m_pMutex(mutex)
 {
     qDebug() << "WebSocketWrapper created.";
 }
@@ -14,6 +14,7 @@ WebSocketWrapper::~WebSocketWrapper()
 
 qint64 WebSocketWrapper::sendTextMessage(const QString &message)
 {
+    QMutexLocker locker(m_pMutex); // locking per client
     qint64 bytesSent = 0;
 
     if (m_pSocket != 0 && m_pSocket->isValid())

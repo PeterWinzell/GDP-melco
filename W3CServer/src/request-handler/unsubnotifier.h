@@ -18,15 +18,22 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef AUTHORIZATIONHANDLER_H
-#define AUTHORIZATIONHANDLER_H
-#include "requesthandler.h"
+#ifndef UNSUBNOFITIER_H
+#define UNSUBNOFITIER_H
 
-class AuthorizationHandler: public RequestHandler
+#include <QObject>
+#include "subscribehandler.h"
+
+class UnsubNotifier: public QObject
 {
+    Q_OBJECT
 public:
-    explicit AuthorizationHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,WebSocketWrapper* client=0);
-    void processRequest();
+    explicit UnsubNotifier(QObject* parent = nullptr,SubscribeHandler* handler = nullptr);
+    void unsubScribe();
+signals:
+    void unsubscribe();
+private:
+    SubscribeHandler* m_psubscriber;
 };
 
-#endif // AUTHORIZATIONHANDLER_H
+#endif // UNSUBNOFITIER_H

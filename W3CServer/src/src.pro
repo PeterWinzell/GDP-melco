@@ -24,9 +24,12 @@ SOURCES += main.cpp \
     request-handler/getvsshandler.cpp \
     request-handler/unsubscribehandler.cpp \
     request-handler/processrequesttask.cpp \
+    request-handler/subscriptions.cpp \
     messaging/websocketwrapper.cpp \
     OpenDSTCPClient/opendstcpclient.cpp \
-    VSSSignalinterface/vsssignalinterfaceimpl.cpp
+    VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    request-handler/unsubnotifier.cpp
+    
 
 HEADERS += \
     w3cserver.h \
@@ -45,6 +48,8 @@ HEADERS += \
     request-handler/processrequesttask.h \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
+    request-handler/unsubnotifier.h \
+    request-handler/subscriptions.h \
     OpenDSTCPClient/opendstcpclient.h \
     VSSSignalinterface/vsssignalinterfaceimpl.h
 
