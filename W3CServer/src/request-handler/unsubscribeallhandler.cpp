@@ -23,7 +23,7 @@
 #include "unsubscribeallhandler.h"
 #include "subscriptions.h"
 
-UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client)
 {
 }
