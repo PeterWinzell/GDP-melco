@@ -323,7 +323,7 @@ bool JSONRequestParser::validatePath(QJsonValue value)
 bool JSONRequestParser::validateValue(QJsonValue value)
 {
     // TODO Validate the different structures of values? Currently just checks if it's there.
-    return !value.isUndefined() && value.toVariant() != QVariant().Invalid ;
+    return !value.isNull() && !value.isUndefined() && value.toVariant() != QVariant().Invalid ;
 }
 
 bool JSONRequestParser::validateId(QJsonValue value)
