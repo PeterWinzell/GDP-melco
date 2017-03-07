@@ -54,10 +54,13 @@ void W3cTestClient::onTextMessageReceived(QString message)
         if (actionString == "subscribe")
         {
             QString path = jsonObject["path"].toString();
-            m_subscriptionid  = jsonObject["subscriptionId"].toInt();
+
+            //cache last received subscribeId
+            m_unsubscribeCachedSubscriptionId = jsonObject["subscriptionId"].toString();
+
             QString requestid = jsonObject["requestId"].toString();
             qDebug() << path + "succesfully subscribed to \n ";
-            qDebug() << " subscriptionId is : " << m_subscriptionid << " \n";
+            qDebug() << " subscriptionId is : " << m_unsubscribeCachedSubscriptionId << " \n";
             qDebug() << " requestId is : " + requestid << " \n";
         }
         else if (actionString == "unsubscribe")
@@ -139,8 +142,7 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 void W3cTestClient::unsubscribe()
 {
     qDebug() << " sending usubscribe to server \n";
-
-    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE);
+    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE,m_unsubscribeCachedSubscriptionId);
     m_webSocket.sendTextMessage(unsubMess);
 }
 

@@ -29,7 +29,7 @@ private Q_SLOTS:
     void unsubscribe();
     void unsubscribeAll();
 private:
-    int m_subscriptionid;
+    QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
     QWebSocket m_webSocket;
 };
 
