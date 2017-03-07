@@ -13,11 +13,18 @@ QT_USE_NAMESPACE
 W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
     QObject(parent)
 {
+    m_test = TestCase::SUBSCRIBE_UNSUBSCRIBE; //default testcase
+
     connect(&m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
     typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
     connect(&m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors),
             this, &W3cTestClient::onSslErrors);
     m_webSocket.open(QUrl(url));
+}
+
+void W3cTestClient::setTest(TestCase test)
+{
+    m_test = test;
 }
 
 void W3cTestClient::onConnected()
@@ -33,8 +40,29 @@ void W3cTestClient::onConnected()
   // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
   //  m_webSocket.sendTextMessage(subMess);
 
-   RunSubscribeUnsubscribeTest();
-   //RunSubscribeUnsubscribeAllTest();
+    switch (m_test)
+    {
+    case TestCase::SUBSCRIBE_UNSUBSCRIBE:
+        RunSubscribeUnsubscribeTest();
+        break;
+
+    case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
+        RunSubscribeUnsubscribeAllTest();
+        break;
+
+    case TestCase::GET_VSS:
+        RunGetVssTest();
+        break;
+
+    case TestCase::SET_GET:
+        break;
+
+    case TestCase::AUTHORIZE_SUCCESS:
+        break;
+
+    default:
+        break;
+    }
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
@@ -103,6 +131,26 @@ void W3cTestClient::onTextMessageReceived(QString message)
             qDebug() << " The value is :   " << value << " \n";
 
         }
+        else if (actionString == "getVSS")
+        {
+            QString requestId = jsonObject["requestId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " request was :" << requestId;
+            }
+            else
+            {
+                QJsonObject vssObject = jsonObject["vss"].toObject();
+                qDebug() << " VSS data received: " << vssObject;
+            }
+        }
+        else
+        {
+
+
+        }
     }
 }
 
@@ -134,6 +182,14 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 
     QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
 
+}
+
+void W3cTestClient::RunGetVssTest()
+{
+    qDebug() << " running getvss test \n";
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
+    m_webSocket.sendTextMessage(subMess);
 }
 
 void W3cTestClient::unsubscribe()
