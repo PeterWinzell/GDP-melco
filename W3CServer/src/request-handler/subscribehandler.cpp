@@ -166,7 +166,7 @@ void SubscribeHandler::initializeFilter()
         // Handle interval
         if(!filterList["interval"].isNull())
         {
-            m_filter.intervalMs = filterList["interval"].toString().toInt();
+            m_filter.intervalMs = filterList["interval"].toInt();
 
             qDebug() << "initializeFilter(): interval = " << m_filter.intervalMs;
         }
@@ -181,13 +181,13 @@ void SubscribeHandler::initializeFilter()
 
             if(!range["above"].isNull())
             {
-                m_filter.rangeMin = range["above"].toString().toInt();
+                m_filter.rangeMin = range["above"].toInt();
 
                 qDebug() << "initializeFilter(): above = " << m_filter.rangeMin;
             }
             if(!range["below"].isNull())
             {
-                m_filter.rangeMax = range["below"].toString().toInt();
+                m_filter.rangeMax = range["below"].toInt();
 
                 qDebug() << "initializeFilter(): below = " << m_filter.rangeMax;
             }
@@ -196,7 +196,7 @@ void SubscribeHandler::initializeFilter()
         // Handle minchange
         if(!filterList["minChange"].isNull())
         {
-            m_filter.minChange = filterList["minChange"].toString().toInt();
+            m_filter.minChange = filterList["minChange"].toInt();
 
             qDebug() << "initializeFilter(): minChange = " << m_filter.minChange;
         }
