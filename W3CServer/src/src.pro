@@ -25,10 +25,10 @@ SOURCES += main.cpp \
     request-handler/unsubscribehandler.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/subscriptions.cpp \
-    request-handler/unsubnofitier.cpp \
     messaging/websocketwrapper.cpp \
     OpenDSTCPClient/opendstcpclient.cpp \
-    VSSSignalinterface/vsssignalinterfaceimpl.cpp
+    VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    request-handler/unsubnotifier.cpp
     
 
 HEADERS += \

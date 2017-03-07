@@ -1,75 +1,52 @@
 #include "jsonrequestparser.h"
 
-JSONRequestParser::JSONRequestParser(QString json, bool debug, QObject *parent) : QObject(parent)
+JSONRequestParser::JSONRequestParser(bool debug, QObject *parent) : QObject(parent)
 {
     m_debug = debug;
-    m_jsonDocument = QJsonDocument::fromJson(json.toUtf8(), &m_parseError);
-
-    parseJson();
 }
-void JSONRequestParser::parseJson()
+QSharedPointer<VISSRequest> JSONRequestParser::parseJson(QString json)
 {
+    QSharedPointer<VISSRequest> request = QSharedPointer<VISSRequest>(new VISSRequest(json), &QObject::deleteLater);
+    request.data()->setJsonDocument(QJsonDocument::fromJson(json.toUtf8(), &m_parseError));
+
     if(!isValidJson())
     {
         if(m_debug) { qDebug() << "json invalid"; }
-        m_request = new VISSRequest();
-        return;
+        return request;
     }
+    request->setJsonObject(request->getJsonDocument().object());
 
-    m_jsonObject = m_jsonDocument.object();
+    if(!validateAction(request.data())) { return request; }
 
-    if(!validateAction())
-    {
-        if(m_debug) { qDebug() << "action invalid"; }
-        m_request = new VISSRequest();
-        return;
-    }
-
-    if(!validateId())
-    {
-        if(m_debug) { qDebug() << "requestId invalid"; }
-        m_request = new VISSRequest();
-        return;
-    }
-
-    m_request = new VISSRequest(m_jsonObject);
-
-    switch (m_request->getAction())
+    switch (request->getAction())
     {
         case GET:
-            if(!validateGetRequest()) { m_request->invalidateRequest(); }
+            if(!validateGetRequest(request.data())) { request->invalidateRequest(); }
             break;
         case SET:
-            if(!validateSetRequest()) { m_request->invalidateRequest(); }
+            if(!validateSetRequest(request.data())) { request->invalidateRequest(); }
             break;
         case SUBSCRIBE:
-            if(!validateSubscribeRequest()) { m_request->invalidateRequest(); }
+            if(!validateSubscribeRequest(request.data())) { request->invalidateRequest(); }
             break;
         case UNSUBSCRIBE:
-            if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
+            if(!validateUnsubscribeRequest(request.data())) { request->invalidateRequest(); }
             break;
         case UNSUBSCRIBEALL:
-            if(!validateUnsubscribeRequest()) { m_request->invalidateRequest(); }
+            if(!validateUnsubscribeRequest(request.data())) { request->invalidateRequest(); }
             break;
         case AUTHORIZE:
-            if(!validateAuthorizeRequest()) { m_request->invalidateRequest(); }
+            if(!validateAuthorizeRequest(request.data())) { request->invalidateRequest(); }
             break;
         case GETVSS:
-            if(!validateGetVSSRequest()) { m_request->invalidateRequest(); }
+            if(!validateGetVSSRequest(request.data())) { request->invalidateRequest(); }
             break;
         case ERROR: // Just to remove compilation warning.
-            m_request->invalidateRequest();
+            request->invalidateRequest();
             break;
     }
-
-    m_request->setRequestValues();
+    return request;
 }
-
-VISSRequest* JSONRequestParser::getRequest()
-{
-    return m_request;
-}
-
 
 // Validate the different Requests
 
@@ -80,10 +57,22 @@ VISSRequest* JSONRequestParser::getRequest()
     "requestId": "8756"
     }
 */
-bool JSONRequestParser::validateGetRequest()
+bool JSONRequestParser::validateGetRequest(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << "validateGetRequest result" << (validatePath()); }
-    return validatePath();
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+    QJsonValue valuePath = request->getJsonObject()["path"];
+
+    bool valid = (validateId(valueId) && validatePath(valuePath));
+
+    if(m_debug) { qDebug() << "validateGetRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        request->setSignalPath(valuePath.toString());
+        return true;
+    }
 }
 
 /*
@@ -94,10 +83,24 @@ bool JSONRequestParser::validateGetRequest()
     "requestId": "8912"
     }
 */
-bool JSONRequestParser::validateSetRequest()
+bool JSONRequestParser::validateSetRequest(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << "validateSetRequest result" << (validatePath() && validateValue()); }
-    return validatePath() && validateValue();
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+    QJsonValue valuePath = request->getJsonObject()["path"];
+    QJsonValue valueValue = request->getJsonObject()["value"];
+
+    bool valid = (validateId(valueId) && validatePath(valuePath) && validateValue(valueValue));
+
+    if(m_debug) { qDebug() << "validateSetRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        request->setSignalPath(valuePath.toString());
+        request->setValue(valueValue.toVariant());
+        return true;
+    }
 }
 
 /*
@@ -107,10 +110,27 @@ bool JSONRequestParser::validateSetRequest()
     "requestId": "5264"
     }
 */
-bool JSONRequestParser::validateSubscribeRequest()
+bool JSONRequestParser::validateSubscribeRequest(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << "validateSubscribeRequest result" << (validatePath()); }
-    return validatePath();
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+    QJsonValue valuePath = request->getJsonObject()["path"];
+    QJsonValue valueFilters = request->getJsonObject()["filters"];
+
+    bool valid = (validateId(valueId) && validatePath(valuePath) && validateFilters(valueFilters));
+
+    if(m_debug) { qDebug() << "validateSubscribeRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        request->setSignalPath(valuePath.toString());
+        if(!valueFilters.isNull() && !valueFilters.isUndefined())
+        {
+            request->setFilters(valueFilters.toVariant());
+        }
+        return true;
+    }
 }
 
 /*
@@ -120,21 +140,46 @@ bool JSONRequestParser::validateSubscribeRequest()
     "requestId": "5264"
     }
 */
-bool JSONRequestParser::validateUnsubscribeRequest()
+bool JSONRequestParser::validateUnsubscribeRequest(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << "validateUnsubscribeRequest result" << (validateSubscriptionId()); }
-    return validateSubscriptionId();
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+    QJsonValue valueSubscriptionId = request->getJsonObject()["subscriptionId"];
+
+    bool valid = (validateId(valueId) && validateSubscriptionId(valueSubscriptionId));
+
+    if(m_debug) { qDebug() << "validateUnsubscribeRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        request->setSubscriptionId(valueSubscriptionId.toString());
+        return true;
+    }
 }
+
 /*
     {
         "action": "unsubscribeAll",
         "requestId": "3468"
     }
 */
-bool JSONRequestParser::validateUnsubscribeAllRequest()
+bool JSONRequestParser::validateUnsubscribeAllRequest(VISSRequest* request)
 {
-    return true; // We have already verified action and id if we have gotten to here.
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+
+    bool valid = (validateId(valueId));
+
+    if(m_debug) { qDebug() << "validateUnsubscribeAllRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        return true;
+    }
 }
+
 /*
     {
     "action": "authorize",
@@ -145,10 +190,22 @@ bool JSONRequestParser::validateUnsubscribeAllRequest()
     "requestId": "1"
     }
 */
-bool JSONRequestParser::validateAuthorizeRequest()
+bool JSONRequestParser::validateAuthorizeRequest(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (validateTokens()); }
-    return validateTokens();
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+    QJsonValue valueTokens = request->getJsonObject()["tokens"];
+
+    bool valid = (validateId(valueId) && validateTokens(valueTokens));
+
+    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        request->setTokens(valueTokens.toObject());
+        return true;
+    }
 }
 
 /*
@@ -158,23 +215,75 @@ bool JSONRequestParser::validateAuthorizeRequest()
     "requestId": "3874"
     }
 */
-bool JSONRequestParser::validateGetVSSRequest()
+bool JSONRequestParser::validateGetVSSRequest(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (validatePath()); }
-    return validatePath();
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+    QJsonValue valuePath = request->getJsonObject()["path"];
+
+    bool valid = (validateId(valueId) && validatePath(valuePath));
+
+    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        request->setSignalPath(valuePath.toString());
+        return true;
+    }
 }
 
 
 // Validate each of the different parts of a request
-bool JSONRequestParser::validateAction()
+bool JSONRequestParser::validateAction(VISSRequest* request)
 {
-    if(m_debug) { qDebug() << m_jsonObject["action"]; }
-    return m_jsonObject["action"].isString();
+    QJsonValue valueAction = request->getJsonObject()["action"];
+
+    bool valid = valueAction.isString();
+
+    if(m_debug) { qDebug() << "validateAction result" << (valid); }
+    if(!valid) { return false; }
+
+    QString val = valueAction.toString();
+
+    if (val == "get")
+    {
+        request->setAction(GET);
+    }
+    else if (val == "set")
+    {
+        request->setAction(SET);
+    }
+    else if (val == "subscribe")
+    {
+        request->setAction(SUBSCRIBE);
+    }
+    else if (val == "unsubscribe")
+    {
+        request->setAction(UNSUBSCRIBE);
+    }
+    else if (val == "unsubscribeAll")
+    {
+        request->setAction(UNSUBSCRIBEALL);
+    }
+    else if (val == "authorize")
+    {
+        request->setAction(AUTHORIZE);
+    }
+    else if (val == "getVSS")
+    {
+        request->setAction(GETVSS);
+    }
+    else
+    {
+        request->setAction(ERROR);
+    }
+    return valid;
 }
 
-bool JSONRequestParser::validatePath()
+bool JSONRequestParser::validatePath(QJsonValue value)
 {
-    QString path = m_jsonObject["path"].toString();
+    QString path = value.toString();
     if(path.isEmpty()) { return false; }
 
     QStringList splitPath = path.split('.');
@@ -211,15 +320,15 @@ bool JSONRequestParser::validatePath()
     return true;
 }
 
-bool JSONRequestParser::validateValue()
+bool JSONRequestParser::validateValue(QJsonValue value)
 {
     // TODO Validate the different structures of values? Currently just checks if it's there.
-    return !m_jsonObject["value"].isUndefined() && m_jsonObject["value"].toVariant() != QVariant().Invalid ;
+    return !value.isNull() && !value.isUndefined() && value.toVariant() != QVariant().Invalid ;
 }
 
-bool JSONRequestParser::validateId()
+bool JSONRequestParser::validateId(QJsonValue value)
 {
-    QVariant id = m_jsonObject["requestId"].toVariant();
+    QVariant id = value.toVariant();
 
     if(id == QVariant().Invalid) { return false; }
     bool parseOk = false;
@@ -234,16 +343,16 @@ bool JSONRequestParser::validateId()
     return true;
 }
 
-bool JSONRequestParser::validateSubscriptionId()
+bool JSONRequestParser::validateSubscriptionId(QJsonValue value)
 {
-    return m_jsonObject["validateSubscriptionId"].isString() || m_jsonObject["validateSubscriptionId"].isNull();
+    return value.isString() || value.isNull();
 }
 
-bool JSONRequestParser::validateFilters()
+bool JSONRequestParser::validateFilters(QJsonValue value)
 {
-    if(!m_jsonObject["filters"].isUndefined())
+    if(!value.isNull())
     {
-        return m_jsonObject["filters"].isObject();
+        return value.isObject();
     }
     else
     {
@@ -251,10 +360,10 @@ bool JSONRequestParser::validateFilters()
     }
 }
 
-bool JSONRequestParser::validateTokens()
+bool JSONRequestParser::validateTokens(QJsonValue value)
 {
     // TODO Validte the diffent tokens.
-    return m_jsonObject["tokens"].isObject();
+    return value.isObject();
 }
 
 bool JSONRequestParser::isValidJson()

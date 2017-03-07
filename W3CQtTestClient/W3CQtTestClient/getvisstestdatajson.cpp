@@ -21,7 +21,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
             testJSON = getGetJson();
             break;
         case requesttype::SET:
-            testJSON = "SET";
+            testJSON = getSetJson();
             break;
         case requesttype::SUBSCRIBE:
             testJSON = getSubscriptionJson();
@@ -33,7 +33,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
             testJSON = getUnsubscribeAll();
             break;
         case requesttype::GETVSS:
-            testJSON = "GETVSS";
+            testJSON = getGetVssJson();
             break;
         case requesttype::AUTHORIZE:
             testJSON = getAuthJson();
@@ -43,12 +43,25 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
     return testJSON;
 }
 
-
 QString GetVissTestDataJson::getSubscriptionJson(){
     QJsonObject jsonObject;
+    QJsonObject jsonFilterObject;
+    QJsonObject jsonRangeObject;
+
+    //client receives data when the value is between 100 and 200 (inclusive)
+    //  "filters": { "range": { "above": 100, "below": 200 } },
+
     jsonObject.insert("action","subscribe");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
-    jsonObject.insert("requestId",QString::number(m_requestId));
+
+    jsonRangeObject.insert("above",50);
+    jsonRangeObject.insert("below",200);
+    jsonFilterObject.insert("range", jsonRangeObject);
+    jsonFilterObject.insert("minChange", 40);
+    jsonFilterObject.insert("interval",500);
+    jsonObject.insert("filters", jsonFilterObject);
+
+    jsonObject.insert("requestId","1");
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
 
     QJsonDocument jsonDoc(jsonObject);
@@ -59,6 +72,17 @@ QString GetVissTestDataJson::getGetJson(){
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
     jsonObject.insert("path","vehicle.engine.speed");
+    jsonObject.insert("requestId","1");
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString GetVissTestDataJson::getSetJson(){
+    QJsonObject jsonObject;
+    jsonObject.insert("action","set");
+    jsonObject.insert("path","vehicle.engine.speed");
+    jsonObject.insert("value", 90);
     jsonObject.insert("requestId","1");
 
     QJsonDocument jsonDoc(jsonObject);
@@ -117,4 +141,14 @@ QString GetVissTestDataJson::getAuthJson(){
     qDebug() << dataJson;
 
     return dataJson;
+}
+
+QString GetVissTestDataJson::getGetVssJson(){
+    QJsonObject jsonObject;
+    jsonObject.insert("action","getVSS");
+    jsonObject.insert("path","vehicle.engine.speed");
+    jsonObject.insert("requestId","1");
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
 }

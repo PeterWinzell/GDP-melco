@@ -16,6 +16,8 @@ public:
     static QString getUnsubscribe(QString subscriptionId);
     static QString getUnsubscribeAll();
     static QString getGetJson();
+    static QString getSetJson();
+    static QString getGetVssJson();
 
     static int m_requestId;
 

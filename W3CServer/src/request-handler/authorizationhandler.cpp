@@ -22,7 +22,7 @@
 #include <QDebug>
 
 
-AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client)
 {
 }
