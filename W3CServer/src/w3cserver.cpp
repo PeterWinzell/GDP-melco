@@ -1,4 +1,3 @@
-#include "w3cserver.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QDebug>
@@ -6,15 +5,18 @@
 #include <QSslCertificate>
 #include <QSslKey>
 #include<QThreadPool>
-#include "jsonrequestparser.h"
 #include<QJsonDocument>
 #include<QJsonObject>
 #include<QJsonArray>
+#include <QPointer>
+
+#include "w3cserver.h"
+#include "jsonrequestparser.h"
 #include "request-handler/processrequesttask.h"
 #include "jwt-utility/qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
-#include <QPointer>
+
 
 QT_USE_NAMESPACE
 
