@@ -60,4 +60,4 @@ INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
-else:unix:!macx: LIBS += -L$$PWD/../../lib/QJsonWebToken/ -lQJsonWebToken
+else:unix:!macx: LIBS += -L$$PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
