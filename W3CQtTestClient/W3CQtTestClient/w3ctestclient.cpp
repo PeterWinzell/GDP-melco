@@ -33,13 +33,21 @@ void W3cTestClient::onConnected()
   // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
   //  m_webSocket.sendTextMessage(subMess);
 
-   RunSubscribeUnsubscribeTest();
+   //RunSubscribeUnsubscribeTest();
    //RunSubscribeUnsubscribeAllTest();
+
+    getVssTest();
+}
+
+void W3cTestClient::getVssTest()
+{
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
+    m_webSocket.sendTextMessage(subMess);
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    // qDebug() << "Message received:" << message << "\n";
+    qDebug() << "Message received:" << message << "\n";
     //parse message
     QJsonParseError parseError;
     QJsonDocument  jsonDocument;

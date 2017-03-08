@@ -19,6 +19,7 @@ public:
 
     void RunSubscribeUnsubscribeAllTest();
     void RunSubscribeUnsubscribeTest();
+    void getVssTest();
 
 private Q_SLOTS:
     void onConnected();

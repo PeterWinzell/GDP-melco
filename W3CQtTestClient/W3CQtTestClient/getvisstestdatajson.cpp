@@ -33,7 +33,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
             testJSON = getUnsubscribeAll();
             break;
         case requesttype::GETVSS:
-            testJSON = "GETVSS";
+            testJSON = getGetVssJson();
             break;
         case requesttype::AUTHORIZE:
             testJSON = getAuthJson();
@@ -58,7 +58,17 @@ QString GetVissTestDataJson::getSubscriptionJson(){
 QString GetVissTestDataJson::getGetJson(){
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
-    jsonObject.insert("path","vehicle.engine.speed");
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
+    jsonObject.insert("requestId","1");
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString GetVissTestDataJson::getGetVssJson(){
+    QJsonObject jsonObject;
+    jsonObject.insert("action","getVSS");
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
     jsonObject.insert("requestId","1");
 
     QJsonDocument jsonDoc(jsonObject);
