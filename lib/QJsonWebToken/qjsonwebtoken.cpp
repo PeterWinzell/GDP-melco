@@ -187,8 +187,8 @@ bool QJsonWebToken::setAlgorithmStr(QString strAlgorithm)
     m_strAlgorithm = strAlgorithm;
     // modify header
     m_jdocHeader = QJsonDocument::fromJson(QObject::trUtf8("{\"typ\": \"JWT\", \"alg\" : \"").toUtf8()
-                                           + m_strAlgorithm.toUtf8()
-                                           + QObject::trUtf8("\"}").toUtf8());
+                                         + m_strAlgorithm.toUtf8()
+                                         + QObject::trUtf8("\"}").toUtf8());
 
     return true;
 }
@@ -215,11 +215,11 @@ bool QJsonWebToken::setToken(QString strToken)
     // so we dont overwrite this instance in case of error
     QJsonWebToken tempTokenObj;
     if ( !tempTokenObj.setHeaderQStr(QByteArray::fromBase64(listJwtParts.at(0).toUtf8())) ||
-            !tempTokenObj.setPayloadQStr(QByteArray::fromBase64(listJwtParts.at(1).toUtf8())) )
+         !tempTokenObj.setPayloadQStr(QByteArray::fromBase64(listJwtParts.at(1).toUtf8())) )
     {
         // try unencoded
         if (!tempTokenObj.setHeaderQStr(listJwtParts.at(0)) ||
-                !tempTokenObj.setPayloadQStr(listJwtParts.at(1)))
+            !tempTokenObj.setPayloadQStr(listJwtParts.at(1)))
         {
             return false;
         }
@@ -232,8 +232,7 @@ bool QJsonWebToken::setToken(QString strToken)
     setHeaderQStr(tempTokenObj.getHeaderQStr());
     setPayloadQStr(tempTokenObj.getPayloadQStr());
     if (isBase64Encoded)
-    {
-        // unencode
+    { // unencode
         m_byteSignature = QByteArray::fromBase64(listJwtParts.at(2).toUtf8());
     }
     else
@@ -317,8 +316,8 @@ bool QJsonWebToken::isAlgorithmSupported(QString strAlgorithm)
 {
     // TODO : support other algorithms
     if (strAlgorithm.compare("HS256", Qt::CaseInsensitive) != 0 && // HMAC using SHA-256 hash algorithm
-            strAlgorithm.compare("HS384", Qt::CaseInsensitive) != 0 && // HMAC using SHA-384 hash algorithm
-            strAlgorithm.compare("HS512", Qt::CaseInsensitive) != 0 /*&& // HMAC using SHA-512 hash algorithm
+        strAlgorithm.compare("HS384", Qt::CaseInsensitive) != 0 && // HMAC using SHA-384 hash algorithm
+        strAlgorithm.compare("HS512", Qt::CaseInsensitive) != 0 /*&& // HMAC using SHA-512 hash algorithm
         strAlgorithm.compare("RS256", Qt::CaseInsensitive) != 0 && // RSA using SHA-256 hash algorithm
         strAlgorithm.compare("RS384", Qt::CaseInsensitive) != 0 && // RSA using SHA-384 hash algorithm
         strAlgorithm.compare("RS512", Qt::CaseInsensitive) != 0 && // RSA using SHA-512 hash algorithm
@@ -336,4 +335,3 @@ QStringList QJsonWebToken::supportedAlgorithms()
     // TODO : support other algorithms
     return QStringList() << "HS256" << "HS384" << "HS512";
 }
-

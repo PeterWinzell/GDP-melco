@@ -20,7 +20,6 @@ SOURCES += main.cpp \
     ../../../src/request-handler/gethandler.cpp \
     ../../../src/request-handler/authorizationhandler.cpp \
     ../../../src/jwt-utility/visstokenvalidator.cpp \
-    ../../../src/jwt-utility/qjsonwebtoken.cpp \
     ../../../src/request-handler/sethandler.cpp \
     ../../../src/request-handler/subscribehandler.cpp \
     ../../../src/request-handler/unsubscribeallhandler.cpp \
@@ -39,7 +38,6 @@ HEADERS += \
     ../../../src/jwt-utility/visstokenvalidator.h \
     ../../../src/jsonrequestparser.h \
     ../../../src/vissrequest.h \
-    ../../../src/jwt-utility/qjsonwebtoken.h \
     ../../../src/request-handler/gethandler.h \
     ../../../src/request-handler/authorizationhandler.h \
     ../../../src/request-handler/sethandler.h \
@@ -66,3 +64,7 @@ INCLUDEPATH += $$PWD/../../../src
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../src/debug/ -lGoogleTestProj
 #else:unix: LIBS += -L$$OUT_PWD/../../../src/ -lGoogleTestProj
 
+INCLUDEPATH += ../../../../lib/QJsonWebToken
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/QJsonWebToken/release/ -lqjsonwebtoken
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
+else:unix:!macx: LIBS += -L$$PWD/../../../../lib/QJsonWebToken/ -lqjsonwebtoken
