@@ -19,7 +19,19 @@ public:
 
     void RunSubscribeUnsubscribeAllTest();
     void RunSubscribeUnsubscribeTest();
+    void RunGetVssTest();
     void getVssTest();
+
+    enum class TestCase
+    {
+        SUBSCRIBE_UNSUBSCRIBE,
+        SUBSCRIBEALL_UNSUBSCRIBEALL,
+        AUTHORIZE_SUCCESS,
+        GET_VSS,
+        SET_GET
+    };
+
+    void setTest(TestCase test);
 
 private Q_SLOTS:
     void onConnected();
@@ -30,8 +42,9 @@ private Q_SLOTS:
     void unsubscribe();
     void unsubscribeAll();
 private:
-    int m_subscriptionid;
+    QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
     QWebSocket m_webSocket;
+    TestCase m_test;
 };
 
 #endif // W3CTESTCLIENT_H

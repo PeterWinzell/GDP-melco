@@ -32,18 +32,33 @@ public:
     explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper* client=0);
 
     void processRequest();
-     WebSocketWrapper* getSocketClient();
+    WebSocketWrapper* getSocketClient();
 
 public slots:
     void socketDisconnected();
-     void unsubscribe();
+    void unsubscribe();
 protected:
     bool m_dosubscription;
+
 private:
     QString m_subId;
+    int m_lastValue;
+    static const int m_defaultIntervalMs;
+
+    class Filter
+    {
+    public:
+        int rangeMin;
+        int rangeMax;
+        int intervalMs;
+        int minChange;
+    };
+    Filter m_filter;
 
     QString getSubscriptionNotificationJson(QString signalValue);
     QString getSubscriptionSuccessJson();
+    bool isFilterPass(QString valueString);
+    void initializeFilter();
     QString getSignalValue(QString path);
     static QMutex locking;
 };
