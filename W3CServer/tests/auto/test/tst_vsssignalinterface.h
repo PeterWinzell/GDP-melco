@@ -3,13 +3,13 @@
 #include <VSSSignalinterface/vsssignalinterfaceimpl.h>
 #include <QDir>
 #include <QCoreApplication>
+#include <QStandardPaths>
 
 using namespace testing;
 
 TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 {
-    QString dir = QCoreApplication::applicationDirPath();
-    //QString dir = QDir::currentPath();
+    QString dir = QDir::current().absolutePath();
     QString file = dir + "/vss_rel_1.json";
 
     VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl(file);
@@ -43,7 +43,7 @@ TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 
 TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 {
-    QString dir = QDir::currentPath();
+    QString dir = QDir::current().absolutePath();
     QString file = dir + "/vss_rel_1.json";
 
     VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl(file);
