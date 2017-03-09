@@ -2,12 +2,14 @@
 #include <gmock/gmock-matchers.h>
 #include <VSSSignalinterface/vsssignalinterfaceimpl.h>
 #include <QDir>
+#include <QCoreApplication>
 
 using namespace testing;
 
 TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 {
-    QString dir = QDir::currentPath();
+    QString dir = QCoreApplication::applicationDirPath();
+    //QString dir = QDir::currentPath();
     QString file = dir + "/vss_rel_1.json";
 
     VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl(file);
