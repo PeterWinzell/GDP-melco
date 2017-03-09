@@ -58,6 +58,7 @@ void W3cTestClient::onConnected()
             break;
 
         case TestCase::AUTHORIZE_SUCCESS:
+            RunAuthorizeTest();
             break;
 
         default:
@@ -153,11 +154,32 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 qDebug() << " VSS data received: " << vssObject;
             }
         }
+        else if(actionString == "authorize")
+        {
+            QString requestId = jsonObject["requestId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                qDebug() << " Failed to authorize";
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " request was :" << requestId;
+            }
+            else
+            {
+                qDebug() << " Successfully authorized";
+                qDebug() << jsonObject;
+
+            }
+        }
         else
         {
-
+            //qDebug() << jsonObject;
 
         }
+    }
+    else
+    {
+        //qDebug() << parseError.errorString();
     }
 }
 
@@ -197,6 +219,14 @@ void W3cTestClient::RunGetVssTest()
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
     m_webSocket.sendTextMessage(subMess);
+}
+
+void W3cTestClient::RunAuthorizeTest()
+{
+    qDebug() << "Running Authorize Test";
+
+    QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
+    m_webSocket.sendTextMessage(dataJson);
 }
 
 void W3cTestClient::unsubscribe()
