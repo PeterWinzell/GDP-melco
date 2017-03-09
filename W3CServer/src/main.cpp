@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("MelcoGOT");
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QPointer<QSettings> settings = new QSettings();
-    std::auto_ptr<QFileInfo> checkFile(new QFileInfo(settings->fileName()));
+    QSharedPointer<QFileInfo> checkFile(new QFileInfo(settings->fileName()));
 
     //check if settings file exists on local filesystem otherwise copy
     //the default settings file from resources
