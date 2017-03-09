@@ -73,4 +73,4 @@ else:unix:!macx: LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebto
 DISTFILES += \
     data/vss_rel_1.json
 
-QMAKE_POST_LINK += $$quote($$QMAKE_COPY_DIR $${PWD}/data/* $${OUT_PWD})
+QMAKE_POST_LINK += $$quote($$QMAKE_COPY $${PWD}/data/* $${OUT_PWD})
