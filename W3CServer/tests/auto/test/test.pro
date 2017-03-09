@@ -10,7 +10,9 @@ QT -= gui
 
 HEADERS += tst_src.h \
     tst_jsonrequestparser.h \
-    tst_w3cserver.h
+    tst_w3cserver.h \
+    tst_vsssignalinterface.h \
+    test.h
 
 SOURCES += main.cpp \
     ../../../src/w3cserver.cpp \
@@ -64,7 +66,15 @@ INCLUDEPATH += $$PWD/../../../src
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../src/debug/ -lGoogleTestProj
 #else:unix: LIBS += -L$$OUT_PWD/../../../src/ -lGoogleTestProj
 
+<<<<<<< HEAD
 INCLUDEPATH += ../../../../lib/QJsonWebToken
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/release/ -lqjsonwebtoken
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
 else:unix:!macx: LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebtoken
+=======
+DISTFILES += \
+    data/vss_rel_1.json
+
+QMAKE_POST_LINK += $$quote($$QMAKE_COPY_DIR $${PWD}/data $${OUT_PWD})
+
+>>>>>>> LP-106

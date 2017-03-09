@@ -81,7 +81,9 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     }
 
     // TODO: select implementation based on application configuration
-    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl());
+
+    const QString vssFile = "/etc/vss_rel_1.json";
+    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
 }
 
 W3CServer::~W3CServer()

@@ -37,37 +37,41 @@ void W3cTestClient::onConnected()
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
     // m_webSocket.sendTextMessage(authMess);
 
-  // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-  //  m_webSocket.sendTextMessage(subMess);
+    // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    //  m_webSocket.sendTextMessage(subMess);
 
     switch (m_test)
     {
-    case TestCase::SUBSCRIBE_UNSUBSCRIBE:
-        RunSubscribeUnsubscribeTest();
-        break;
+        case TestCase::SUBSCRIBE_UNSUBSCRIBE:
+            RunSubscribeUnsubscribeTest();
+            break;
 
-    case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
-        RunSubscribeUnsubscribeAllTest();
-        break;
+        case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
+            RunSubscribeUnsubscribeAllTest();
+            break;
 
-    case TestCase::GET_VSS:
-        RunGetVssTest();
-        break;
+        case TestCase::GET_VSS:
+            RunGetVssTest();
+            break;
 
-    case TestCase::SET_GET:
-        break;
+        case TestCase::SET_GET:
+            break;
 
-    case TestCase::AUTHORIZE_SUCCESS:
-        break;
+        case TestCase::AUTHORIZE_SUCCESS:
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
+
+    //RunSubscribeUnsubscribeTest();
+    //RunSubscribeUnsubscribeAllTest();
+
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    // qDebug() << "Message received:" << message << "\n";
+    qDebug() << "Message received:" << message << "\n";
     //parse message
     QJsonParseError parseError;
     QJsonDocument  jsonDocument;
