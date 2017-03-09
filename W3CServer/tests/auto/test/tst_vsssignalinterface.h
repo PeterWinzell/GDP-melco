@@ -9,10 +9,7 @@ using namespace testing;
 
 TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 {
-    QString dir = QDir::current().absolutePath();
-    QString file = dir + "/vss_rel_1.json";
-
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl(file);
+    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("Signal.Drivetrain.InternalCombustionEngine.RPM");
 
     QJsonValue val1 = obj.value("Signal");
@@ -43,10 +40,7 @@ TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 
 TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 {
-    QString dir = QDir::current().absolutePath();
-    QString file = dir + "/vss_rel_1.json";
-
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl(file);
+    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("");
 
     QJsonValue val1 = obj.value("Attribute");
