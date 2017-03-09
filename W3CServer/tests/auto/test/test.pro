@@ -8,11 +8,10 @@ CONFIG += thread
 QT += core websockets
 QT -= gui
 
-HEADERS += tst_src.h \
+HEADERS += \
     tst_jsonrequestparser.h \
     tst_w3cserver.h \
-    tst_vsssignalinterface.h \
-    test.h
+    tst_vsssignalinterface.h
 
 SOURCES += main.cpp \
     ../../../src/w3cserver.cpp \
@@ -74,4 +73,4 @@ else:unix:!macx: LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebto
 DISTFILES += \
     data/vss_rel_1.json
 
-QMAKE_POST_LINK += $$quote($$QMAKE_COPY_DIR $${PWD}/data $${OUT_PWD})
+QMAKE_POST_LINK += $$quote($$QMAKE_COPY_DIR $${PWD}/data/* $${OUT_PWD})
