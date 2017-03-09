@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QJsonDocument>
 #include <QFile>
+#include <QDir>
 #include <QDebug>
 
 VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
