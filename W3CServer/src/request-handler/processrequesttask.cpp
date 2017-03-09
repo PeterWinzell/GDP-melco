@@ -1,8 +1,9 @@
-#include "processrequesttask.h"
-#include "requesthandler.h"
 #include <QWebSocket>
 #include <QUrl>
+#include "processrequesttask.h"
+#include "requesthandler.h"
 #include "messaging/websocketwrapper.h"
+#include "VSSSignalinterface/vsssignalinterface.h"
 
 ProcessRequestTask::ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSSSignalInterface> signalInterface, QString message, bool debug):
     m_pClient(wsw),
@@ -10,7 +11,12 @@ ProcessRequestTask::ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSS
     m_jsonRequestMessage(message),
     m_pSignalInterface(signalInterface)
 {
+    qDebug() << "ProcessRequestTask created";
+}
 
+ProcessRequestTask::~ProcessRequestTask()
+{
+    qDebug() << "ProcessRequestTask dying...";
 }
 
 void ProcessRequestTask::run()

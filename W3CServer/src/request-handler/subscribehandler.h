@@ -23,17 +23,29 @@
 #include "requesthandler.h"
 #include "vissrequest.h"
 #include <QWebSocket>
+#include <QMutex>
 
 class SubscribeHandler : public RequestHandler
 {
     Q_OBJECT
 public:
-    explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest=0, WebSocketWrapper* client=0);
+    explicit SubscribeHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper* client=0);
+
     void processRequest();
+     WebSocketWrapper* getSocketClient();
+
 public slots:
     void socketDisconnected();
+     void unsubscribe();
 protected:
     bool m_dosubscription;
+private:
+    QString m_subId;
+
+    QString getSubscriptionNotificationJson(QString signalValue);
+    QString getSubscriptionSuccessJson();
+    QString getSignalValue(QString path);
+    static QMutex locking;
 };
 
 #endif // SUBSCRIBEHANDLER_H

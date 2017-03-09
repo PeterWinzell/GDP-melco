@@ -20,7 +20,7 @@
 ***************************************************************************************************************/
 #include "getvsshandler.h"
 
-GetVSSHandler::GetVSSHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+GetVSSHandler::GetVSSHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest, client)
 {
 }
@@ -29,4 +29,25 @@ void GetVSSHandler::processRequest()
 {
     qDebug() << " processing get handler requests";
 
+    QString path = m_pVissrequest->getSignalPath();
+    QString id = m_pVissrequest->getRequestId();
+    QString time = QString::number(QDateTime::currentDateTime().toTime_t());
+
+    QJsonObject vss = m_pSignalInterface->getVSSNode(path);
+
+    QJsonObject response;
+
+    vss_request req = m_pVissrequest->getAction();
+
+    response.insert("vss", vss);
+    response.insert("timestamp", time);
+    response.insert("action", "getVSS");
+    response.insert("id", id);
+
+    QJsonDocument jsonDoc(response);
+    QString message = jsonDoc.toJson();
+
+    m_pClient->sendTextMessage(message);
+
 }
+

@@ -1,21 +1,23 @@
-#include "w3cserver.h"
-#include "QtWebSockets/qwebsocketserver.h"
-#include "QtWebSockets/qwebsocket.h"
+
 #include <QDebug>
 #include <QFile>
 #include <QSslCertificate>
 #include <QSslKey>
-#include<QThreadPool>
+#include <QThreadPool>
+#include <QPointer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include "w3cserver.h"
 #include "jsonrequestparser.h"
-#include<QJsonDocument>
-#include<QJsonObject>
-#include<QJsonArray>
+#include "QtWebSockets/qwebsocketserver.h"
+#include "QtWebSockets/qwebsocket.h"
 #include "request-handler/processrequesttask.h"
 #include "jwt-utility/qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
+#include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "messaging/websocketwrapper.h"
-#include <QPointer>
-#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+#include "VSSSignalinterface/vsssignalinterface.h"
 
 QT_USE_NAMESPACE
 
@@ -32,6 +34,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
                 QWebSocketServer::SecureMode,
                 this);
+        // m_pWebSocketServer ->
         QSslConfiguration sslConfiguration;
 
         QFile keyFile(QStringLiteral(":/server.key"));
@@ -71,14 +74,16 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
         //Connect QWebsocketServer signal with W3CServer signal closed
-        connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
+       // connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
         //SSL error handler
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &W3CServer::onSslErrors);
     }
 
     // TODO: select implementation based on application configuration
-    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl());
+
+    const QString vssFile = "/etc/vss_rel_1.json";
+    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
 }
 
 W3CServer::~W3CServer()
@@ -101,7 +106,7 @@ void W3CServer::onNewConnection()
     connect(pSocket, &QWebSocket::disconnected, this, &W3CServer::socketDisconnected);
 
     // add socket to list of clients
-    m_clients << pSocket;
+    m_clients.insert(pSocket, new QMutex());
 }
 
 void W3CServer::processTextMessage(const QString& message)
@@ -109,63 +114,21 @@ void W3CServer::processTextMessage(const QString& message)
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
-    QPointer<WebSocketWrapper> socketWrapper;
-    socketWrapper = new WebSocketWrapper(zeClient);
-
+    if (m_clients.contains(zeClient)){
+        // we need a mutex per client .
+        QMutex* mutex = m_clients.find(zeClient).value();
+        QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
+        startRequestProcess(socketWrapper, message);
+    }
+    else
+    {
+        qDebug() << "fatal connection error, websocket client not found ";
+    }
 
     if (m_debug)
     {
         qDebug() << "Message recieved: " << message;
     }
-
-    //testing
-    /*QJsonDocument doc;
-    doc = QJsonDocument::fromJson(message.toUtf8());
-
-    qDebug() << " doc is " + doc.toJson();
-
-    QJsonObject obj = doc.object();
-    QString str = obj["action"].toString();
-    qDebug() <<  " action is : " + str ;
-
-    QString str2 = obj["requestId"].toString();
-    qDebug() << " requestID is : " + str2;
-
-    QJsonObject tokensObject = obj["tokens"].toObject();
-    QString token = tokensObject["authorization"].toString();
-
-    qDebug() << " token is : " + token;
-
-    VissTokenValidator tokenValidator(token);
-    if (tokenValidator.validateToken("mydirtysecret"))
-        qDebug() << " TOKEN IS VERIFIED \n";
-    else
-        qDebug() << " TOKEN IS NOT VERIFIED \n";
-
-    QString zePayload = tokenValidator.getJsonPayload();
-
-    qDebug() << " token payload is " + zePayload;
-
-    QJsonDocument doc2;
-    doc2 = QJsonDocument::fromJson(zePayload.toUtf8());
-        default:
-            break;
-    QJsonObject tokenpl = doc2.object();
-    QString issuer = tokenpl["iss"].toString();
-    qDebug() << " Token issuer is : " + issuer;
-    QString valid_from = tokenpl["ValidFrom"].toString();
-    qDebug() << " ValidFrom : " + valid_from;
-
-    QString valid_to = tokenpl["ValidTo"].toString();
-    qDebug() << " Valid To : " + valid_to;
-
-    QString path = tokenpl["path"].toString();
-    qDebug() << " Signal path is : " + path;
-
-    QString actions = tokenpl["actions"].toString();
-    qDebug() << " Actions are : " + actions;*/
-
-    startRequestProcess(socketWrapper, message);
 }
 
 void W3CServer::socketDisconnected()
@@ -179,7 +142,7 @@ void W3CServer::socketDisconnected()
     //remove from client list and delete from heap
     if (zeClient)
     {
-        m_clients.removeAll(zeClient);
+        m_clients.remove(zeClient);
         zeClient->deleteLater();
     }
 }

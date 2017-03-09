@@ -12,11 +12,10 @@
 //factory method for requestHandler
 QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString& message, WebSocketWrapper* client, QSharedPointer<VSSSignalInterface> signalInterface)
 {
-    JSONRequestParser jsonParser(message);
-    VISSRequest* parsedRequest = jsonParser.getRequest();
+    JSONRequestParser jsonParser;
+    QSharedPointer<VISSRequest> parsedRequest = jsonParser.parseJson(message);
 
     QSharedPointer<RequestHandler> handler;
-
 
     switch(parsedRequest->getAction())
     {
@@ -47,4 +46,17 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
 
     return handler;
 
+}
+
+RequestHandler::~RequestHandler()
+{
+    if (m_pClient != 0)
+    {
+        delete m_pClient;
+    }
+
+    //if (m_pVissrequest != 0)
+    //{
+    //    delete m_pVissrequest;
+    //}
 }

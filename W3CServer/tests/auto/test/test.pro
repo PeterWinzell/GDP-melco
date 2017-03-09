@@ -10,7 +10,9 @@ QT -= gui
 
 HEADERS += tst_src.h \
     tst_jsonrequestparser.h \
-    tst_w3cserver.h
+    tst_w3cserver.h \
+    tst_vsssignalinterface.h \
+    test.h
 
 SOURCES += main.cpp \
     ../../../src/w3cserver.cpp \
@@ -27,8 +29,11 @@ SOURCES += main.cpp \
     ../../../src/request-handler/getvsshandler.cpp \
     ../../../src/request-handler/unsubscribehandler.cpp \
     ../../../src/request-handler/processrequesttask.cpp \
+    ../../../src/request-handler/subscriptions.cpp \
+    ../../../src/request-handler/unsubnotifier.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp
+
 
 HEADERS += \
     ../../../src/w3cserver.h \
@@ -45,6 +50,8 @@ HEADERS += \
     ../../../src/request-handler/getvsshandler.h \
     ../../../src/request-handler/unsubscribehandler.h \
     ../../../src/request-handler/processrequesttask.h \
+    ../../../src/request-handler/subscriptions.h \
+    ../../../src/request-handler/unsubnotifier.h \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h
@@ -60,4 +67,9 @@ INCLUDEPATH += $$PWD/../../../src
 #win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../src/release/ -lGoogleTestProj
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../src/debug/ -lGoogleTestProj
 #else:unix: LIBS += -L$$OUT_PWD/../../../src/ -lGoogleTestProj
+
+DISTFILES += \
+    data/vss_rel_1.json
+
+QMAKE_POST_LINK += $$quote($$QMAKE_COPY_DIR $${PWD}/data $${OUT_PWD})
 

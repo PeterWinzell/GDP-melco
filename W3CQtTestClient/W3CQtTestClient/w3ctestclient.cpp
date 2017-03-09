@@ -3,7 +3,10 @@
 #include <QtCore/QDebug>
 #include <QtWebSockets/QWebSocket>
 #include <QCoreApplication>
-#include <QThread>
+#include <QJsonParseError>
+#include <QTime>
+#include <QJsonObject>
+#include <QTimer>
 
 QT_USE_NAMESPACE
 
@@ -27,22 +30,132 @@ void W3cTestClient::onConnected()
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
     // m_webSocket.sendTextMessage(authMess);
 
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
+  // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+  //  m_webSocket.sendTextMessage(subMess);
 
+   //RunSubscribeUnsubscribeTest();
+   //RunSubscribeUnsubscribeAllTest();
+
+    getVssTest();
+}
+
+void W3cTestClient::getVssTest()
+{
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
     m_webSocket.sendTextMessage(subMess);
-
-    qDebug() << " JSON SENT TO SERVER IS: " + subMess;
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    qDebug() << "Message received:" << message;
+    qDebug() << "Message received:" << message << "\n";
+    //parse message
+    QJsonParseError parseError;
+    QJsonDocument  jsonDocument;
+    QJsonObject    jsonObject;
 
-    QThread::msleep(100);
+    jsonDocument = QJsonDocument::fromJson(message.toUtf8(),&parseError);
+    jsonObject = jsonDocument.object();
+    if (parseError.error == QJsonParseError::NoError)
+    {
+        QString actionString =jsonObject["action"].toString();
 
-    m_webSocket.sendTextMessage(GetVissTestDataJson::getTestDataString(requesttype::GET));
+        if (actionString == "subscribe")
+        {
+            QString path = jsonObject["path"].toString();
+            m_subscriptionid  = jsonObject["subscriptionId"].toInt();
+            QString requestid = jsonObject["requestId"].toString();
+            qDebug() << path + "succesfully subscribed to \n ";
+            qDebug() << " subscriptionId is : " << m_subscriptionid << " \n";
+            qDebug() << " requestId is : " + requestid << " \n";
+        }
+        else if (actionString == "unsubscribe")
+        {
+            QString  subscriptionId = jsonObject["subscriptionId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " subId: " << subscriptionId;
+            }
+            else
+            {
+                qDebug() << "succesfully unsuscribed to : " << subscriptionId;
+            }
+        }
+        else if (actionString == "unsubscribeAll")
+        {
+            QString requestId = jsonObject["requestId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " request was :" << requestId;
+            }
+            else
+            {
+                qDebug() << " succesfully performed unsubscribe all ";
+            }
 
-    //qApp->quit();
+        }
+        else if (actionString == "subscribing")
+        {
+
+            QString subId = jsonObject["subscriptionId"].toString();
+            QString valueStr  =  jsonObject["value"].toString();
+            int value = valueStr.toInt();
+            QString timeString  = jsonObject["timestamp"].toString();
+            QDateTime time_t = QDateTime::fromTime_t(timeString.toInt());
+
+            qDebug() << " subscriptionId is : " + subId << " \n";
+            qDebug() << " currentTime is : " + time_t.toString() << " \n";
+            qDebug() << " The value is :   " << value << " \n";
+
+        }
+    }
+}
+
+
+/**
+ * @brief W3cTestClient::RunSubscribeUnsubscribeTest
+ * Testing subscribe and unsubscribe and unsubscribeall scenario
+ */
+void W3cTestClient::RunSubscribeUnsubscribeTest()
+{
+    qDebug() << " running usubscribe test \n";
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    m_webSocket.sendTextMessage(subMess);
+    QTimer::singleShot(10000,this,SLOT(unsubscribe()));
+
+}
+
+void W3cTestClient::RunSubscribeUnsubscribeAllTest()
+{
+    QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+
+    //do 3 subscriptions
+    m_webSocket.sendTextMessage(subMess1);
+    m_webSocket.sendTextMessage(subMess2);
+    m_webSocket.sendTextMessage(subMess3);
+
+    QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
+
+}
+
+void W3cTestClient::unsubscribe()
+{
+    qDebug() << " sending usubscribe to server \n";
+
+    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE);
+    m_webSocket.sendTextMessage(unsubMess);
+}
+
+void W3cTestClient::unsubscribeAll()
+{
+    QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL);
+    m_webSocket.sendTextMessage(usubscribeAllMess);
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)

@@ -3,9 +3,15 @@
 #include <QJsonDocument>
 
 
-GetHandler::GetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, VISSRequest* vissrequest, WebSocketWrapper *client):
+GetHandler::GetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client)
 {
+    qDebug() << " GetHandler is created.";
+}
+
+GetHandler::~GetHandler()
+{
+    qDebug() << " GetHandler is dying...";
 }
 
 void GetHandler::processRequest()

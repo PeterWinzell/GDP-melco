@@ -10,6 +10,7 @@ class ProcessRequestTask : public QRunnable
 {
 public:
     ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSSSignalInterface> signalInterface, QString message, bool debug = false);
+    virtual ~ProcessRequestTask();
     void run();
 private:
     WebSocketWrapper* m_pClient;

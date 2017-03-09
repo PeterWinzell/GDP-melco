@@ -17,12 +17,20 @@ class W3cTestClient : public QObject
 public:
     explicit W3cTestClient(const QUrl &url, QObject *parent = Q_NULLPTR);
 
+    void RunSubscribeUnsubscribeAllTest();
+    void RunSubscribeUnsubscribeTest();
+    void getVssTest();
+
 private Q_SLOTS:
     void onConnected();
     void onTextMessageReceived(QString message);
     void onSslErrors(const QList<QSslError> &errors);
 
+    //timer slots
+    void unsubscribe();
+    void unsubscribeAll();
 private:
+    int m_subscriptionid;
     QWebSocket m_webSocket;
 };
 

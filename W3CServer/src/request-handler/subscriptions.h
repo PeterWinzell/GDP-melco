@@ -18,15 +18,51 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef AUTHORIZATIONHANDLER_H
-#define AUTHORIZATIONHANDLER_H
-#include "requesthandler.h"
+#ifndef SUBSCRIPTIONS_H
+#define SUBSCRIPTIONS_H
+#include <QMutex>
+#include <QMutexLocker>
+#include <QHash>
+#include "subscribehandler.h"
+#include "unsubnotifier.h"
 
-class AuthorizationHandler: public RequestHandler
+
+
+
+class Subscriptions : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit AuthorizationHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,WebSocketWrapper* client=0);
-    void processRequest();
+
+    static Subscriptions* getInstance();
+
+    QString addSubcription(SubscribeHandler* handler);
+    bool unsubscribe(QString subscriptionId);
+    bool unsubscribeAll(WebSocketWrapper *client);
+
+signals:
+    void unsubscribe();
+
+private:
+
+    //There can be only one accces at a time
+   // static QMutex m_mutex;
+    //Keep track of subscriptions
+    static Subscriptions * m_instance;
+    static int m_subscriptionIdCounter;
+    static QMutex m_mutex;
+
+    QMap<QString,UnsubNotifier*> m_notifiers;
+    QMultiMap<QWebSocket*,QString>  m_clientsubscriptions;
+
+    Subscriptions(QObject *parent=0):QObject(parent)
+    {
+
+    }
+
 };
 
-#endif // AUTHORIZATIONHANDLER_H
+
+
+#endif // SUBSCRIPTIONS_H
