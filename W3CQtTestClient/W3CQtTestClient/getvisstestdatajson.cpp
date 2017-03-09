@@ -153,12 +153,3 @@ QString GetVissTestDataJson::getAuthJson(){
     return dataJson;
 }
 
-QString GetVissTestDataJson::getGetVssJson(){
-    QJsonObject jsonObject;
-    jsonObject.insert("action","getVSS");
-    jsonObject.insert("path","vehicle.engine.speed");
-    jsonObject.insert("requestId","1");
-
-    QJsonDocument jsonDoc(jsonObject);
-    return jsonDoc.toJson();
-}

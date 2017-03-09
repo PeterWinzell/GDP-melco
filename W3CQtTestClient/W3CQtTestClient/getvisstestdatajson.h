@@ -18,7 +18,6 @@ public:
     static QString getGetJson();
     static QString getGetVssJson();
     static QString getSetJson();
-    static QString getGetVssJson();
 
     static int m_requestId;
 

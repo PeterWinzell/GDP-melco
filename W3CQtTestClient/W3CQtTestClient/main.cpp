@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     W3cTestClient client(QUrl(QStringLiteral("wss://127.0.0.1:8080")));
 
     // Parse options
-    if (argc > 0)
+    if (argc > 1)
     {
         QString str(argv[1]);
         if (str == "-subscribe")
