@@ -11,7 +11,7 @@
 QT_USE_NAMESPACE
 
 W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
-    QObject(parent)
+    QObject(parent), m_url(url)
 {
     m_test = TestCase::SUBSCRIBE_UNSUBSCRIBE; //default testcase
 
@@ -19,12 +19,12 @@ W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
     typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
     connect(&m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors),
             this, &W3cTestClient::onSslErrors);
-    m_webSocket.open(QUrl(url));
 }
 
 void W3cTestClient::setTest(TestCase test)
 {
     m_test = test;
+    m_webSocket.open(QUrl(m_url));
 }
 
 void W3cTestClient::onConnected()
@@ -72,7 +72,7 @@ void W3cTestClient::onConnected()
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    qDebug() << "Message received:" << message << "\n";
+    //qDebug() << "Message received:" << message << "\n";
     //parse message
     QJsonParseError parseError;
     QJsonDocument  jsonDocument;
