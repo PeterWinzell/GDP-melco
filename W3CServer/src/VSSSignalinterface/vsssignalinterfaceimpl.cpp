@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QJsonArray>
 
 VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 {
@@ -56,6 +57,7 @@ QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
 
 qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path)
 {
+    QString p = path;
     return 0;
 }
 
@@ -136,7 +138,34 @@ void VSSSignalInterfaceImpl::createJsonVssTree(QVector<JsonNode>& nodes, QJsonOb
 
         if (node.isBranch)
         {
+//            QStringList keys = node.json.keys();
+//            QVector<JsonNode> jsonObjects;
+
+//            // sort key order to get children last
+
+//            foreach (QString key, keys)
+//            {
+//                JsonNode copyNode;
+//                copyNode.key = key;
+//                copyNode.json = node.json.value(key).toObject();
+//                jsonObjects.push_back(copyNode);
+//            }
+
+//            foreach (QString key, keys)
+//            {
+//                node.json.remove(key);
+//            }
+
+//            foreach (JsonNode n, jsonObjects)
+//            {
+//                node.json.insert(n.key, n.json);
+//            }
+
+//            // will be placed last
+
             node.json.insert("children", json);
+
+            // insert the reordered object
             obj.insert(node.key, node.json);
         }
         else
@@ -177,6 +206,7 @@ void VSSSignalInterfaceImpl::removeOne(QJsonObject& json, const QString& filter)
 
 QJsonObject VSSSignalInterfaceImpl::getVSSTree(const QString& path)
 {
+    QString p = path;
     QJsonObject tree;
     return tree;
 }
