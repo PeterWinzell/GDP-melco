@@ -11,7 +11,7 @@
 QT_USE_NAMESPACE
 
 W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
-    QObject(parent)
+    QObject(parent), m_url(url)
 {
     m_test = TestCase::SUBSCRIBE_UNSUBSCRIBE; //default testcase
 
@@ -19,12 +19,12 @@ W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
     typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
     connect(&m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors),
             this, &W3cTestClient::onSslErrors);
-    m_webSocket.open(QUrl(url));
 }
 
 void W3cTestClient::setTest(TestCase test)
 {
     m_test = test;
+    m_webSocket.open(QUrl(m_url));
 }
 
 void W3cTestClient::onConnected()
@@ -37,37 +37,43 @@ void W3cTestClient::onConnected()
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
     // m_webSocket.sendTextMessage(authMess);
 
-  // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-  //  m_webSocket.sendTextMessage(subMess);
+    // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    //  m_webSocket.sendTextMessage(subMess);
 
     switch (m_test)
     {
-    case TestCase::SUBSCRIBE_UNSUBSCRIBE:
-        RunSubscribeUnsubscribeTest();
-        break;
+        case TestCase::SUBSCRIBE_UNSUBSCRIBE:
+            RunSubscribeUnsubscribeTest();
+            break;
 
-    case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
-        RunSubscribeUnsubscribeAllTest();
-        break;
+        case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
+            RunSubscribeUnsubscribeAllTest();
+            break;
 
-    case TestCase::GET_VSS:
-        RunGetVssTest();
-        break;
+        case TestCase::GET_VSS:
+            RunGetVssTest();
+            break;
 
-    case TestCase::SET_GET:
-        break;
+        case TestCase::SET_GET:
+            break;
 
-    case TestCase::AUTHORIZE_SUCCESS:
-        break;
+        case TestCase::AUTHORIZE_SUCCESS:
+            RunAuthorizeTest();
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
+
+    //RunSubscribeUnsubscribeTest();
+    //RunSubscribeUnsubscribeAllTest();
+
+
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
 {
-    qDebug() << "Message received:" << message << "\n";
+    //qDebug() << "Message received:" << message << "\n";
     //parse message
     QJsonParseError parseError;
     QJsonDocument  jsonDocument;
@@ -149,11 +155,32 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 qDebug() << " VSS data received: " << vssObject;
             }
         }
+        else if(actionString == "authorize")
+        {
+            QString requestId = jsonObject["requestId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                qDebug() << " Failed to authorize";
+                QString errorMessage = errorObject["message"].toString();
+                qDebug() << errorMessage + " request was :" << requestId;
+            }
+            else
+            {
+                qDebug() << " Successfully authorized";
+                qDebug() << jsonObject;
+
+            }
+        }
         else
         {
-
+            //qDebug() << jsonObject;
 
         }
+    }
+    else
+    {
+        //qDebug() << parseError.errorString();
     }
 }
 
@@ -193,6 +220,14 @@ void W3cTestClient::RunGetVssTest()
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
     m_webSocket.sendTextMessage(subMess);
+}
+
+void W3cTestClient::RunAuthorizeTest()
+{
+    qDebug() << "Running Authorize Test";
+
+    QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
+    m_webSocket.sendTextMessage(dataJson);
 }
 
 void W3cTestClient::unsubscribe()

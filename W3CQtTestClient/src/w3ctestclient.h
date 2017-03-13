@@ -21,6 +21,7 @@ public:
     void RunSubscribeUnsubscribeTest();
     void RunGetVssTest();
     void getVssTest();
+    void RunAuthorizeTest();
 
     enum class TestCase
     {
@@ -44,6 +45,7 @@ private Q_SLOTS:
 private:
     QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
     QWebSocket m_webSocket;
+    QUrl m_url;
     TestCase m_test;
 };
 

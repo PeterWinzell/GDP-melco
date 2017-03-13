@@ -13,7 +13,7 @@
 #include "w3cserver.h"
 #include "jsonrequestparser.h"
 #include "request-handler/processrequesttask.h"
-#include "jwt-utility/qjsonwebtoken.h"
+#include "qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
@@ -42,7 +42,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
         certFile.open(QIODevice::ReadOnly);
         const QByteArray bytes = certFile.readAll();
-
+        QJsonWebToken e;
         qDebug() << "cert file length : " + QString::number(bytes.length());
         QSslCertificate certificate(bytes, QSsl::Pem);
 

@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+#include <QDir>
+#include <QCoreApplication>
+#include <QStandardPaths>
 
 using namespace testing;
 
 TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 {
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("data/vss_rel_1.json");
+    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("Signal.Drivetrain.InternalCombustionEngine.RPM");
 
     QJsonValue val1 = obj.value("Signal");
@@ -31,11 +34,13 @@ TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
     ASSERT_THAT(false, val8.isUndefined());
     ASSERT_THAT(false, val9.isUndefined());
     ASSERT_THAT(false, val10.isUndefined());
+
+    delete signalInterface;
 }
 
 TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 {
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("data/vss_rel_1.json");
+    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("");
 
     QJsonValue val1 = obj.value("Attribute");
@@ -46,4 +51,5 @@ TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
     ASSERT_THAT(false, val2.isUndefined());
     ASSERT_THAT(false, val3.isUndefined());
 
+    delete signalInterface;
 }

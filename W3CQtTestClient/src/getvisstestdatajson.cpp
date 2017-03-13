@@ -12,11 +12,13 @@ GetVissTestDataJson::GetVissTestDataJson()
 }
 
 
-QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
+QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId)
+{
 
     QString testJSON;
     m_requestId++;
-    switch(type){
+    switch(type)
+    {
         case requesttype::GET:
             testJSON = getGetJson();
             break;
@@ -43,7 +45,8 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId){
     return testJSON;
 }
 
-QString GetVissTestDataJson::getSubscriptionJson(){
+QString GetVissTestDataJson::getSubscriptionJson()
+{
     QJsonObject jsonObject;
     QJsonObject jsonFilterObject;
     QJsonObject jsonRangeObject;
@@ -68,7 +71,8 @@ QString GetVissTestDataJson::getSubscriptionJson(){
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getGetJson(){
+QString GetVissTestDataJson::getGetJson()
+{
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
@@ -78,7 +82,8 @@ QString GetVissTestDataJson::getGetJson(){
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getGetVssJson(){
+QString GetVissTestDataJson::getGetVssJson()
+{
     QJsonObject jsonObject;
     jsonObject.insert("action","getVSS");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
@@ -88,7 +93,8 @@ QString GetVissTestDataJson::getGetVssJson(){
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getSetJson(){
+QString GetVissTestDataJson::getSetJson()
+{
     QJsonObject jsonObject;
     jsonObject.insert("action","set");
     jsonObject.insert("path","vehicle.engine.speed");
@@ -121,13 +127,14 @@ QString GetVissTestDataJson::getUnsubscribeAll()
 }
 
 // { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }'
-QString GetVissTestDataJson::getAuthJson(){
+QString GetVissTestDataJson::getAuthJson()
+{
 
     QJsonWebToken l_jwtObj;
 
     // How should this be distributed in production.
     l_jwtObj.setSecret("mydirtysecret");
-        // set a default payload
+    // set a default payload
     l_jwtObj.appendClaim("iss", "MelcoGot");
     l_jwtObj.appendClaim("ValidFrom", QString::number(QDateTime::currentDateTime().toTime_t()));
     l_jwtObj.appendClaim("ValidTo", QString::number(QDateTime::currentDateTime().addDays(365).toTime_t()));
@@ -152,4 +159,3 @@ QString GetVissTestDataJson::getAuthJson(){
 
     return dataJson;
 }
-

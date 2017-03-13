@@ -9,29 +9,42 @@ int main(int argc, char *argv[])
 
     QCoreApplication a(argc, argv);
 
-    W3cTestClient client(QUrl(QStringLiteral("wss://127.0.0.1:8080")));
+    // if only one argument, localhost is default and first argument is option
+    QString host = "wss://127.0.0.1:8080";
+    QString option = argv[1];
+
+    // if 2 arguments, first is host, second is option
+    if (argc > 2)
+    {
+        host = QString(argv[1]);
+        option = argv[2];
+    }
+
+    QUrl url(host);
+    W3cTestClient client(url);
+
 
     // Parse options
     if (argc > 1)
     {
-        QString str(argv[1]);
-        if (str == "-subscribe")
+        QString str(option);
+        if (option == "-subscribe")
         {
             client.setTest(W3cTestClient::TestCase::SUBSCRIBE_UNSUBSCRIBE);
         }
-        else if (str == "-subscribeall")
+        else if (option == "-subscribeall")
         {
             client.setTest(W3cTestClient::TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL);
         }
-        else if (str == "-authorize")
+        else if (option == "-authorize")
         {
             client.setTest(W3cTestClient::TestCase::AUTHORIZE_SUCCESS);
         }
-        else if (str == "-getvss")
+        else if (option == "-getvss")
         {
             client.setTest(W3cTestClient::TestCase::GET_VSS);
         }
-        else if (str == "-setget")
+        else if (option == "-setget")
         {
             client.setTest(W3cTestClient::TestCase::SET_GET);
         }
@@ -43,6 +56,7 @@ int main(int argc, char *argv[])
             client.setTest(W3cTestClient::TestCase::SUBSCRIBE_UNSUBSCRIBE);
         }
     }
+
     Q_UNUSED(client);
 
     return a.exec();

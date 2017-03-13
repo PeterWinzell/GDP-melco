@@ -36,9 +36,6 @@ void GetVSSHandler::processRequest()
     QJsonObject vss = m_pSignalInterface->getVSSNode(path);
 
     QJsonObject response;
-
-    vss_request req = m_pVissrequest->getAction();
-
     response.insert("vss", vss);
     response.insert("timestamp", time);
     response.insert("action", "getVSS");
@@ -48,6 +45,5 @@ void GetVSSHandler::processRequest()
     QString message = jsonDoc.toJson();
 
     m_pClient->sendTextMessage(message);
-
 }
 
