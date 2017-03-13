@@ -32,55 +32,96 @@ AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSi
 void AuthorizationHandler::processRequest()
 {
     qDebug() << " processing authorization handler requests";
-    // qDebug() << " token is : " + (m_pVissrequest->getTokens().["authorization"]);
 
-    VissTokenValidator tokenValidator(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString());
+    // TODO Make it so that these are added to VISSRequest instead?
+    bool userToken = !m_pVissrequest->getTokens().toJsonObject()["authorization"].isNull();
+    bool deviceToken = !m_pVissrequest->getTokens().toJsonObject()["www-vehicle-device"].isNull();
 
-    if (tokenValidator.validateToken("mydirtysecret"))
+    bool authorized;
+    if(userToken && !deviceToken)
     {
-        qDebug() << " TOKEN IS VERIFIED \n";
+        authorized = validateUserToken();
     }
-    else
+    else if(!userToken && deviceToken)
     {
-        qDebug() << " TOKEN IS NOT VERIFIED \n";
+        authorized = validateDeviceToken();
     }
-
-    QString zePayload = tokenValidator.getJsonPayload();
-
-    qDebug() << " token payload is " + (zePayload);
-
-    QJsonDocument doc2;
-    doc2 = QJsonDocument::fromJson(zePayload.toUtf8());
-
-    QJsonObject tokenpl = doc2.object();
-    QString issuer = tokenpl["iss"].toString();
-    qDebug() << " Token issuer is : " + issuer;
-
-    QString valid_from = tokenpl["ValidFrom"].toString();
-    qDebug() << " ValidFrom : " + valid_from;
-
-    QString valid_to = tokenpl["ValidTo"].toString();
-    qDebug() << " Valid To : " + valid_to;
-
-    QString path = tokenpl["path"].toString();
-    qDebug() << " Signal path is : " + path;
-
-    QString actions = tokenpl["actions"].toString();
-    qDebug() << " Actions are : " + actions;
-
-
+    else if(userToken && deviceToken)
+    {
+        authorized = validateUserToken() && validateDeviceToken();
+    }
 
 
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
 
     QJsonObject response;
     response.insert("action", "authorize");
-    response.insert("requestId", "3");
-    response.insert("TTL", 42);
+    response.insert("requestId", m_pVissrequest->getRequestId());
     response.insert("timestamp", time);
+
+    if (authorized)
+    {
+        qDebug() << " TOKEN IS VERIFIED \n";
+
+        /* QString zePayload = tokenValidator.getJsonPayload();
+
+        //qDebug() << " token payload is " + (zePayload);
+
+        QJsonDocument doc2;
+        doc2 = QJsonDocument::fromJson(zePayload.toUtf8());
+
+        QJsonObject tokenpl = doc2.object();
+        QString issuer = tokenpl["iss"].toString();
+        //qDebug() << " Token issuer is : " + issuer;
+
+        QString valid_from = tokenpl["ValidFrom"].toString();
+        //qDebug() << " ValidFrom : " + valid_from;
+
+        QString valid_to = tokenpl["ValidTo"].toString();
+        //qDebug() << " Valid To : " + valid_to;
+
+        QString path = tokenpl["path"].toString();
+        //qDebug() << " Signal path is : " + path;
+
+        QString actions = tokenpl["actions"].toString();
+        //qDebug() << " Actions are : " + actions;
+        */
+        // Time to live ?
+        //QDateTime::currentDateTime().msecsTo(QDateTime::fromString(valid_to))
+
+
+        response.insert("TTL", 32);
+        // TODO Implement Authorization Success handling
+        // TODO Add calculation of time to live.
+        // TODO Add to AuthorizationManager
+        addAuthorization();
+    }
+    else
+    {
+        qDebug() << " TOKEN IS NOT VERIFIED \n";
+        response.insert("error", "error");
+        // TODO Implement Authorization Failed handling
+
+    }
 
     QJsonDocument jsonDoc(response);
     QString message = jsonDoc.toJson();
 
     m_pClient->sendTextMessage(message);
+}
+
+bool AuthorizationHandler::validateUserToken()
+{
+    VissTokenValidator tokenValidator(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString());
+    return tokenValidator.validateToken("mydirtysecret");
+}
+bool AuthorizationHandler::validateDeviceToken()
+{
+    VissTokenValidator tokenValidator(m_pVissrequest->getTokens().toJsonObject()["www-vehicle-device"].toString());
+    return tokenValidator.validateToken("mydirtysecret");
+}
+void AuthorizationHandler::addAuthorization()
+{
+
+
 }

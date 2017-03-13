@@ -27,6 +27,10 @@ class AuthorizationHandler: public RequestHandler
 public:
     explicit AuthorizationHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,WebSocketWrapper* client=0);
     void processRequest();
+private:
+    bool validateUserToken();
+    bool validateDeviceToken();
+    void addAuthorization();
 };
 
 #endif // AUTHORIZATIONHANDLER_H
