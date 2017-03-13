@@ -204,6 +204,7 @@ void W3cTestClient::unsubscribe()
 
 void W3cTestClient::unsubscribeAll()
 {
+    qDebug() << " sending ubsuscribe all to server \n";
     QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL);
     m_webSocket.sendTextMessage(usubscribeAllMess);
 }
