@@ -335,4 +335,3 @@ QStringList QJsonWebToken::supportedAlgorithms()
     // TODO : support other algorithms
     return QStringList() << "HS256" << "HS384" << "HS512";
 }
-

@@ -17,7 +17,6 @@ SOURCES += main.cpp \
     request-handler/gethandler.cpp \
     request-handler/authorizationhandler.cpp \
     jwt-utility/visstokenvalidator.cpp \
-    jwt-utility/qjsonwebtoken.cpp \
     request-handler/sethandler.cpp \
     request-handler/subscribehandler.cpp \
     request-handler/unsubscribeallhandler.cpp \
@@ -29,7 +28,6 @@ SOURCES += main.cpp \
     OpenDSTCPClient/opendstcpclient.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     request-handler/unsubnotifier.cpp
-    
 
 HEADERS += \
     w3cserver.h \
@@ -37,7 +35,6 @@ HEADERS += \
     jwt-utility/visstokenvalidator.h \
     jsonrequestparser.h \
     vissrequest.h \
-    jwt-utility/qjsonwebtoken.h \
     request-handler/gethandler.h \
     request-handler/authorizationhandler.h \
     request-handler/sethandler.h \
@@ -58,3 +55,9 @@ INSTALLS += target
 
 RESOURCES += \
     ../ssl.qrc
+
+INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
+else:unix:!macx: LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
