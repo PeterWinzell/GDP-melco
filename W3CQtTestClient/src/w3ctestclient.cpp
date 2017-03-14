@@ -14,31 +14,43 @@ W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
     QObject(parent), m_url(url)
 {
     m_test = TestCase::SUBSCRIBE_UNSUBSCRIBE; //default testcase
-
-    connect(&m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
-    typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
-    connect(&m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors),
-            this, &W3cTestClient::onSslErrors);
+}
+W3cTestClient::~W3cTestClient()
+{
+    if(m_webSocket->isValid()) { m_webSocket->close(); }
+    m_webSocket->deleteLater();
 }
 
 void W3cTestClient::setTest(TestCase test)
 {
     m_test = test;
-    m_webSocket.open(QUrl(m_url));
+}
+
+void W3cTestClient::startClient(QList<W3cTestClient::TestCase> tests)
+{
+    m_webSocket = new QWebSocket();
+
+    //qDebug() << tests.length();
+
+    connect(m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
+    typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
+    connect(m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors), this, &W3cTestClient::onSslErrors);
+
+    m_webSocket->open(QUrl(m_url));
 }
 
 void W3cTestClient::onConnected()
 {
     qDebug() << "WebSocket connected";
-    connect(&m_webSocket, &QWebSocket::textMessageReceived,
+    connect(m_webSocket, &QWebSocket::textMessageReceived,
             this, &W3cTestClient::onTextMessageReceived);
 
     //QString authMess = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
     //qDebug() << " JSON SENT TO SEVER IS: " + authMess;
-    // m_webSocket.sendTextMessage(authMess);
+    // m_webSocket->sendTextMessage(authMess);
 
     // QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    //  m_webSocket.sendTextMessage(subMess);
+    //  m_webSocket->sendTextMessage(subMess);
 
     switch (m_test)
     {
@@ -193,7 +205,7 @@ void W3cTestClient::RunSubscribeUnsubscribeTest()
     qDebug() << " running usubscribe test \n";
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    m_webSocket.sendTextMessage(subMess);
+    m_webSocket->sendTextMessage(subMess);
     QTimer::singleShot(10000,this,SLOT(unsubscribe()));
 
 }
@@ -205,9 +217,9 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
     QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
 
     //do 3 subscriptions
-    m_webSocket.sendTextMessage(subMess1);
-    m_webSocket.sendTextMessage(subMess2);
-    m_webSocket.sendTextMessage(subMess3);
+    m_webSocket->sendTextMessage(subMess1);
+    m_webSocket->sendTextMessage(subMess2);
+    m_webSocket->sendTextMessage(subMess3);
 
     QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
 
@@ -218,7 +230,7 @@ void W3cTestClient::RunGetVssTest()
     qDebug() << " running getvss test \n";
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
-    m_webSocket.sendTextMessage(subMess);
+    m_webSocket->sendTextMessage(subMess);
 }
 
 void W3cTestClient::RunAuthorizeTest()
@@ -226,20 +238,20 @@ void W3cTestClient::RunAuthorizeTest()
     qDebug() << "Running Authorize Test";
 
     QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
-    m_webSocket.sendTextMessage(dataJson);
+    m_webSocket->sendTextMessage(dataJson);
 }
 
 void W3cTestClient::unsubscribe()
 {
     qDebug() << " sending usubscribe to server \n";
     QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE,m_unsubscribeCachedSubscriptionId);
-    m_webSocket.sendTextMessage(unsubMess);
+    m_webSocket->sendTextMessage(unsubMess);
 }
 
 void W3cTestClient::unsubscribeAll()
 {
     QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL);
-    m_webSocket.sendTextMessage(usubscribeAllMess);
+    m_webSocket->sendTextMessage(usubscribeAllMess);
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
@@ -256,5 +268,5 @@ void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
     }
 
 
-    m_webSocket.ignoreSslErrors();
+    m_webSocket->ignoreSslErrors();
 }

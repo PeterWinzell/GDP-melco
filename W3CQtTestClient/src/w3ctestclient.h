@@ -16,6 +16,7 @@ class W3cTestClient : public QObject
     Q_OBJECT
 public:
     explicit W3cTestClient(const QUrl &url, QObject *parent = Q_NULLPTR);
+    ~W3cTestClient();
 
     void RunSubscribeUnsubscribeAllTest();
     void RunSubscribeUnsubscribeTest();
@@ -32,6 +33,10 @@ public:
     };
 
     void setTest(TestCase test);
+    void startClient(QList<W3cTestClient::TestCase> tests);
+
+signals:
+    void completed(bool result);
 
 private Q_SLOTS:
     void onConnected();
@@ -43,7 +48,7 @@ private Q_SLOTS:
     void unsubscribeAll();
 private:
     QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
-    QWebSocket m_webSocket;
+    QWebSocket *m_webSocket;
     QUrl m_url;
     TestCase m_test;
 };
