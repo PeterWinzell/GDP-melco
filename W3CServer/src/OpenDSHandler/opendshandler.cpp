@@ -4,90 +4,114 @@
 #include <QDebug>
 #include <QStringBuilder>
 #include <QTcpSocket>
+#include <QTime>
+#include <QCoreApplication>
+#include <QDomDocument>
 
 OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
 {
+    qDebug() << "handler executing";
+
+    //Initiate socket and connect to simulation server (note that IP needs to be changed to match your server IP)
+    m_Socket = new QTcpSocket(this);
+    connect(m_Socket, &QTcpSocket::connected,this, &OpenDSHandler::connected);
+    connect(m_Socket, &QTcpSocket::disconnected,this, &OpenDSHandler::disconnected);
+    connect(m_Socket, &QTcpSocket::bytesWritten,this, &OpenDSHandler::bytesWritten);
+    connect(m_Socket, &QTcpSocket::readyRead,this, &OpenDSHandler::readyRead);
+    connect(m_Socket, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error), this, &OpenDSHandler::socketError);
+
     // Reading server settings from settings file
     QPointer<QSettings> settings = new QSettings();
     settings->beginGroup("OpenDSHandler");
     settings->beginGroup("servers");
-    QString server_ip = settings->value("server_ip").toString();
-    int server_port = settings->value("server_port").toInt();
+    m_server_ip = settings->value("server_ip").toString();
+    m_server_port = settings->value("server_port").toInt();
+    m_delay_sec = settings->value("delay_sec").toInt();
 
-    //Initiate socket and connect to simulation server (note that IP needs to be changed to match your server IP)
-    QTcpSocket socket = new QTcpSocket(this);
-    connect(socket, SIGNAL(connected()),this, SLOT(connected()));
-    connect(socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
-    connect(socket, SIGNAL(bytesWritten(qint64)),this, SLOT(bytesWritten(qint64)));
-    connect(socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
-
-
-
-
-    socket->connectToHost(server_ip, server_port);
-
-//    m_notifier(socket.);
-
-//    connect(&_nam, &QNetworkAccessManager::networkAccessibleChanged, this, &SpaCloudPinger::onNetworkAccessibleChanged);
-
-//    //Initiate socket and connect to simulation server (note that IP needs to be changed to match your server IP)
-//    socket = new QTcpSocket(this);
-//    socket->connectToHost("192.168.31.119", 5678);
-//    //192.168.31.107
-
-
-//    qDebug() << "Trying to connect...";
-//    if(socket->waitForConnected(2000))
-//    {
-//        qDebug() << "Connected!";
-//    }
-
-
-//    QString message = readSubscribeMessage();
-//    qDebug() << "SubscribeMessage\n" << message;
-
+    m_Socket->connectToHost(m_server_ip, m_server_port);
 }
 
-
-void MyTcpSocket::connected()
+void OpenDSHandler::reconnect()
 {
-    qDebug() << "connected...";
-
-    // Hey server, tell me about you.
-    socket->write("HEAD / HTTP/1.0\r\n\r\n\r\n\r\n");
+    //if connection to OpenDS Server was lost we wait for x seconds and then retries!
+    delay(m_delay_sec);
+    // "times up, should now retry....";
+    m_Socket->connectToHost(m_server_ip, m_server_port);
 }
 
-void MyTcpSocket::disconnected()
+void OpenDSHandler::delay(int delay)
 {
-    qDebug() << "disconnected...";
+    QTime delayTime = QTime::currentTime().addSecs(delay);
+    while (QTime::currentTime() < delayTime)
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
 }
 
-void MyTcpSocket::bytesWritten(qint64 bytes)
+void OpenDSHandler::xmlParser(QString xmlData)
+{
+    //Get your xml into xmlText(you can use QString instead og QByteArray)
+    QDomDocument doc;
+    doc.setContent(xmlData);
+
+    //Parse data
+    QDomNodeList speed=doc.elementsByTagName("speed");
+    QDomNodeList rpm=doc.elementsByTagName("actualRpm");
+
+    //notify listners for valueChanged
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Speed, speed.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::RPM, rpm.at(0).toElement().text());
+}
+
+void OpenDSHandler::connected()
+{
+    qDebug() << "connected to OpenDS Server, sending subscribe message";
+    QByteArray message = getSubscribeMessage();
+    qDebug() << message;
+
+    m_Socket->write(message);
+}
+
+void OpenDSHandler::disconnected()
+{
+    qDebug() << "disconnected... reconnecting";
+    reconnect();
+}
+
+void OpenDSHandler::bytesWritten(qint64 bytes)
 {
     qDebug() << bytes << " bytes written...";
 }
 
-void MyTcpSocket::readyRead()
+void OpenDSHandler::readyRead()
 {
-    qDebug() << "reading...";
-
     // read the data from the socket
-    qDebug() << socket->readAll();
+   xmlParser(m_Socket->readAll());
+}
+
+void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
+{
+    qDebug() << "something went wrong...." << error;
+
+    // check if socket is still connected or if we need to reconnect!
+    if(!(m_Socket->state() == QTcpSocket::ConnectedState))
+    {
+        qDebug() << "Trying to recover";
+        reconnect();
+    }
 }
 
 
-
-
-QString OpenDSHandler::readSubscribeMessage()
+QByteArray OpenDSHandler::getSubscribeMessage()
 {
-    QPointer<QSettings> settings = new QSettings();
-
     // Reading the SubscribeMessage from settings file
+    QPointer<QSettings> settings = new QSettings();
     settings->beginGroup("OpenDSHandler");
     int size = settings->beginReadArray("SubscribeMessage");
-    QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r<Message>""\r";
-    QStringList list;
 
+    // Constructing readSubscribeMessage from settings file
+    QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
+    message = message % "<Message>""\r";
     for (int i = 0; i < size; ++i)
     {
         settings->setArrayIndex(i);
@@ -96,34 +120,11 @@ QString OpenDSHandler::readSubscribeMessage()
         QString event = "<Event Name=\"" % key % "\">" % value % "</Event>\r";
         message = message % event;
     }
-    message = message % "<Event Name=\"EstablishConnection\"/>\r";
-    message = message % "</Message>";
+    message = message % "</Message>\r";
 
     settings->endArray();
     settings->endGroup();
 
-    qDebug() << "SubscribeMessage\n" << message;
-
-    return message;
-
-
-//    <?xml version="1.0" encoding="UTF-8"?>
-//    <Message>
-//    <Event Name="Unsubscribe">/root/thisVehicle</Event>
-//    <Event Name="Subscribe">/root/thisVehicle/exterior/engineCompartment/engine/Properties/actualRpm</Event>
-//    <Event Name="Subscribe">/root/thisVehicle/physicalAttributes/Properties/speed</Event>
-//    <Event Name="SetUpdateInterval">200</Event>
-//    <Event Name="EstablishConnection"/>
-//    </Message>
-
-
-//    //xml message for starting subscribing to RPM and speed
-//    char xmlMsgSubscribe[]= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\
-//                  <Message>\r\
-//                    <Event Name=\"Unsubscribe\">/root/thisVehicle</Event>\r\
-//                    <Event Name=\"Subscribe\">/root/thisVehicle/exterior/engineCompartment/engine/Properties/actualRpm</Event>\r\
-//                    <Event Name=\"Subscribe\">/root/thisVehicle/physicalAttributes/Properties/speed</Event>\r\
-//                    <Event Name=\"SetUpdateInterval\">200</Event>\r \
-//                    <Event Name=\"EstablishConnection\"/>\r \
-//                  </Message>\r";
+    return message.toLocal8Bit();
 }
+

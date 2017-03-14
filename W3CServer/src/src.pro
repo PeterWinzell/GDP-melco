@@ -1,5 +1,6 @@
 QT += core websockets
 QT -= gui
+QT += xml
 
 CONFIG += c++11
 
@@ -55,7 +56,6 @@ INSTALLS += target
 
 RESOURCES += \
     ../ssl.qrc
-
 
 INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 

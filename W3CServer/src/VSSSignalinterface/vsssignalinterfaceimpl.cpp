@@ -17,6 +17,24 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
     loadJson(vssFile);
 }
 
+void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
+{
+    //qDebug()  << "VSSSignalInterfaceImpl::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    switch (type) {
+    case CarSignalType::RPM:
+        m_rpm = value;
+        break;
+    case CarSignalType::Speed:
+        m_speed = value;
+        break;
+    default:
+        break;
+    }
+}
+
 void VSSSignalInterfaceImpl::loadJson(const QString &fileName)
 {
     QFile jsonFile(fileName);
@@ -103,10 +121,10 @@ void VSSSignalInterfaceImpl::getTreeNodes(QJsonObject& tree, QStringList& path, 
     {
         QString key = path[0];
 
-//        if (key != "*")
-//        {
+        //        if (key != "*")
+        //        {
         removeAllKeysButOne(tree, key);
-//        }
+        //        }
 
         tree = tree.value(key).toObject();
 
@@ -141,30 +159,30 @@ void VSSSignalInterfaceImpl::createJsonVssTree(QVector<JsonNode>& nodes, QJsonOb
 
         if (node.isBranch)
         {
-//            QStringList keys = node.json.keys();
-//            QVector<JsonNode> jsonObjects;
+            //            QStringList keys = node.json.keys();
+            //            QVector<JsonNode> jsonObjects;
 
-//            // sort key order to get children last
+            //            // sort key order to get children last
 
-//            foreach (QString key, keys)
-//            {
-//                JsonNode copyNode;
-//                copyNode.key = key;
-//                copyNode.json = node.json.value(key).toObject();
-//                jsonObjects.push_back(copyNode);
-//            }
+            //            foreach (QString key, keys)
+            //            {
+            //                JsonNode copyNode;
+            //                copyNode.key = key;
+            //                copyNode.json = node.json.value(key).toObject();
+            //                jsonObjects.push_back(copyNode);
+            //            }
 
-//            foreach (QString key, keys)
-//            {
-//                node.json.remove(key);
-//            }
+            //            foreach (QString key, keys)
+            //            {
+            //                node.json.remove(key);
+            //            }
 
-//            foreach (JsonNode n, jsonObjects)
-//            {
-//                node.json.insert(n.key, n.json);
-//            }
+            //            foreach (JsonNode n, jsonObjects)
+            //            {
+            //                node.json.insert(n.key, n.json);
+            //            }
 
-//            // will be placed last
+            //            // will be placed last
 
             node.json.insert("children", json);
 

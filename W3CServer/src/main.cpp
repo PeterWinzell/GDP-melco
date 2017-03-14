@@ -34,6 +34,10 @@ int main(int argc, char *argv[])
         }
     }
 
+//qDebug() << "här är jag";
+  //  OpenDSHandler handler;
+//qDebug() << "nu är jag inte där...";
+
     // reads W3CServer settings values
     settings->beginGroup("W3CServer");
     qint16 serverPort = settings->value("server_port").toInt();
@@ -41,7 +45,6 @@ int main(int argc, char *argv[])
     bool serverDebug = settings->value("server_debug").toBool();
     settings->endGroup();
 
-    OpenDSHandler handler;
 
     W3CServer *server = new W3CServer(serverPort,serverWSS,serverDebug);
     QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);

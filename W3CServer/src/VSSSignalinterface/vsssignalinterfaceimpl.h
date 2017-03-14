@@ -9,6 +9,7 @@
 class VSSSignalInterfaceImpl : public VSSSignalInterface
 {
 public:
+
     VSSSignalInterfaceImpl(const QString &vssFile);
     QString getSignalValue(const QString& path);
     qint8   setSignalValue(const QString& path);
@@ -21,6 +22,17 @@ public:
         QString key;
         bool isBranch;
     };
+
+    enum CarSignalType
+    {
+        RPM,
+        Speed
+    };
+    Q_ENUM(CarSignalType)
+
+public slots:
+    void updateValue(CarSignalType type, QString value);
+
 
 private:
     void loadJson(const QString& fileName);
