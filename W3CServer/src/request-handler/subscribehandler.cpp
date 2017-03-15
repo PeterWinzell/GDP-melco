@@ -23,6 +23,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDateTime>
+#include <QCoreApplication>
+#include <QEventLoop>
 #include "unsubnotifier.h"
 #include "subscribehandler.h"
 #include "subscriptions.h"
@@ -74,6 +76,7 @@ void SubscribeHandler::processRequest()
         }
 
         //Sleep for the period defined by filter
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
 
@@ -82,6 +85,7 @@ void SubscribeHandler::processRequest()
 
 void SubscribeHandler::socketDisconnected()
 {
+    qDebug() << " socket disconnected slot called in subscribehandler";
     m_dosubscription = false;
 }
 
