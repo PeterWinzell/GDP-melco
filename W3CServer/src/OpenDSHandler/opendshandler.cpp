@@ -28,6 +28,10 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
     m_server_port = settings->value("server_port").toInt();
     m_delay_sec = settings->value("delay_sec").toInt();
 
+
+    qDebug() << "server ip: " << m_server_ip;
+    qDebug() << "server port: " << m_server_port;
+
     m_Socket->connectToHost(m_server_ip, m_server_port);
 }
 
@@ -57,10 +61,45 @@ void OpenDSHandler::xmlParser(QString xmlData)
     //Parse data
     QDomNodeList speed=doc.elementsByTagName("speed");
     QDomNodeList rpm=doc.elementsByTagName("actualRpm");
+    QDomNodeList pressedState=doc.elementsByTagName("pressedState"); // GASPEDAL + BRAKEPEDAL
+    QDomNodeList steerAngle=doc.elementsByTagName("steerAngle");
+    QDomNodeList headlights=doc.elementsByTagName("headlights");
+    QDomNodeList currentGear=doc.elementsByTagName("currentGear");
+    QDomNodeList running=doc.elementsByTagName("running");
+    QDomNodeList actualRpm=doc.elementsByTagName("actualRpm");
+    QDomNodeList currentConsumption=doc.elementsByTagName("currentConsumption");
+    QDomNodeList maxAmount=doc.elementsByTagName("maxAmount");
+    QDomNodeList actualAmount=doc.elementsByTagName("actualAmount");
+    QDomNodeList latitude=doc.elementsByTagName("latitude");
+    QDomNodeList longitude=doc.elementsByTagName("longitude");
+    QDomNodeList altitude=doc.elementsByTagName("altitude");
+    QDomNodeList orientation=doc.elementsByTagName("orientation");
+    QDomNodeList rise=doc.elementsByTagName("rise");
+    QDomNodeList accelerationLateral=doc.elementsByTagName("accelerationLateral");
+    QDomNodeList rotation=doc.elementsByTagName("rotation");
+    QDomNodeList accelerationRotation=doc.elementsByTagName("accelerationRotation");
+    QDomNodeList acceleration=doc.elementsByTagName("acceleration");
 
     //notify listners for valueChanged
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Speed, speed.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::RPM, rpm.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::GasPedal, pressedState.at(1).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::BrakePedal, pressedState.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::SteerAngle, steerAngle.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Headlights, headlights.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::EngineRunning, running.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CurrentFuelConsumption, currentConsumption.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::FuelTankMax, maxAmount.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::FuelTankActual, actualAmount.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionLatitude, latitude.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionLongitude, longitude.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionAltitude, altitude.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Orientation, orientation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rise, rise.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationLateral, accelerationLateral.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rotation, rotation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationRotation, accelerationRotation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Acceleration, acceleration.at(0).toElement().text());
 }
 
 void OpenDSHandler::connected()
@@ -91,12 +130,12 @@ void OpenDSHandler::readyRead()
 
 void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
 {
-    qDebug() << "something went wrong...." << error;
+//    qDebug() << "something went wrong...." << error;
 
     // check if socket is still connected or if we need to reconnect!
     if(!(m_Socket->state() == QTcpSocket::ConnectedState))
     {
-        qDebug() << "Trying to recover";
+//        qDebug() << "Trying to recover";
         reconnect();
     }
 }

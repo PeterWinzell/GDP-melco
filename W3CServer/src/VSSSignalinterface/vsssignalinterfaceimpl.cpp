@@ -19,7 +19,7 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 
 void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
 {
-    //qDebug()  << "VSSSignalInterfaceImpl::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
+    qDebug()  << "VSSSignalInterfaceImpl::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
     QMutex mutex;
     QMutexLocker locker(&mutex);
 

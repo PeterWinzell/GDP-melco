@@ -6,6 +6,7 @@
 #include <QPointer>
 #include <QFileInfo>
 #include <QFile>
+#include <QDir>
 
 #include <OpenDSHandler/opendshandler.h>
 
@@ -21,22 +22,29 @@ int main(int argc, char *argv[])
     QPointer<QSettings> settings = new QSettings();
     QSharedPointer<QFileInfo> checkFile(new QFileInfo(settings->fileName()));
 
+    qDebug() << "Try to open settings file: " << settings->fileName();
+
     //check if settings file exists on local filesystem otherwise copy
     //the default settings file from resources
     if(!checkFile->isFile())
     {
-        //could we copy?
-        if (QFile::copy(":/W3CServer.ini",settings->fileName()))
+        qDebug() << "No settings file found";
+
+        if(QDir().mkpath(checkFile->absolutePath()))
         {
-            //waits for settings file to become available and loads content
-            while(!checkFile->isFile());
-            settings->sync();
+            qDebug() << "Path exists";
+
+            //could we copy?
+            if (QFile::copy(":/W3CServer.ini",settings->fileName()))
+            {
+                qDebug() << "Default settings file copied";
+
+                //waits for settings file to become available and loads content
+                while(!checkFile->isFile());
+                settings->sync();
+            }
         }
     }
-
-//qDebug() << "här är jag";
-  //  OpenDSHandler handler;
-//qDebug() << "nu är jag inte där...";
 
     // reads W3CServer settings values
     settings->beginGroup("W3CServer");

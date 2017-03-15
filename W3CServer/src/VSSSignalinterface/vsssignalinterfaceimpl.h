@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMutex>
 #include "vsssignalinterface.h"
-#include <QMutex>
+
 
 class VSSSignalInterfaceImpl : public VSSSignalInterface
 {
@@ -26,7 +26,24 @@ public:
     enum CarSignalType
     {
         RPM,
-        Speed
+        Speed,
+        GasPedal,
+        BrakePedal,
+        SteerAngle,
+        Headlights,
+        EngineRunning,
+        CurrentFuelConsumption,
+        FuelTankMax,
+        FuelTankActual,
+        PositionLatitude,
+        PositionLongitude,
+        PositionAltitude,
+        Orientation,
+        Rise,
+        AccelerationLateral,
+        Rotation,
+        AccelerationRotation,
+        Acceleration
     };
     Q_ENUM(CarSignalType)
 
