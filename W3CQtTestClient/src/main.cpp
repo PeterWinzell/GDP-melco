@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
     QUrl url(host);
     W3cTestClient client(url);
 
+
     // Parse options
     if (argc > 1)
     {
@@ -52,8 +53,7 @@ int main(int argc, char *argv[])
             //Default
             qDebug() << "Unknown argument: " << str;
             qDebug() << "Running default test";
-            client.setTest(W3cTestClient::TestCase::AUTHORIZE_SUCCESS);
-            //client.setTest(W3cTestClient::TestCase::SUBSCRIBE_UNSUBSCRIBE);
+            client.setTest(W3cTestClient::TestCase::SUBSCRIBE_UNSUBSCRIBE);
         }
     }
 

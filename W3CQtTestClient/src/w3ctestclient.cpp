@@ -68,6 +68,7 @@ void W3cTestClient::onConnected()
     //RunSubscribeUnsubscribeTest();
     //RunSubscribeUnsubscribeAllTest();
 
+
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)

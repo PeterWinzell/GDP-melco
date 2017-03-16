@@ -20,6 +20,7 @@ public:
     void RunSubscribeUnsubscribeAllTest();
     void RunSubscribeUnsubscribeTest();
     void RunGetVssTest();
+    void getVssTest();
     void RunAuthorizeTest();
 
     enum class TestCase

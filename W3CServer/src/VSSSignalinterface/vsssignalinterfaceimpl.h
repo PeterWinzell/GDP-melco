@@ -2,12 +2,14 @@
 #define VSSSIGNALINTERFACEIMPL_H
 
 #include <QObject>
-#include "vsssignalinterface.h"
 #include <QMutex>
+#include "vsssignalinterface.h"
+
 
 class VSSSignalInterfaceImpl : public VSSSignalInterface
 {
 public:
+
     VSSSignalInterfaceImpl(const QString &vssFile);
     QString getSignalValue(const QString& path);
     qint8   setSignalValue(const QString& path);
@@ -21,6 +23,34 @@ public:
         bool isBranch;
     };
 
+    enum CarSignalType
+    {
+        RPM,
+        Speed,
+        GasPedal,
+        BrakePedal,
+        SteerAngle,
+        Headlights,
+        EngineRunning,
+        CurrentFuelConsumption,
+        FuelTankMax,
+        FuelTankActual,
+        PositionLatitude,
+        PositionLongitude,
+        PositionAltitude,
+        Orientation,
+        Rise,
+        AccelerationLateral,
+        Rotation,
+        AccelerationRotation,
+        Acceleration
+    };
+    Q_ENUM(CarSignalType)
+
+public slots:
+    void updateValue(CarSignalType type, QString value);
+
+
 private:
     void loadJson(const QString& fileName);
     void getTreeNodes(QJsonObject& tree, QStringList& path, QVector<JsonNode>& nodes);
@@ -29,9 +59,9 @@ private:
     void createJsonVssTree(QVector<JsonNode>& nodes, QJsonObject &json);
 
 private:
-    QString rpm;
-    QString speed;
-    QMutex mutex;
+    QString m_rpm;
+    QString m_speed;
+    QMutex m_mutex;
 
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;

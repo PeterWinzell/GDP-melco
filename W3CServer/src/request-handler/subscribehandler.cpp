@@ -35,6 +35,7 @@ const int SubscribeHandler::m_defaultIntervalMs = 1000;
 SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
+    m_pSignalInterface = signalInterface;
 }
 
 void SubscribeHandler::processRequest()
@@ -60,7 +61,7 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        QString value = getSignalValue(m_pVissrequest->getSignalPath());
+        QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
 
         if (isFilterPass(value))
         {

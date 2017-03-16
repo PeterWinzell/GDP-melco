@@ -18,6 +18,7 @@
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
 #include "messaging/websocketwrapper.h"
+#include "OpenDSHandler/opendshandler.h"
 
 QT_USE_NAMESPACE
 
@@ -84,6 +85,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
     const QString vssFile = "/etc/vss_rel_1.json";
     m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
+    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
+    connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
 
 W3CServer::~W3CServer()
