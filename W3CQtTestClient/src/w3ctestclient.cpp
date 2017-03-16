@@ -138,7 +138,6 @@ void W3cTestClient::onTextMessageReceived(QString message)
             qDebug() << " currentTime is : " + time_t.toString() << " \n";
             qDebug() << " The value is :   " << value << " \n";
 
-            m_webSocket.close();
         }
         else if (actionString == "getVSS")
         {
