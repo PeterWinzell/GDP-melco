@@ -41,7 +41,7 @@ W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tes
 
 W3cTestClientHandler::~W3cTestClientHandler()
 {
-
+    QCoreApplication::exit(0);
 }
 
 void W3cTestClientHandler::handleTestResult(TestResult* result)
@@ -51,4 +51,7 @@ void W3cTestClientHandler::handleTestResult(TestResult* result)
 void W3cTestClientHandler::handleTestClientCompletion()
 {
     qDebug() << " Test Client Finished!";
+    m_finishedClients++;
+
+    if(m_finishedClients >= m_clients.length()) this->deleteLater();
 }

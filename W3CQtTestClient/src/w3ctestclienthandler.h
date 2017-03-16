@@ -22,6 +22,7 @@ signals:
 private:
    //QVector<QSharedPointer<W3cTestClient>> clients;
    QVector<QThread*> m_clients;
+   int m_finishedClients = 0;
 };
 
 #endif // W3CTESTCLIENTHANDLER_H

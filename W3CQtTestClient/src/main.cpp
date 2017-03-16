@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
         else
         {
             qDebug() << "Unknown argument: " << test;
-			QCoreApplication::exit(-1);
         }
     }
 
@@ -97,8 +96,6 @@ int main(int argc, char *argv[])
 
     W3cTestClientHandler handler(nrOfClients, tests, randomize, secure, url);
 
-
     Q_UNUSED(handler);
-	QCoreApplication::exit(0);
     return a.exec();
 }
