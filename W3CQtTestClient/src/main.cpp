@@ -96,6 +96,6 @@ int main(int argc, char *argv[])
 
 
     Q_UNUSED(handler);
-
+	QCoreApplication.exit(0);
     return a.exec();
 }
