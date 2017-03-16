@@ -23,10 +23,12 @@ int main(int argc, char *argv[])
     QCommandLineOption secureOption(QStringList() << "s" << "secure", QCoreApplication::translate("main", "Use Secure Web Sockets."));
     parser.addOption(secureOption);
 
-    QCommandLineOption urlOption(QStringList() << "u" << "url", QCoreApplication::translate("main", "Target W3CServer implementation url."));
+    QCommandLineOption urlOption(QStringList() << "u" << "url", QCoreApplication::translate("main", "Target W3CServer implementation url."),
+            QCoreApplication::translate("main", "url"));
     parser.addOption(urlOption);
 
-    QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."));
+    QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."),
+            QCoreApplication::translate("main", "nrOfClients"));
     parser.addOption(clientOption);
 
 
@@ -64,6 +66,7 @@ int main(int argc, char *argv[])
         else
         {
             qDebug() << "Unknown argument: " << test;
+			QCoreApplication::exit(-1);
         }
     }
 
