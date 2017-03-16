@@ -104,10 +104,16 @@ void W3cTestClient::onTextMessageReceived(QString message)
             {
                 QString errorMessage = errorObject["message"].toString();
                 qDebug() << errorMessage + " subId: " << subscriptionId;
+
+                // TODO: Remove me!
+                close(-1);
             }
             else
             {
                 qDebug() << "succesfully unsuscribed to : " << subscriptionId;
+
+                // TODO: Remove me!
+                close(0);
             }
         }
         else if (actionString == "unsubscribeAll")
@@ -147,11 +153,17 @@ void W3cTestClient::onTextMessageReceived(QString message)
             {
                 QString errorMessage = errorObject["message"].toString();
                 qDebug() << errorMessage + " request was :" << requestId;
+
+                // TODO: Remove me!
+                close(-1);
             }
             else
             {
                 QJsonObject vssObject = jsonObject["vss"].toObject();
                 qDebug() << " VSS data received: " << vssObject;
+
+                // TODO: Remove me!
+                close(0);
             }
         }
         else if(actionString == "authorize")
@@ -183,6 +195,11 @@ void W3cTestClient::onTextMessageReceived(QString message)
     }
 }
 
+void W3cTestClient::close(int result)
+{
+    m_webSocket.close();
+    QCoreApplication::exit(result);
+}
 
 /**
  * @brief W3cTestClient::RunSubscribeUnsubscribeTest

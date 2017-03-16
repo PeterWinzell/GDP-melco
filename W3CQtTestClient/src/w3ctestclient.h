@@ -41,11 +41,14 @@ private Q_SLOTS:
     //timer slots
     void unsubscribe();
     void unsubscribeAll();
+
 private:
+    void close(int result);
     QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
     QWebSocket m_webSocket;
     QUrl m_url;
     TestCase m_test;
+
 };
 
 #endif // W3CTESTCLIENT_H
