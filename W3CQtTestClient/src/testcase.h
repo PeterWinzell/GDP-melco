@@ -1,0 +1,29 @@
+<<<<<<< HEAD
+#ifndef TESTCASE_H
+#define TESTCASE_H
+
+enum class TestCase
+{
+    SUBSCRIBE_UNSUBSCRIBE,
+    SUBSCRIBEALL_UNSUBSCRIBEALL,
+    AUTHORIZE_SUCCESS,
+    GET_VSS,
+    SET_GET
+};
+
+#endif // TESTCASE_H
+=======
+#ifndef TESTCASE_H
+#define TESTCASE_H
+
+enum class TestCase
+{
+    SUBSCRIBE_UNSUBSCRIBE,
+    SUBSCRIBEALL_UNSUBSCRIBEALL,
+    AUTHORIZE_SUCCESS,
+    GET_VSS,
+    SET_GET
+};
+
+#endif // TESTCASE_H
+>>>>>>> 8426b50bc0330aee1954172cdf6a7e967943eb39
