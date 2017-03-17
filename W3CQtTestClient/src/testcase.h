@@ -1,6 +1,8 @@
 #ifndef TESTCASE_H
 #define TESTCASE_H
 
+#include <QString>
+
 enum class TestCase
 {
     SUBSCRIBE_UNSUBSCRIBE,
@@ -9,5 +11,16 @@ enum class TestCase
     GET_VSS,
     SET_GET
 };
+
+
+struct TestCaseDescription
+{
+    int id;
+    TestCase testCase;
+    QString name;
+    QString argument;
+    QString description;
+};
+
 
 #endif // TESTCASE_H

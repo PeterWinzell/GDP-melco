@@ -2,6 +2,7 @@
 #define W3CTESTCLIENTHANDLER_H
 
 #include "w3ctestclient.h"
+#include "clientreport.h"
 
 Q_DECLARE_METATYPE(QQueue<TestCase>)
 
@@ -13,15 +14,15 @@ public:
     ~W3cTestClientHandler();
 
 public slots:
-    void handleTestResult(TestResult* result);
-    void handleTestClientCompletion();
+    void handleTestClientCompletion(ClientReport* report);
 
 signals:
-    void startClients(const QQueue<TestCase> &);
+    void startClients();
 
 private:
    //QVector<QSharedPointer<W3cTestClient>> clients;
    QVector<QThread*> m_clients;
+   int m_finishedClients = 0;
 };
 
 #endif // W3CTESTCLIENTHANDLER_H

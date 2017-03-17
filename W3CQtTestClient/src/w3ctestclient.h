@@ -10,6 +10,7 @@
 #include <QtCore/QUrl>
 
 #include "testresult.h"
+#include "clientreport.h"
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
@@ -19,7 +20,7 @@ class W3cTestClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit W3cTestClient(const QUrl &url, QObject *parent = Q_NULLPTR);
+    explicit W3cTestClient(int clientId, QQueue<TestCase> tests, const QUrl &url, QObject *parent = Q_NULLPTR);
     ~W3cTestClient();
 
     void RunSubscribeUnsubscribeAllTest();
@@ -28,12 +29,12 @@ public:
     void RunAuthorizeTest();
 
 
-    void startClient(QQueue<TestCase> tests);
+    void startClient();
     void runTest();
 
 signals:
     void testresult(TestResult *result);
-    void testsfinished();
+    void testsfinished(ClientReport *m_currentRunningTest);
 
 private Q_SLOTS:
     void onConnected();
@@ -47,14 +48,17 @@ private:
     void passTestRun();
     void failTestRun();
 
-
+    ClientReport *m_clientReport;
 
     QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
     QWebSocket *m_webSocket = 0;
+
+    int m_clientId;
     QUrl m_url;
-    TestCase m_currentTest;
+
     QQueue<TestCase> m_tests;
-    TestResult* m_currentTestResult = 0;
+    TestCase m_currentTest;
+    QDateTime m_testStartTime;
 };
 
 #endif // W3CTESTCLIENT_H

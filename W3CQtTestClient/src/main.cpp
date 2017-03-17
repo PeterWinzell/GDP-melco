@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     QCommandLineOption secureOption(QStringList() << "s" << "secure", QCoreApplication::translate("main", "Use Secure Web Sockets."));
     parser.addOption(secureOption);
 
-    QCommandLineOption urlOption(QStringList() << "u" << "url", QCoreApplication::translate("main", "Target W3CServer implementation url."));
+    QCommandLineOption urlOption(QStringList() << "u" << "url", QCoreApplication::translate("main", "Target W3CServer implementation url."),
+            QCoreApplication::translate("main", "url"));
     parser.addOption(urlOption);
 
     QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."));
@@ -64,16 +65,17 @@ int main(int argc, char *argv[])
         else
         {
             qDebug() << "Unknown argument: " << test;
+            QCoreApplication::exit(-1);
         }
     }
 
     if(tests.length() == 0)
     {
-        tests << TestCase::AUTHORIZE_SUCCESS;
+        //tests << TestCase::AUTHORIZE_SUCCESS;
 
         tests << TestCase::GET_VSS;
 
-        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
 
         tests << TestCase::AUTHORIZE_SUCCESS;
     }
@@ -81,8 +83,10 @@ int main(int argc, char *argv[])
     bool secure = parser.isSet(secureOption);
 
 
-    QString url = "ws://127.0.0.1:8080"; // default url
+    QString url = "wss://169.254.143.52:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
+
+
     if(parser.isSet(urlOption))
     {
         url = parser.value(urlOption);
@@ -96,6 +100,5 @@ int main(int argc, char *argv[])
 
 
     Q_UNUSED(handler);
-
     return a.exec();
 }

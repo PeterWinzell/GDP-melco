@@ -19,7 +19,8 @@ HEADERS += \
     getvisstestdatajson.h \
     w3ctestclienthandler.h \
     testresult.h \
-    testcase.h
+    testcase.h \
+    clientreport.h
 
 INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 

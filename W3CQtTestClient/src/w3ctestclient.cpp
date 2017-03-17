@@ -10,10 +10,11 @@
 
 QT_USE_NAMESPACE
 
-W3cTestClient::W3cTestClient(const QUrl &url, QObject *parent) :
-    QObject(parent), m_url(url)
+W3cTestClient::W3cTestClient(int clientId, QQueue<TestCase> tests, const QUrl &url, QObject *parent) :
+    QObject(parent), m_clientId(clientId), m_tests(tests), m_url(url)
 {
     qRegisterMetaType<TestResult>();
+    m_clientReport = new ClientReport(m_clientId);
 }
 
 W3cTestClient::~W3cTestClient()
@@ -22,10 +23,9 @@ W3cTestClient::~W3cTestClient()
     m_webSocket->deleteLater();
 }
 
-void W3cTestClient::startClient(QQueue<TestCase> tests)
+void W3cTestClient::startClient()
 {
     qDebug() << " Starting Client";
-    m_tests = tests;
     m_webSocket = new QWebSocket();
 
     connect(m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
@@ -47,10 +47,7 @@ void W3cTestClient::onConnected()
 void W3cTestClient::runTest()
 {
     m_currentTest = m_tests.dequeue();
-
-    m_currentTestResult = new TestResult();
-    m_currentTestResult->testcase = m_currentTest;
-    m_currentTestResult->started = QDateTime::currentDateTime(); // Now?
+    m_testStartTime = QDateTime::currentDateTime();
 
     switch (m_currentTest)
     {
@@ -175,11 +172,11 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 return;
             };
 
-            QString subId = jsonObject["subscriptionId"].toString();
-            QString valueStr  =  jsonObject["value"].toString();
-            int value = valueStr.toInt();
-            QString timeString  = jsonObject["timestamp"].toString();
-            QDateTime time_t = QDateTime::fromTime_t(timeString.toInt());
+            //QString subId = jsonObject["subscriptionId"].toString();
+            //QString valueStr  =  jsonObject["value"].toString();
+            //int value = valueStr.toInt();
+            //QString timeString  = jsonObject["timestamp"].toString();
+            //QDateTime time_t = QDateTime::fromTime_t(timeString.toInt());
 
             //qDebug() << " subscriptionId is : " + subId << " \n";
             //qDebug() << " currentTime is : " + time_t.toString() << " \n";
@@ -289,7 +286,6 @@ void W3cTestClient::onTextMessageReceived(QString message)
 void W3cTestClient::RunSubscribeUnsubscribeTest()
 {
     qDebug() << " Running Subscribe + Unsubscribe Test \n";
-    m_currentTestResult->description = "Subscribe + Unsubscribe ... add description...";
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
     m_webSocket->sendTextMessage(subMess);
@@ -299,7 +295,6 @@ void W3cTestClient::RunSubscribeUnsubscribeTest()
 void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 {
     qDebug() << " Running Subscribe + Unsubscribe All Test \n";
-    m_currentTestResult->description = "Subscribe + Unsubscribe All ... add description...";
 
     QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
     QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
@@ -316,7 +311,6 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 void W3cTestClient::RunGetVssTest()
 {
     qDebug() << " Running Get VSS Test \n";
-    m_currentTestResult->description = "Get VSS ... add description...";
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
     m_webSocket->sendTextMessage(subMess);
@@ -325,7 +319,6 @@ void W3cTestClient::RunGetVssTest()
 void W3cTestClient::RunAuthorizeTest()
 {
     qDebug() << " Running Authorize Test \n";
-    m_currentTestResult->description = "Authorize ... add description...";
 
     QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
     m_webSocket->sendTextMessage(dataJson);
@@ -334,27 +327,33 @@ void W3cTestClient::RunAuthorizeTest()
 
 void W3cTestClient::passTestRun()
 {
-    m_currentTestResult->outcome = true;
-    m_currentTestResult->ended = QDateTime::currentDateTime();
+    QHash <QString, QString> finishedTest;
+    finishedTest.insert("testcase", (QString)(int)m_currentTest);
+    finishedTest.insert("outcome", "passed");
+    finishedTest.insert("started", m_testStartTime.toString());
+    finishedTest.insert("ended", QDateTime::currentDateTime().toString());
 
     // Handle special cases here also, if needed
 
-    emit testresult(m_currentTestResult);
+    m_clientReport->m_testResults.append(finishedTest);
 
     if(m_tests.length() > 0) { runTest(); }
-    else { emit testsfinished(); }
+    else { emit testsfinished(m_clientReport); }
 }
 void W3cTestClient::failTestRun()
 {
-    m_currentTestResult->outcome = false;
-    m_currentTestResult->ended = QDateTime::currentDateTime();
+    QHash <QString, QString> finishedTest;
+    finishedTest.insert("testcase", (QString)(int)m_currentTest);
+    finishedTest.insert("outcome", "passed");
+    finishedTest.insert("started", m_testStartTime.toString());
+    finishedTest.insert("ended", QDateTime::currentDateTime().toString());
 
     // Handle special cases here also, if needed.
 
-    emit testresult(m_currentTestResult);
+    m_clientReport->m_testResults.append(finishedTest);
 
     if(m_tests.length() > 0) { runTest(); }
-    else { emit testsfinished(); }
+    else { emit testsfinished(m_clientReport); }
 }
 
 
@@ -380,10 +379,10 @@ void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
     // The proper way to handle self-signed certificates is to add a custom root
     // to the CA store.
 
-    foreach( const QSslError &error, errors )
-    {
+    //foreach( const QSslError &error, errors )
+    //{
         //qDebug() << "SSL Error: " << error.errorString();
-    }
+    //}
 
 
     m_webSocket->ignoreSslErrors();
