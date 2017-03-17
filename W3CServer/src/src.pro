@@ -1,5 +1,6 @@
 QT += core websockets
 QT -= gui
+QT += xml
 
 CONFIG += c++11
 
@@ -25,8 +26,8 @@ SOURCES += main.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/subscriptions.cpp \
     messaging/websocketwrapper.cpp \
-    OpenDSTCPClient/opendstcpclient.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp
 
 HEADERS += \
@@ -45,10 +46,10 @@ HEADERS += \
     request-handler/processrequesttask.h \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
+    VSSSignalinterface/vsssignalinterfaceimpl.h \
+    OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
-    request-handler/subscriptions.h \
-    OpenDSTCPClient/opendstcpclient.h \
-    VSSSignalinterface/vsssignalinterfaceimpl.h
+    request-handler/subscriptions.h
 
 target.path = /home/pi
 INSTALLS += target

@@ -7,6 +7,7 @@ CONFIG += thread
 
 QT += core websockets
 QT -= gui
+QT += xml
 
 HEADERS += \
     tst_jsonrequestparser.h \
@@ -30,7 +31,8 @@ SOURCES += main.cpp \
     ../../../src/request-handler/subscriptions.cpp \
     ../../../src/request-handler/unsubnotifier.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
-    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp
+    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    ../../../src/OpenDSHandler/opendshandler.cpp
 
 
 HEADERS += \
@@ -51,7 +53,8 @@ HEADERS += \
     ../../../src/request-handler/unsubnotifier.h \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
-    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h
+    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h \
+    ../../../src/OpenDSHandler/opendshandler.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging
 INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface

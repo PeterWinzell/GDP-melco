@@ -18,6 +18,7 @@
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
 #include "messaging/websocketwrapper.h"
+#include "OpenDSHandler/opendshandler.h"
 
 QT_USE_NAMESPACE
 
@@ -29,7 +30,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     m_debug(debug),
     m_secure(usesecureprotocol)
 {
-     QThreadPool::globalInstance() -> setMaxThreadCount(100);
+    QThreadPool::globalInstance()->setMaxThreadCount(100);
+
     if (usesecureprotocol)
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
@@ -85,6 +87,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
     const QString vssFile = "/etc/vss_rel_1.json";
     m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
+    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
+    connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
 
 W3CServer::~W3CServer()
@@ -133,6 +137,7 @@ void W3CServer::processTextMessage(const QString& message)
         qDebug() << "fatal connection error, websocket client not found ";
     }
 
+        qDebug() << "Message received: " << message;
 }
 
 void W3CServer::socketDisconnected()
@@ -156,11 +161,14 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
     qDebug() << "Ssl error occurred";
 }
 
-
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
     ProcessRequestTask* requesttask = new ProcessRequestTask(sw, m_vsssInterface, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
 
-    QThreadPool::globalInstance()->start(requesttask);
+    if(!QThreadPool::globalInstance()->tryStart(requesttask))
+    {
+        qWarning() << "Failed to start thread! Active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+        qWarning() << "Max threads allowed: " << QThreadPool::globalInstance()->maxThreadCount();
+    }
 }

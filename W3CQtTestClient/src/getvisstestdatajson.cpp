@@ -143,7 +143,7 @@ QString GetVissTestDataJson::getAuthJson()
 
     QString zeToken = l_jwtObj.getToken();
 
-    qDebug() << "Token is: " + zeToken;
+    //qDebug() << "Token is: " + zeToken;
 
     QJsonObject jsonObject;
     jsonObject.insert("action","authorize");
@@ -155,7 +155,7 @@ QString GetVissTestDataJson::getAuthJson()
 
     QJsonDocument jsonDoc(jsonObject);
     QString dataJson = jsonDoc.toJson();
-    qDebug() << dataJson;
+    //qDebug() << dataJson;
 
     return dataJson;
 }
