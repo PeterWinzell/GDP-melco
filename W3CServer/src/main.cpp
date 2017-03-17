@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
     bool serverDebug = settings->value("server_debug").toBool();
     settings->endGroup();
 
-
     W3CServer *server = new W3CServer(serverPort,serverWSS,serverDebug);
     QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
 

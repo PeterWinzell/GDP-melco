@@ -30,6 +30,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     m_debug(debug),
     m_secure(usesecureprotocol)
 {
+    QThreadPool::globalInstance()->setMaxThreadCount(100);
+
     if (usesecureprotocol)
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
@@ -130,7 +132,7 @@ void W3CServer::processTextMessage(const QString& message)
 
     if (m_debug)
     {
-        qDebug() << "Message recieved: " << message;
+        qDebug() << "Message received: " << message;
     }
 }
 
@@ -155,10 +157,14 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
     qDebug() << "Ssl error occurred";
 }
 
-
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
     ProcessRequestTask* requesttask = new ProcessRequestTask(sw, m_vsssInterface, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
-    QThreadPool::globalInstance()->start(requesttask);
+
+    if(!QThreadPool::globalInstance()->tryStart(requesttask))
+    {
+        qWarning() << "Failed to start thread! Active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+        qWarning() << "Max threads allowed: " << QThreadPool::globalInstance()->maxThreadCount();
+    }
 }
