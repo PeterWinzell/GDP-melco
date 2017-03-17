@@ -20,19 +20,8 @@
 ***************************************************************************************************************/
 #include "unsubnotifier.h"
 
-UnsubNotifier::UnsubNotifier(QObject *parent,SubscribeHandler* handler):QObject(parent),m_psubscriber(handler)
+UnsubNotifier::UnsubNotifier(QObject *parent):QObject(parent)
 {
 
-}
-
-/**
- * @brief UnsubNotifier::unsubScribe
- * the emit needs to be done from the ownership thread ???
- */
-void UnsubNotifier::unsubScribe(){
-    if (m_psubscriber == nullptr)
-        emit unsubscribe();
-    else
-        m_psubscriber -> unsubscribe();
 }
 

@@ -29,6 +29,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     m_debug(debug),
     m_secure(usesecureprotocol)
 {
+     QThreadPool::globalInstance() -> setMaxThreadCount(100);
     if (usesecureprotocol)
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
@@ -112,6 +113,13 @@ void W3CServer::onNewConnection()
 void W3CServer::processTextMessage(const QString& message)
 {
 
+
+    if (m_debug)
+    {
+        qDebug() << "Message recieved: " << message;
+    }
+
+
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
     if (m_clients.contains(zeClient)){
@@ -125,10 +133,6 @@ void W3CServer::processTextMessage(const QString& message)
         qDebug() << "fatal connection error, websocket client not found ";
     }
 
-    if (m_debug)
-    {
-        qDebug() << "Message recieved: " << message;
-    }
 }
 
 void W3CServer::socketDisconnected()
@@ -157,5 +161,6 @@ void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message
 {
     ProcessRequestTask* requesttask = new ProcessRequestTask(sw, m_vsssInterface, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
+
     QThreadPool::globalInstance()->start(requesttask);
 }

@@ -75,8 +75,9 @@ void SubscribeHandler::processRequest()
             m_pClient->sendTextMessage(message);
         }
 
-        //Sleep for the period defined by filter
+        //Let the event loop process events so that signals are not blocked
         QCoreApplication::processEvents(QEventLoop::AllEvents);
+        //Sleep for the period defined by filter
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
 
@@ -91,6 +92,7 @@ void SubscribeHandler::socketDisconnected()
 
 void SubscribeHandler::unsubscribe()
 {
+    qDebug() << " usubscribe signal invoked ";
     m_dosubscription = false;
 }
 

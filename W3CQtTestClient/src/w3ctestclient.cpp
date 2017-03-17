@@ -138,7 +138,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
             qDebug() << " currentTime is : " + time_t.toString() << " \n";
             qDebug() << " The value is :   " << value << " \n";
 
-            m_webSocket.close();
+
         }
         else if (actionString == "getVSS")
         {
@@ -204,13 +204,34 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
     QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
     QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
     QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess4 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess5 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess6 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess7 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+   /* QString subMess8 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess9 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess10 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess11= GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess12 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);*/
+
 
     //do 3 subscriptions
     m_webSocket.sendTextMessage(subMess1);
     m_webSocket.sendTextMessage(subMess2);
     m_webSocket.sendTextMessage(subMess3);
+    m_webSocket.sendTextMessage(subMess4);
+    m_webSocket.sendTextMessage(subMess5);
+    m_webSocket.sendTextMessage(subMess6);
+    m_webSocket.sendTextMessage(subMess7);
+    /*m_webSocket.sendTextMessage(subMess8);
+    m_webSocket.sendTextMessage(subMess9);
+    m_webSocket.sendTextMessage(subMess10);
+    m_webSocket.sendTextMessage(subMess11);
+    m_webSocket.sendTextMessage(subMess12);*/
 
-    QTimer::singleShot(10000,this,SLOT(unsubscribeAll()));
+
+
+    QTimer::singleShot(60000,this,SLOT(unsubscribeAll()));
 
 }
 
