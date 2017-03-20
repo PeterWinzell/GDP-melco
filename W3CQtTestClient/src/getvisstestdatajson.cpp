@@ -57,10 +57,10 @@ QString GetVissTestDataJson::getSubscriptionJson()
     jsonObject.insert("action","subscribe");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
 
-    jsonRangeObject.insert("above",50);
-    jsonRangeObject.insert("below",200);
-    jsonFilterObject.insert("range", jsonRangeObject);
-    jsonFilterObject.insert("minChange", 40);
+    //jsonRangeObject.insert("above",50);
+    //jsonRangeObject.insert("below",200);
+    //jsonFilterObject.insert("range", jsonRangeObject);
+    //jsonFilterObject.insert("minChange", 40);
     jsonFilterObject.insert("interval",500);
     jsonObject.insert("filters", jsonFilterObject);
 

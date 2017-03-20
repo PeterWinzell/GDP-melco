@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
             QCoreApplication::translate("main", "url"));
     parser.addOption(urlOption);
 
-    QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."));
+    QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."),
+                                    QCoreApplication::translate("main", "nrOfClients"));
     parser.addOption(clientOption);
 
 
@@ -62,6 +63,14 @@ int main(int argc, char *argv[])
         {
             tests << TestCase::SET_GET;
         }
+        else if (test == "set")
+        {
+            tests << TestCase::SET;
+        }
+        else if (test == "get")
+        {
+            tests << TestCase::GET;
+        }
         else
         {
             qDebug() << "Unknown argument: " << test;
@@ -71,6 +80,8 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
+        qDebug() << "Running default test ";
+
         //tests << TestCase::AUTHORIZE_SUCCESS;
 
         tests << TestCase::GET_VSS;
@@ -95,6 +106,8 @@ int main(int argc, char *argv[])
     {
         url = "wss://127.0.0.1:8080"; // default secure url
     }
+
+    qDebug() << "nrOfClients: " << nrOfClients << " randomize: " << randomize << " secure: " << secure << " url: " << url;
 
     W3cTestClientHandler handler(nrOfClients, tests, randomize, secure, url);
 

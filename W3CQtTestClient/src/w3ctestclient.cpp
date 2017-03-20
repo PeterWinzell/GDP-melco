@@ -64,6 +64,15 @@ void W3cTestClient::runTest()
             break;
 
         case TestCase::SET_GET:
+            RunSetGetTest();
+            break;
+
+        case TestCase::SET:
+            RunSetTest();
+            break;
+
+        case TestCase::GET:
+            RunGetTest();
             break;
 
         case TestCase::AUTHORIZE_SUCCESS:
@@ -241,7 +250,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
         }
         else if (actionString == "get")
         {
-            if(m_currentTest != TestCase::SET_GET)
+            if((m_currentTest != TestCase::GET) && (m_currentTest != TestCase::SET_GET))
             {
                 qDebug() << " Received Get action when not requested";
 
@@ -254,7 +263,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
         }
         else if (actionString == "set")
         {
-            if(m_currentTest != TestCase::SET_GET)
+            if((m_currentTest != TestCase::SET) && (m_currentTest != TestCase::SET_GET))
             {
                 qDebug() << " Received Set action when not requested";
 
@@ -324,6 +333,32 @@ void W3cTestClient::RunAuthorizeTest()
     m_webSocket->sendTextMessage(dataJson);
 }
 
+
+void W3cTestClient::RunSetGetTest()
+{
+    qDebug() << " Running SetGet Test \n";
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
+    m_webSocket->sendTextMessage(subMess);
+
+    QTimer::singleShot(5000,this,SLOT(RunGetTest()));
+}
+
+void W3cTestClient::RunSetTest()
+{
+    qDebug() << " Running Set Test \n";
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
+    m_webSocket->sendTextMessage(subMess);
+}
+
+void W3cTestClient::RunGetTest()
+{
+    qDebug() << " Running Get Test \n";
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
+    m_webSocket->sendTextMessage(subMess);
+}
 
 void W3cTestClient::passTestRun()
 {

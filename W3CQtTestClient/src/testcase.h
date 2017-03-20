@@ -9,7 +9,9 @@ enum class TestCase
     SUBSCRIBEALL_UNSUBSCRIBEALL,
     AUTHORIZE_SUCCESS,
     GET_VSS,
-    SET_GET
+    SET_GET,
+    SET,
+    GET
 };
 
 

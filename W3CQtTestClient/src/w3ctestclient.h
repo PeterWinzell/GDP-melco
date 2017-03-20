@@ -26,6 +26,8 @@ public:
     void RunSubscribeUnsubscribeAllTest();
     void RunSubscribeUnsubscribeTest();
     void RunGetVssTest();
+    void RunSetGetTest();
+    void RunSetTest();
     void RunAuthorizeTest();
 
 
@@ -42,6 +44,7 @@ private Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
 
     //timer slots
+    void RunGetTest();
     void unsubscribe();
     void unsubscribeAll();
 private:
