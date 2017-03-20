@@ -1,7 +1,8 @@
 #include "w3ctestclienthandler.h"
 #include <QDebug>
-#include <QThread>
 #include <QtCore/QCoreApplication>
+
+
 W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, bool randomize, bool secure, QString url )
 {
     Q_UNUSED(randomize);
@@ -13,7 +14,7 @@ W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tes
     {
         QThread* clientThread = new QThread();
 
-        W3cTestClient* client = new W3cTestClient(i, tests, QUrl(url));
+        W3cTestClient* client = new W3cTestClient(i+1, tests, QUrl(url));
         client->moveToThread(clientThread);
 
         connect(this,           &W3cTestClientHandler::startClients,
@@ -41,13 +42,60 @@ W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tes
 
 W3cTestClientHandler::~W3cTestClientHandler()
 {
+    qDebug() << " Handler Deleted!";
 
 }
 
 void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 {
     qDebug() << " Test Client Finished!";
-    m_finishedClients++;
+    m_finishedClients.append(report);
 
-    if(m_finishedClients >= m_clients.length()) QCoreApplication::exit(0);
+    if(m_finishedClients.length() >= m_clients.length())
+    {
+        QString file = QString("/home/vagrant/GDP/GDP-melco/tests.xml");
+        writeXMLReport(file);
+        QCoreApplication::exit(0);
+    }
+}
+void W3cTestClientHandler::writeXMLReport(QString filename)
+{
+    QFile file(filename);
+    if(!file.open(QFile::WriteOnly |QFile::Text))
+    {
+        return;
+    }
+
+    QXmlStreamWriter stream(&file);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+
+    stream.writeStartElement("system-test");
+    stream.writeAttribute("sw-version", "NA");
+    stream.writeAttribute("randomized", "NA");
+    stream.writeAttribute("timestamp", "NA");
+
+    for(auto report : m_finishedClients)
+    {
+        stream.writeStartElement("test-client");
+        stream.writeAttribute("id", QString::number(report->m_clientId));
+        for (auto results : report->m_testResults)
+        {
+            stream.writeStartElement("test");
+            stream.writeAttribute("id", "NA");
+            for (auto result : results.keys())
+            {
+                stream.writeTextElement(result, results.value(result));
+            }
+            stream.writeEndElement();
+        }
+         stream.writeEndElement();
+    }
+
+    stream.writeEndElement();
+
+    stream.writeEndDocument();
+
+    file.flush();
+    file.close();
 }

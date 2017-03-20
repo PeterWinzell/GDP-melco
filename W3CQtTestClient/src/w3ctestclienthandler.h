@@ -1,6 +1,10 @@
 #ifndef W3CTESTCLIENTHANDLER_H
 #define W3CTESTCLIENTHANDLER_H
 
+#include <QThread>
+#include <QXmlStreamWriter>
+#include <QFile>
+
 #include "w3ctestclient.h"
 #include "clientreport.h"
 
@@ -20,9 +24,12 @@ signals:
     void startClients();
 
 private:
-   //QVector<QSharedPointer<W3cTestClient>> clients;
+    void writeXMLReport(QString filename);
+
+
    QVector<QThread*> m_clients;
-   int m_finishedClients = 0;
+   QList<ClientReport*> m_finishedClients;
+   //int m_finishedClients = 0;
 };
 
 #endif // W3CTESTCLIENTHANDLER_H

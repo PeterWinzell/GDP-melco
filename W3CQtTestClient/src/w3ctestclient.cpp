@@ -328,7 +328,7 @@ void W3cTestClient::RunAuthorizeTest()
 void W3cTestClient::passTestRun()
 {
     QHash <QString, QString> finishedTest;
-    finishedTest.insert("testcase", (QString)(int)m_currentTest);
+    finishedTest.insert("testcase", QString::number((int)m_currentTest));
     finishedTest.insert("outcome", "passed");
     finishedTest.insert("started", m_testStartTime.toString());
     finishedTest.insert("ended", QDateTime::currentDateTime().toString());
@@ -381,7 +381,7 @@ void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
 
     //foreach( const QSslError &error, errors )
     //{
-        //qDebug() << "SSL Error: " << error.errorString();
+    //qDebug() << "SSL Error: " << error.errorString();
     //}
 
 
