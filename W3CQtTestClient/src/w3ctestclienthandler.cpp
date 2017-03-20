@@ -1,20 +1,19 @@
 #include "w3ctestclienthandler.h"
 #include <QDebug>
 #include <QtCore/QCoreApplication>
+#include "testcasedescriptions.h"
 
-
-W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, bool randomize, bool secure, QString url )
+W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url,
+        QString swversion, QString timestamp, bool randomize)
+    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize)
 {
-    Q_UNUSED(randomize);
-    Q_UNUSED(secure);
-
     qRegisterMetaType<QQueue<TestCase>>();
 
     for(int i = 0; i < nrOfClients; i++)
     {
         QThread* clientThread = new QThread();
 
-        W3cTestClient* client = new W3cTestClient(i+1, tests, QUrl(url));
+        W3cTestClient* client = new W3cTestClient(i+1, tests, randomize, QUrl(url));
         client->moveToThread(clientThread);
 
         connect(this,           &W3cTestClientHandler::startClients,
@@ -48,12 +47,12 @@ W3cTestClientHandler::~W3cTestClientHandler()
 
 void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 {
-    qDebug() << " Test Client Finished!";
+    qDebug() << "[Client#" << report->m_clientId << "] " << " Test Client Finished!";
     m_finishedClients.append(report);
 
     if(m_finishedClients.length() >= m_clients.length())
     {
-        QString file = QString("/home/vagrant/GDP/GDP-melco/tests.xml");
+        QString file = QString("/usr/bin/w3c-tests.xml");
         writeXMLReport(file);
         QCoreApplication::exit(0);
     }
@@ -65,15 +64,28 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
     {
         return;
     }
+    TestCaseDescriptions desc;
 
     QXmlStreamWriter stream(&file);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
 
     stream.writeStartElement("system-test");
-    stream.writeAttribute("sw-version", "NA");
-    stream.writeAttribute("randomized", "NA");
-    stream.writeAttribute("timestamp", "NA");
+    stream.writeAttribute("sw-version", m_swversion);
+    stream.writeAttribute("timestamp", m_timestamp);
+    stream.writeAttribute("url", m_url);
+    stream.writeAttribute("randomized", m_randomize ? "true" : "false");
+
+    // Add meta-data
+
+    for(int i = 0; i < (int)TestCase::NR_OF_TESTCASES; i++)
+    {
+        stream.writeStartElement("system-test");
+        stream.writeAttribute("id", QString::number(desc.getDescription(i)->m_id));
+        stream.writeAttribute("name", desc.getDescription(i)->m_name);
+        stream.writeAttribute("description", desc.getDescription(i)->m_description);
+        stream.writeEndElement();
+    }
 
     for(auto report : m_finishedClients)
     {
@@ -82,14 +94,13 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
         for (auto results : report->m_testResults)
         {
             stream.writeStartElement("test");
-            stream.writeAttribute("id", "NA");
             for (auto result : results.keys())
             {
                 stream.writeTextElement(result, results.value(result));
             }
             stream.writeEndElement();
         }
-         stream.writeEndElement();
+        stream.writeEndElement();
     }
 
     stream.writeEndElement();

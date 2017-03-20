@@ -20,7 +20,7 @@ class W3cTestClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit W3cTestClient(int clientId, QQueue<TestCase> tests, const QUrl &url, QObject *parent = Q_NULLPTR);
+    explicit W3cTestClient(int clientId, QQueue<TestCase> tests, bool randomize, const QUrl &url, QObject *parent = Q_NULLPTR);
     ~W3cTestClient();
 
     void RunSubscribeUnsubscribeAllTest();
@@ -31,6 +31,7 @@ public:
 
     void startClient();
     void runTest();
+    void debugOutput(QString text);
 
 signals:
     void testresult(TestResult *result);
