@@ -11,18 +11,14 @@ enum class TestCase
     GET_VSS,
     SET_GET,
     SET,
-    GET
+    GET,
+    STATUS,
+    NR_OF_TESTCASES
 };
 
 
-struct TestCaseDescription
-{
-    int id;
-    TestCase testCase;
-    QString name;
-    QString argument;
-    QString description;
-};
+
+
 
 
 #endif // TESTCASE_H

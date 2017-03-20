@@ -12,7 +12,8 @@ TEMPLATE = app
 SOURCES += main.cpp \
     w3ctestclient.cpp \
     getvisstestdatajson.cpp \
-    w3ctestclienthandler.cpp
+    w3ctestclienthandler.cpp \
+    testcasedescriptions.cpp
 
 HEADERS += \
     w3ctestclient.h \
@@ -20,7 +21,8 @@ HEADERS += \
     w3ctestclienthandler.h \
     testresult.h \
     testcase.h \
-    clientreport.h
+    clientreport.h \
+    testcasedescriptions.h
 
 INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 
