@@ -26,6 +26,7 @@ W3cTestClient::~W3cTestClient()
 
 void W3cTestClient::startClient()
 {
+    if(m_clientStarted) return;
     debugOutput("Starting Client");
     m_webSocket = new QWebSocket();
 
@@ -34,6 +35,7 @@ void W3cTestClient::startClient()
     connect(m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors), this, &W3cTestClient::onSslErrors);
 
     m_webSocket->open(QUrl(m_url));
+    m_clientStarted = true;
 }
 
 void W3cTestClient::onConnected()

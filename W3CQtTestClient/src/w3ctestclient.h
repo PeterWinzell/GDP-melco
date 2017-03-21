@@ -52,6 +52,7 @@ private:
     void passTestRun();
     void failTestRun();
 
+    bool m_clientStarted = false;
     ClientReport *m_clientReport;
 
     QString m_unsubscribeCachedSubscriptionId; // keep track of this to perform unsubscribe.
