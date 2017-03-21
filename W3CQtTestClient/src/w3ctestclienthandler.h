@@ -1,7 +1,12 @@
 #ifndef W3CTESTCLIENTHANDLER_H
 #define W3CTESTCLIENTHANDLER_H
 
+#include <QThread>
+#include <QXmlStreamWriter>
+#include <QFile>
+
 #include "w3ctestclient.h"
+#include "clientreport.h"
 
 Q_DECLARE_METATYPE(QQueue<TestCase>)
 
@@ -9,20 +14,28 @@ class W3cTestClientHandler: public QObject
 {
     Q_OBJECT
 public:
-    W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, bool randomize, bool secure, QString url);
+    W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url, QString swversion, QString timestamp, bool randomize);
     ~W3cTestClientHandler();
 
 public slots:
-    void handleTestResult(TestResult* result);
-    void handleTestClientCompletion();
+    void handleTestClientCompletion(ClientReport* report);
 
 signals:
-    void startClients(const QQueue<TestCase> &);
+    void startClients();
 
 private:
-   //QVector<QSharedPointer<W3cTestClient>> clients;
+
+    void writeXMLReport(QString filename);
+
+   QQueue<TestCase> m_testCases;
    QVector<QThread*> m_clients;
-   int m_finishedClients = 0;
+   QList<ClientReport*> m_finishedClients;
+
+   QString m_url;
+   QString m_swversion;
+   QString m_timestamp;
+   bool m_randomize;
+   //int m_finishedClients = 0;
 };
 
 #endif // W3CTESTCLIENTHANDLER_H

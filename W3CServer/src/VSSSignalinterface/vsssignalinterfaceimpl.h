@@ -12,7 +12,7 @@ public:
 
     VSSSignalInterfaceImpl(const QString &vssFile);
     QString getSignalValue(const QString& path);
-    qint8   setSignalValue(const QString& path);
+    qint8   setSignalValue(const QString& path, QVariant value);
     QJsonObject getVSSNode(const QString& path);
     QJsonObject getVSSTree(const QString& path);
 
