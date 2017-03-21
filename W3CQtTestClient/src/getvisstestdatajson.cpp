@@ -5,6 +5,7 @@
 #include <QJsonArray>
 
 int GetVissTestDataJson::m_requestId = 0;
+QString GetVissTestDataJson::m_setValue = "0";
 
 GetVissTestDataJson::GetVissTestDataJson()
 {
@@ -93,12 +94,18 @@ QString GetVissTestDataJson::getGetVssJson()
     return jsonDoc.toJson();
 }
 
+QString GetVissTestDataJson::getSetValue()
+{
+    return m_setValue;
+}
+
 QString GetVissTestDataJson::getSetJson()
 {
     QJsonObject jsonObject;
+    m_setValue = "90";
     jsonObject.insert("action","set");
-    jsonObject.insert("path","vehicle.engine.speed");
-    jsonObject.insert("value", 90);
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
+    jsonObject.insert("value", m_setValue);
     jsonObject.insert("requestId","1");
 
     QJsonDocument jsonDoc(jsonObject);

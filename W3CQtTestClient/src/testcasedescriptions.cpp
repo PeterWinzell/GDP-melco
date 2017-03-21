@@ -33,14 +33,28 @@ TestCaseDescriptions::TestCaseDescriptions()
                 TestCase::GET_VSS,
                 "GetVSS",
                 "getvss",
-                "Will send one 'getVSS' request and expect and answer."
+                "Will send one 'getVSS' request and expect an answer."
                 );
     m_descriptions[(int)TestCase::SET_GET] = TestCaseDescription(
                 (int)TestCase::SET_GET,
                 TestCase::SET_GET,
                 "Set / Get",
                 "setget",
-                " [Not implemented] "
+                "Will send one 'set' request and expect an answer. Will then send one 'get' request, and compare value in answer to the set value."
+                );
+    m_descriptions[(int)TestCase::GET] = TestCaseDescription(
+                (int)TestCase::GET,
+                TestCase::GET,
+                "Get",
+                "get",
+                "Will send one 'get' request and expect an answer."
+                );
+    m_descriptions[(int)TestCase::SET] = TestCaseDescription(
+                (int)TestCase::SET,
+                TestCase::SET,
+                "Set",
+                "set",
+                "Will send one 'set' request and expect an answer."
                 );
     m_descriptions[(int)TestCase::STATUS] = TestCaseDescription(
                 (int)TestCase::STATUS,

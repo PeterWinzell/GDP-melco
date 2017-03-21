@@ -288,7 +288,14 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 return;
             }
 
-            debugOutput("Notice ! Set / Get Test Case is incomplete."); // Add value to output when test is completly made.
+            QString receivedValue = jsonObject["value"].toString();
+            QString setValue = GetVissTestDataJson::getSetValue();
+            if (receivedValue != setValue)
+            {
+                debugOutput("Warning! Received value [" +  receivedValue + "] does not match set value [" + setValue + "]");
+            }
+
+            debugOutput("Get successfully received."); // Add value to output when test is completly made.
             passTestRun();
         }
         else if (actionString == "set")
@@ -298,7 +305,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 debugOutput("Received Set action when not requested");
                 failTestRun();
                 return;
-            };
+            }
 
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
@@ -311,9 +318,16 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 failTestRun();
                 return;
             }
-            debugOutput("Notice ! Set / Get Test Case is incomplete."); // Add value to output when test is completly made.
-            // Send Get Request
-            passTestRun();
+
+            if(m_currentTest == TestCase::SET)
+            {
+                debugOutput("Set Test Case successful.");
+                passTestRun();
+            }
+            else
+            {
+                debugOutput("Set response received. Waiting for Get");
+            }
         }
         else
         {
@@ -382,7 +396,7 @@ void W3cTestClient::RunSetGetTest()
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
     m_webSocket->sendTextMessage(subMess);
 
-    QTimer::singleShot(5000,this,SLOT(RunGetTest()));
+    QTimer::singleShot(4000,this,SLOT(RunGetTest()));
 }
 
 void W3cTestClient::RunSetTest()
