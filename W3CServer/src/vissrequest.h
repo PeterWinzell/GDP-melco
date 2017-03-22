@@ -17,7 +17,8 @@ enum vss_request
     UNSUBSCRIBEALL,
     AUTHORIZE,
     GETVSS,
-    ERROR
+    ERROR,
+    STATUS
 };
 
 class VISSRequest : public QObject

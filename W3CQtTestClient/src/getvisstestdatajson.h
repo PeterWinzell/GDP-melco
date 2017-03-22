@@ -2,7 +2,7 @@
 #define GETVISSTESTDATAJSON_H
 #include <QString>
 
-enum requesttype {GET=1,SET,SUBSCRIBE,UNSUBSCRIBE,UNSUBSCRIBEALL,GETVSS,AUTHORIZE};
+enum requesttype {GET=1,SET,SUBSCRIBE,UNSUBSCRIBE,UNSUBSCRIBEALL,GETVSS,AUTHORIZE,STATUS};
 
 class GetVissTestDataJson
 {
@@ -19,6 +19,7 @@ public:
     static QString getSetJson();
     static QString getGetVssJson();
     static QString getSetValue();
+    static QString getStatusJson();
     static int m_requestId;
 private:
     static QString m_setValue;

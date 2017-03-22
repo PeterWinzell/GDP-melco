@@ -41,6 +41,9 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId)
         case requesttype::AUTHORIZE:
             testJSON = getAuthJson();
             break;
+        case requesttype::STATUS:
+            testJSON = getStatusJson();
+            break;
     }
 
     return testJSON;
@@ -165,4 +168,15 @@ QString GetVissTestDataJson::getAuthJson()
     //qDebug() << dataJson;
 
     return dataJson;
+}
+
+QString GetVissTestDataJson::getStatusJson()
+{
+    QJsonObject jsonObject;
+    m_setValue = "90";
+    jsonObject.insert("action","status");
+    jsonObject.insert("requestId","1");
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
 }

@@ -26,7 +26,7 @@ W3cTestClient::~W3cTestClient()
 
 void W3cTestClient::startClient()
 {
-    if(m_clientStarted) return;
+    if(m_clientStarted) { return; }
     debugOutput("Starting Client");
     m_webSocket = new QWebSocket();
 
@@ -80,6 +80,10 @@ void W3cTestClient::runTest()
 
         case TestCase::AUTHORIZE_SUCCESS:
             RunAuthorizeTest();
+            break;
+
+        case TestCase::STATUS:
+            RunStatusTest();
             break;
 
         default:
@@ -331,9 +335,34 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 debugOutput("Set response received. Waiting for Get");
             }
         }
+        else if (actionString == "status")
+        {
+            if(m_currentTest != TestCase::STATUS)
+            {
+                debugOutput("Received Status action when not requested");
+                failTestRun();
+                return;
+            }
+
+            QString requestId = jsonObject["requestId"].toString();
+            QJsonObject errorObject = jsonObject["error"].toObject();
+            if (!errorObject.empty())
+            {
+                debugOutput("Failed to get status");
+                QString errorMessage = errorObject["message"].toString();
+                debugOutput("Error! Request ID [ " + requestId + " ], Message: "+ errorMessage);
+
+                failTestRun();
+                return;
+            }
+
+            debugOutput("Status Test Case successful.");
+            passTestRun();
+
+        }
         else
         {
-            qDebug() << " Received unknown Request " << actionString;
+            debugOutput("Received unknown Request " + actionString);
             failTestRun();
         }
     }
@@ -380,16 +409,16 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
     m_webSocket->sendTextMessage(subMess1);
     m_webSocket->sendTextMessage(subMess2);
     m_webSocket->sendTextMessage(subMess3);
-/*
-    m_webSocket.sendTextMessage(subMess4);
-    m_webSocket.sendTextMessage(subMess5);
-    m_webSocket.sendTextMessage(subMess6);
-    m_webSocket.sendTextMessage(subMess7);
-    m_webSocket.sendTextMessage(subMess8);
-    m_webSocket.sendTextMessage(subMess9);
-    m_webSocket.sendTextMessage(subMess10);
-    m_webSocket.sendTextMessage(subMess11);
-    m_webSocket.sendTextMessage(subMess12);*/
+    /*
+        m_webSocket.sendTextMessage(subMess4);
+        m_webSocket.sendTextMessage(subMess5);
+        m_webSocket.sendTextMessage(subMess6);
+        m_webSocket.sendTextMessage(subMess7);
+        m_webSocket.sendTextMessage(subMess8);
+        m_webSocket.sendTextMessage(subMess9);
+        m_webSocket.sendTextMessage(subMess10);
+        m_webSocket.sendTextMessage(subMess11);
+        m_webSocket.sendTextMessage(subMess12);*/
 
 
 
@@ -415,7 +444,7 @@ void W3cTestClient::RunAuthorizeTest()
 
 void W3cTestClient::RunSetGetTest()
 {
-    qDebug() << " Running SetGet Test \n";
+    debugOutput("Running SetGet Test");
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
     m_webSocket->sendTextMessage(subMess);
@@ -425,7 +454,7 @@ void W3cTestClient::RunSetGetTest()
 
 void W3cTestClient::RunSetTest()
 {
-    qDebug() << " Running Set Test \n";
+    debugOutput("Running Set Test");
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
     m_webSocket->sendTextMessage(subMess);
@@ -433,11 +462,19 @@ void W3cTestClient::RunSetTest()
 
 void W3cTestClient::RunGetTest()
 {
-    qDebug() << " Running Get Test \n";
+    debugOutput("Running Get Test");
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
     m_webSocket->sendTextMessage(subMess);
 }
+
+void W3cTestClient::RunStatusTest()
+{
+    debugOutput("Running Status Test");
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::STATUS);
+    m_webSocket->sendTextMessage(subMess);
+}
+
 
 void W3cTestClient::passTestRun()
 {

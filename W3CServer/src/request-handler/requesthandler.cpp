@@ -6,6 +6,7 @@
 #include "unsubscribeallhandler.h"
 #include "getvsshandler.h"
 #include "authorizationhandler.h"
+#include "statushandler.h"
 #include "jsonrequestparser.h"
 #include "vissrequest.h"
 
@@ -39,6 +40,9 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
             break;
         case AUTHORIZE:
             handler = QSharedPointer<AuthorizationHandler>(new AuthorizationHandler(nullptr, signalInterface, parsedRequest,client));
+            break;
+        case STATUS:
+            handler = QSharedPointer<StatusHandler>(new StatusHandler(nullptr, signalInterface, parsedRequest,client));
             break;
         default:
             break;

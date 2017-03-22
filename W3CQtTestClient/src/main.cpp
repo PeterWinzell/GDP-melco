@@ -15,12 +15,15 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     //parser.addVersionOption();
 
-    parser.addPositionalArgument("tests", QCoreApplication::translate("main", "Test cases to run, [subscribe, subscribeall, authorize, getvss, getset, status]. Each test case can be entered several times.")); // TODO Add list to -help
+    parser.addPositionalArgument("tests", QCoreApplication::translate("main",
+                                 "Test cases to run, [subscribe, subscribeall, authorize, getvss, getset, status]. Each test case can be entered several times.")); // TODO Add list to -help
 
-    QCommandLineOption randomizeOption(QStringList() << "r" << "random", QCoreApplication::translate("main", "Shuffles the order the test cases are excecuted in. The order will be different on each client."));
+    QCommandLineOption randomizeOption(QStringList() << "r" << "random", QCoreApplication::translate("main",
+                                       "Shuffles the order the test cases are excecuted in. The order will be different on each client."));
     parser.addOption(randomizeOption);
 
-    QCommandLineOption secureOption(QStringList() << "s" << "secure", QCoreApplication::translate("main", "Use Secure Web Sockets. Does nothing at the moment since we are able to ignore all errors."));
+    QCommandLineOption secureOption(QStringList() << "s" << "secure", QCoreApplication::translate("main",
+                                    "Use Secure Web Sockets. Does nothing at the moment since we are able to ignore all errors."));
     parser.addOption(secureOption);
 
     QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."),
@@ -31,11 +34,13 @@ int main(int argc, char *argv[])
                                  QCoreApplication::translate("main", "url"));
     parser.addOption(urlOption);
 
-    QCommandLineOption softwareOption(QStringList() << "software", QCoreApplication::translate("main", "Software version the test is run upon. When run from Bamboo this is the git commit id."),
+    QCommandLineOption softwareOption(QStringList() << "software", QCoreApplication::translate("main",
+                                      "Software version the test is run upon. When run from Bamboo this is the git commit id."),
                                       QCoreApplication::translate("main", "version"));
     parser.addOption(softwareOption);
 
-    QCommandLineOption timestampOption(QStringList() << "timestamp", QCoreApplication::translate("main", "Timestamp when the test were initialized. When run from bamboo this is the same timestamp found in the image created."),
+    QCommandLineOption timestampOption(QStringList() << "timestamp", QCoreApplication::translate("main",
+                                       "Timestamp when the test were initialized. When run from bamboo this is the same timestamp found in the image created."),
                                        QCoreApplication::translate("main", "timestamp"));
     parser.addOption(timestampOption);
 
@@ -97,20 +102,22 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
-        tests << TestCase::AUTHORIZE_SUCCESS;
+        //tests << TestCase::AUTHORIZE_SUCCESS;
 
 
-        tests << TestCase::GET_VSS;
+        //tests << TestCase::GET_VSS;
 
         //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
 
-        tests << TestCase::AUTHORIZE_SUCCESS;
+        //tests << TestCase::AUTHORIZE_SUCCESS;
+
+        tests << TestCase::STATUS;
     }
     bool randomize = parser.isSet(randomizeOption);
     bool secure = parser.isSet(secureOption);
 
 
-    QString url = "ws://127.0.0.1:8080"; // default url
+    QString url = "wss://127.0.0.1:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
 
 

@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     messaging/websocketwrapper.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     OpenDSHandler/opendshandler.cpp  \
-    request-handler/unsubnotifier.cpp
+    request-handler/unsubnotifier.cpp \
+    request-handler/statushandler.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -49,7 +50,8 @@ HEADERS += \
     VSSSignalinterface/vsssignalinterfaceimpl.h \
     OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
-    request-handler/subscriptions.h
+    request-handler/subscriptions.h \
+    request-handler/statushandler.h
 
 target.path = /home/pi
 INSTALLS += target
