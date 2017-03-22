@@ -88,11 +88,6 @@ int main(int argc, char *argv[])
         {
             tests << TestCase::STATUS;
         }
-
-        else if (test == "get")
-        {
-            tests << TestCase::GET;
-        }
         else
         {
             qDebug() << "Unknown argument: " << test;
@@ -117,7 +112,7 @@ int main(int argc, char *argv[])
     bool secure = parser.isSet(secureOption);
 
 
-    QString url = "wss://127.0.0.1:8080"; // default url
+    QString url = "ws://127.0.0.1:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
 
 

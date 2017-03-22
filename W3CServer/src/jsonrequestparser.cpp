@@ -41,6 +41,9 @@ QSharedPointer<VISSRequest> JSONRequestParser::parseJson(QString json)
         case GETVSS:
             if(!validateGetVSSRequest(request.data())) { request->invalidateRequest(); }
             break;
+        case STATUS:
+            if(!validateStatusRequest(request.data())) { request->invalidateRequest(); }
+        break;
         case ERROR: // Just to remove compilation warning.
             request->invalidateRequest();
             break;
@@ -233,6 +236,22 @@ bool JSONRequestParser::validateGetVSSRequest(VISSRequest* request)
     }
 }
 
+bool JSONRequestParser::validateStatusRequest(VISSRequest *request)
+{
+    QJsonValue valueId = request->getJsonObject()["requestId"];
+
+    bool valid = (validateId(valueId));
+
+    if(m_debug) { qDebug() << "validateStatusRequest result" << (valid); }
+
+    if(!valid) { return false; }
+    else
+    {
+        request->setRequestId(valueId.toString());
+        return true;
+    }
+}
+
 
 // Validate each of the different parts of a request
 bool JSONRequestParser::validateAction(VISSRequest* request)
@@ -273,6 +292,10 @@ bool JSONRequestParser::validateAction(VISSRequest* request)
     else if (val == "getVSS")
     {
         request->setAction(GETVSS);
+    }
+    else if (val == "status")
+    {
+        request->setAction(STATUS);
     }
     else
     {
