@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
 
     parser.process(a);
+    qDebug() << parser.optionNames();
 
     int nrOfClients = 2; // Default number of clients
     if(parser.isSet(clientOption))
@@ -41,6 +42,7 @@ int main(int argc, char *argv[])
     }
 
     QQueue<TestCase> tests;
+
     for(auto test : parser.positionalArguments())
     {
         if (test == "subscribe")
