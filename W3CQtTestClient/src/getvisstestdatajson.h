@@ -18,8 +18,10 @@ public:
     static QString getGetJson();
     static QString getSetJson();
     static QString getGetVssJson();
-
+    static QString getSetValue();
     static int m_requestId;
+private:
+    static QString m_setValue;
 };
 
 #endif // GETVISSTESTDATAJSON_H

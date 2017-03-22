@@ -11,25 +11,33 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("W3C VISS Reference Implementation Test Client Application");
+    parser.setApplicationDescription("Melco Gothenburg W3C VISS Reference Implementation - Test Client Application");
     parser.addHelpOption();
     //parser.addVersionOption();
 
-    parser.addPositionalArgument("tests", QCoreApplication::translate("main", "Test case sto run.")); // TODO Add list to -help
+    parser.addPositionalArgument("tests", QCoreApplication::translate("main", "Test cases to run, [subscribe, subscribeall, authorize, getvss, getset, status]. Each test case can be entered several times.")); // TODO Add list to -help
 
-    QCommandLineOption randomizeOption(QStringList() << "r" << "random", QCoreApplication::translate("main", "Randomize test case execution order."));
+    QCommandLineOption randomizeOption(QStringList() << "r" << "random", QCoreApplication::translate("main", "Shuffles the order the test cases are excecuted in. The order will be different on each client."));
     parser.addOption(randomizeOption);
 
-    QCommandLineOption secureOption(QStringList() << "s" << "secure", QCoreApplication::translate("main", "Use Secure Web Sockets."));
+    QCommandLineOption secureOption(QStringList() << "s" << "secure", QCoreApplication::translate("main", "Use Secure Web Sockets. Does nothing at the moment since we are able to ignore all errors."));
     parser.addOption(secureOption);
 
-    QCommandLineOption urlOption(QStringList() << "u" << "url", QCoreApplication::translate("main", "Target W3CServer implementation url."),
-            QCoreApplication::translate("main", "url"));
+    QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."),
+                                    QCoreApplication::translate("main", "nr of clients"));
+    parser.addOption(clientOption);
+
+    QCommandLineOption urlOption(QStringList() << "url", QCoreApplication::translate("main", "Full W3CServer target implementation url."),
+                                 QCoreApplication::translate("main", "url"));
     parser.addOption(urlOption);
 
-    QCommandLineOption clientOption(QStringList() << "c" << "clients", QCoreApplication::translate("main", "Number of clients to use."),
-            QCoreApplication::translate("main", "nrOfClients"));
-    parser.addOption(clientOption);
+    QCommandLineOption softwareOption(QStringList() << "software", QCoreApplication::translate("main", "Software version the test is run upon. When run from Bamboo this is the git commit id."),
+                                      QCoreApplication::translate("main", "version"));
+    parser.addOption(softwareOption);
+
+    QCommandLineOption timestampOption(QStringList() << "timestamp", QCoreApplication::translate("main", "Timestamp when the test were initialized. When run from bamboo this is the same timestamp found in the image created."),
+                                       QCoreApplication::translate("main", "timestamp"));
+    parser.addOption(timestampOption);
 
 
     parser.process(a);
@@ -65,9 +73,27 @@ int main(int argc, char *argv[])
         {
             tests << TestCase::SET_GET;
         }
+        else if (test == "set")
+        {
+            tests << TestCase::SET;
+        }
+        else if (test == "get")
+        {
+            tests << TestCase::GET;
+        }
+        else if (test == "status")
+        {
+            tests << TestCase::STATUS;
+        }
+
+        else if (test == "get")
+        {
+            tests << TestCase::GET;
+        }
         else
         {
             qDebug() << "Unknown argument: " << test;
+            return -1;
         }
     }
 
@@ -75,9 +101,10 @@ int main(int argc, char *argv[])
     {
         tests << TestCase::AUTHORIZE_SUCCESS;
 
+
         tests << TestCase::GET_VSS;
 
-        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
 
         tests << TestCase::AUTHORIZE_SUCCESS;
     }
@@ -87,6 +114,8 @@ int main(int argc, char *argv[])
 
     QString url = "ws://127.0.0.1:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
+
+
     if(parser.isSet(urlOption))
     {
         url = parser.value(urlOption);
@@ -96,7 +125,12 @@ int main(int argc, char *argv[])
         url = "wss://127.0.0.1:8080"; // default secure url
     }
 
-    W3cTestClientHandler handler(nrOfClients, tests, randomize, secure, url);
+    qDebug() << "nrOfClients: " << nrOfClients << " randomize: " << randomize << " secure: " << secure << " url: " << url;
+
+    QString swversion = parser.value(softwareOption);
+    QString timestamp = parser.value(timestampOption);
+    W3cTestClientHandler handler(nrOfClients, tests, url, swversion,timestamp,randomize);
+
 
     Q_UNUSED(handler);
     return a.exec();

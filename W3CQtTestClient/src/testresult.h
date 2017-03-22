@@ -3,9 +3,12 @@
 
 #include <QDateTime>
 #include "testcase.h"
+#include <QPair>
 
 struct TestResult
 {
+    QList<QPair<QString, QString>> output;
+
     bool outcome;
     QDateTime started;
     QDateTime ended;

@@ -77,7 +77,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
         //Connect QWebsocketServer signal with W3CServer signal closed
-       // connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
+        // connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
         //SSL error handler
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &W3CServer::onSslErrors);
@@ -116,17 +116,15 @@ void W3CServer::onNewConnection()
 
 void W3CServer::processTextMessage(const QString& message)
 {
-
-
     if (m_debug)
     {
         qDebug() << "Message recieved: " << message;
     }
 
-
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
-    if (m_clients.contains(zeClient)){
+    if (m_clients.contains(zeClient))
+    {
         // we need a mutex per client .
         QMutex* mutex = m_clients.find(zeClient).value();
         QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
@@ -137,7 +135,7 @@ void W3CServer::processTextMessage(const QString& message)
         qDebug() << "fatal connection error, websocket client not found ";
     }
 
-        qDebug() << "Message received: " << message;
+    qDebug() << "Message received: " << message;
 }
 
 void W3CServer::socketDisconnected()
@@ -170,5 +168,9 @@ void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message
     {
         qWarning() << "Failed to start thread! Active threads: " << QThreadPool::globalInstance()->activeThreadCount();
         qWarning() << "Max threads allowed: " << QThreadPool::globalInstance()->maxThreadCount();
+    }
+    else
+    {
+        qDebug() << "New thread started!, active threads: " << QThreadPool::globalInstance()->activeThreadCount();
     }
 }
