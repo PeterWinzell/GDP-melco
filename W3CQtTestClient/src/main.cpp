@@ -99,10 +99,11 @@ int main(int argc, char *argv[])
     {
         //tests << TestCase::AUTHORIZE_SUCCESS;
 
+        tests << TestCase::STATUS;
 
         //tests << TestCase::GET_VSS;
 
-        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
 
         //tests << TestCase::AUTHORIZE_SUCCESS;
 
