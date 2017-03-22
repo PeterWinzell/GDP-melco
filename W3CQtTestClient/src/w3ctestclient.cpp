@@ -357,7 +357,6 @@ void W3cTestClient::onTextMessageReceived(QString message)
             }
 
             debugOutput("Status Test Case successful.");
-            qDebug() << message;
             passTestRun();
 
         }
