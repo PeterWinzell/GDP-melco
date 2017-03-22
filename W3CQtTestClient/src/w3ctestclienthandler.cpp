@@ -53,7 +53,8 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 
     if(m_finishedClients.length() >= m_clients.length())
     {
-        QString file = QString("/usr/bin/w3c-tests.xml");
+        // TODO: output file should be optionally set as an application argument
+        QString file = QString("./w3c-tests.xml");
         writeXMLReport(file);
         QCoreApplication::exit(0);
     }
