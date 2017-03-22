@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         else
         {
             qDebug() << "Unknown argument: " << test;
-            QCoreApplication::exit(-1);
+            return -1;
         }
     }
 
