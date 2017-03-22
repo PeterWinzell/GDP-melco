@@ -1,52 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset='utf-8'>
-    <title>W3C Vehicle Information Signal Specification reference implementation, Mitsubishi Electric </title>
-    <script 
-     src='https://www.w3.org/Tools/respec/respec-w3c-common' 
-     class='remove'></script>
+	<title>W3C Vehicle Information Signal Specification reference implementation, Mitsubishi Electric 	</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
+            class='remove'>    </script>
     <script class='remove'>
-      var respecConfig = {
-        specStatus: "ED",
-        editors: [{
-          name: “Peter Winzell“,
-          url: "http://your-site.com",
-        }],
-        processVersion: 2015,
-        edDraftURI: "http://se.mitsubishielectric.com/en/index.page",
-        shortName: “Melco GOT”
-      };
-    </script>
+var respecConfig = {
+          specStatus:           "ED",
+          shortName:            "vehicle-information-service",
+          editors:  [{
+            name: "Peter Winzell", company: "Mitsubishi Electric",
+            url: "mailto:peterwinzell.gbg@gmail.com",
+	    companyURL: "http://www.mitsubishielectric.com",
+	    
+          }],
+          edDraftURI:   "https://github.com/PeterWinzell/GDP-melco/tree/LP-116/report",
+          wg:           "Automotive Working Group",
+
+          otherLinks: [{
+            key: 'Repository and Participation',
+            data: [
+                {
+                    value: 'We are on github.',
+                    href: 'https://github.com/PeterWinzell'
+                },
+             ]
+          }],
+
+    };
+    </script><style>
+        table.parameters, table.exceptions {
+            border-spacing: 0;
+            border-collapse:    collapse;
+            margin: 0.5em 0;
+            width:  100%;
+        }
+        table.parameters { border-bottom:  1px solid #90b8de; }
+        table.exceptions { border-bottom:  1px solid #deb890; }
+
+        .parameters th, .exceptions th {
+            color:  inherit;
+            padding:    3px 5px;
+            text-align: left;
+            font-weight:    normal;
+        }
+        .parameters th { color: #fff; background: #005a9c; }
+        .exceptions th { background: #deb890; }
+
+        .parameters td, .exceptions td {
+            padding:    3px 10px;
+            border-top: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        .parameters tr:first-child td, .exceptions tr:first-child td {
+            border-top: none;
+        }
+
+        .parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+            width:  100px;
+        }
+
+        .parameters td.prmType {
+            width:  120px;
+        }
+
+        table.exceptions table {
+            border-spacing: 0;
+            border-collapse:    collapse;
+            width:  100%;
+        }
+    </style>
   </head>
   <body>
-    <section id='abstract'>
+    <section id="abstract">
       <p>
         The standardization of vehicle information signals is key to facilitate feature growth and innovation for internet based applications inside and outside the vehicle. 
       </p>
-    </section>
-    <section id=‘Design choices’>
+    </section>    <section id="sotd">
+    </section>   <section id="architecture">	<h2>Design choices</h2>
       <p>
         One of the criteria was to implement this on a platform that would allow open source development. The Genivi development platform (GDP-11) was a choosen for its availability and …
       </p>
-    </section>
-    <section id=‘Server architecture’>
-<p>
+      <p>
       The server implementation is based on a simple idea that client every request is handled by a separate thread. Threads are reused through thread pool mechanism to reduce system memory and performance strains. The server implementation is able to handle multiple requests … 
-</p>
-    </section>
-     <section id=‘Southbound interfaces’>
+    </p>
+    </section>    <section >      <h3> Interfaces </h3>
        <p>
       openDS interface, VSI, RVI + VSI …
       </p>
     </section>
 
-     <section id=‘Usage ’>
+     <section id="usage">	<h3> Usage cases </h3>
        <p>
        The server deployment is not bound to the infotainment system, i.e the actual IHU. The server can be deployed anywhere on any ECU inside the vehicle, but not only that the server could also be deployed outside the vehicle. The benefits of using internet based protocols is that the deployment of the signal server is boundless. It is a piece of software for the internet-of-things-everywhere. The use cases and features that this opens up for are endless…might move this to the abstract
        </p>
     </section>
-     <section id=‘Server tests’>
+     <section id="testing">     <h3> Test results </h3>
        <p>
       Table from W3Ctestclient…
       </p>
