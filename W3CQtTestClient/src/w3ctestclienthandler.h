@@ -26,17 +26,19 @@ signals:
 private:
 
     void writeXMLReport(QString filename);
+    void writeHTMLReport(const QString &filename);
 
-   QQueue<TestCase> m_testCases;
-   QVector<QThread*> m_clients;
-   QList<ClientReport*> m_finishedClients;
 
-   QString m_url;
-   QString m_swversion;
-   QString m_timestamp;
-   bool m_randomize;
-   QString m_reportDir;
-   //int m_finishedClients = 0;
+    QQueue<TestCase> m_testCases;
+    QVector<QThread*> m_clients;
+    QList<ClientReport*> m_finishedClients;
+
+    QString m_url;
+    QString m_swversion;
+    QString m_timestamp;
+    bool m_randomize;
+    QString m_reportDir;
+    //int m_finishedClients = 0;
 };
 
 #endif // W3CTESTCLIENTHANDLER_H
