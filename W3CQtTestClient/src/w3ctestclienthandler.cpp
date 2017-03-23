@@ -148,8 +148,8 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
     QString startCol = "<td>";
     QString endCol = "</td>";
 
-    QString startColGreen = "<td bgcolor=\"#fe0000\">";
-    QString startColRed = "<td bgcolor=\"#32cb00\">";
+    QString startColGreen = "<td bgcolor=\"#32cb00\">";
+    QString startColRed = "<td bgcolor=\"#fe0000\">";
 
     QString startHeader = "<th>";
     QString endHeader = "</th>";
