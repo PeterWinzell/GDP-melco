@@ -14,7 +14,7 @@ class W3cTestClientHandler: public QObject
 {
     Q_OBJECT
 public:
-    W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url, QString swversion, QString timestamp, bool randomize);
+    W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url, QString swversion, QString timestamp, bool randomize, const QString &reportDir);
     ~W3cTestClientHandler();
 
 public slots:
@@ -35,6 +35,7 @@ private:
    QString m_swversion;
    QString m_timestamp;
    bool m_randomize;
+   QString m_reportDir;
    //int m_finishedClients = 0;
 };
 

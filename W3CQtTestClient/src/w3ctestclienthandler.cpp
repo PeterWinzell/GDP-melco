@@ -2,11 +2,12 @@
 #include <QDebug>
 #include <QThread>
 #include <QtCore/QCoreApplication>
+#include <QFileInfo>
 #include "testcasedescriptions.h"
 
 W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url,
-        QString swversion, QString timestamp, bool randomize)
-    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize)
+        QString swversion, QString timestamp, bool randomize, const QString& reportDir)
+    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize), m_reportDir(reportDir)
 {
     qRegisterMetaType<QQueue<TestCase>>();
 
@@ -53,8 +54,13 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 
     if(m_finishedClients.length() >= m_clients.length())
     {
-        // TODO: output file should be optionally set as an application argument
         QString file = QString("./w3c-tests.xml");
+
+        if (m_reportDir != "")
+        {
+            file = m_reportDir + "/w3c-tests.xml";
+        }
+        qDebug() << "Generating final report...";
         writeXMLReport(file);
         QCoreApplication::exit(0);
     }
@@ -62,8 +68,10 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 void W3cTestClientHandler::writeXMLReport(QString filename)
 {
     QFile file(filename);
+    QFileInfo fileinfo(filename);
     if(!file.open(QFile::WriteOnly |QFile::Text))
     {
+        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
         return;
     }
     TestCaseDescriptions desc;
@@ -111,4 +119,6 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
 
     file.flush();
     file.close();
+
+    qDebug() << "Final report saved at " << fileinfo.absoluteFilePath();
 }
