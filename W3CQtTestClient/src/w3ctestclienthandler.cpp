@@ -123,7 +123,7 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
     file.flush();
     file.close();
 
-    qDebug() << "Final report saved at " << fileinfo.absoluteFilePath();
+    qDebug() << "Xml report saved at " << fileinfo.absoluteFilePath();
 }
 
 void W3cTestClientHandler::writeHTMLReport(const QString& filename)
@@ -156,9 +156,7 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
 
     QString table = startTable;
 
-    // create header from first result
-
-    auto results = m_finishedClients[0]->m_testResults[0];
+    // create header
 
     table += startRow;
 
@@ -166,12 +164,21 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
     table += "Client id";
     table += endHeader;
 
-    for (auto key : results.keys())
-    {
-        table += startHeader;
-        table += key;
-        table += endHeader;
-    }
+    table += startHeader;
+    table += "Test case";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Started";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Ended";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Outcome";
+    table += endHeader;
 
     table += endRow;
 
@@ -187,38 +194,31 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
             table += QString::number(report->m_clientId);
             table += endCol;
 
-            for (auto key : results.keys())
+            table += startCol;
+            int caseId = results["testcase"].toInt();
+            table += desc.getDescription(caseId)->m_name;
+            table += endCol;
+
+            table += startCol;
+            table += results["started"];
+            table += endCol;
+
+            table += startCol;
+            table += results["ended"];
+            table += endCol;
+
+            QString outcome = results["outcome"];
+            if (outcome == "passed")
             {
-                QString value = results.value(key);
-
-                if (key == "outcome")
-                {
-                    if (value == "passed")
-                    {
-                        table += startColGreen;
-                    }
-                    else
-                    {
-                        table += startColRed;
-                    }
-                }
-                else
-                {
-                    table += startCol;
-                }
-
-                if (key == "testcase")
-                {
-                    int caseId = value.toInt();
-                    table += desc.getDescription(caseId)->m_name;
-                }
-                else
-                {
-                    table += value;
-                }
-
-                table += endCol;
+                table += startColGreen;
             }
+            else
+            {
+                outcome += startColRed;
+            }
+
+            table += outcome;
+            table += endCol;
 
             table += endRow;
         }
@@ -234,4 +234,5 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
 
     file.close();
 
+    qDebug() << "Html report saved at " << fileinfo.absoluteFilePath();
 }
