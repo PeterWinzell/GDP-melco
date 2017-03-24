@@ -11,7 +11,7 @@ The ability to access vehicle data signals with a standardized API opens up for 
   
 # Architecture and Design
 
-Our choice of using the Qt platform as the basis for the server implementation was that the Qt framework since v 5.4 has an excellent web socket api. The Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms and it allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool.
+When selecting the Qt platform as the basis for the server implementation we argued that the Qt framework since v 5.4 has an excellent web socket api, and since the Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms, and allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool.
 
 
 # Usability According to Spec
