@@ -1,5 +1,6 @@
 QT += core websockets
 QT -= gui
+QT += xml
 
 CONFIG += c++11
 
@@ -25,9 +26,10 @@ SOURCES += main.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/subscriptions.cpp \
     messaging/websocketwrapper.cpp \
-    OpenDSTCPClient/opendstcpclient.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    request-handler/unsubnotifier.cpp
+    OpenDSHandler/opendshandler.cpp  \
+    request-handler/unsubnotifier.cpp \
+    request-handler/statushandler.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -45,10 +47,11 @@ HEADERS += \
     request-handler/processrequesttask.h \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
+    VSSSignalinterface/vsssignalinterfaceimpl.h \
+    OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
-    OpenDSTCPClient/opendstcpclient.h \
-    VSSSignalinterface/vsssignalinterfaceimpl.h
+    request-handler/statushandler.h
 
 target.path = /home/pi
 INSTALLS += target
@@ -60,4 +63,4 @@ INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
-else:unix:!macx: LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
+else:unix: LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken

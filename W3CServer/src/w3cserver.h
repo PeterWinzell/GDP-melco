@@ -6,6 +6,7 @@
 #include <QByteArray>
 #include <QSslError>
 #include <QMutex>
+#include "OpenDSHandler/opendshandler.h"
 
 class WebSocketWrapper;
 class VSSSignalInterface;
@@ -15,7 +16,6 @@ class VSSSignalInterface;
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
-
 class W3CServer : public QObject
 {
     Q_OBJECT
@@ -23,6 +23,8 @@ public:
     explicit W3CServer(quint16 port,bool usesecureprotocol = false,bool debug=false, QObject *parent = Q_NULLPTR);
     ~W3CServer();
 
+    //static int getNumberOfClients() {return m_nrOfClients; }
+    static int m_nrOfClients;
 Q_SIGNALS:
     void closed();
 
@@ -37,8 +39,10 @@ private:
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
     QSharedPointer<VSSSignalInterface> m_vsssInterface;
+    QSharedPointer<OpenDSHandler> m_openDSHandler;
     bool m_debug;
     bool m_secure;
+
 };
 
 #endif // W3CSERVER_H

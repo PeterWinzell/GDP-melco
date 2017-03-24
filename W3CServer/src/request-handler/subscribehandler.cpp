@@ -23,6 +23,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDateTime>
+#include <QCoreApplication>
+#include <QEventLoop>
 #include "unsubnotifier.h"
 #include "subscribehandler.h"
 #include "subscriptions.h"
@@ -33,6 +35,7 @@ const int SubscribeHandler::m_defaultIntervalMs = 1000;
 SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
+    m_pSignalInterface = signalInterface;
 }
 
 void SubscribeHandler::processRequest()
@@ -58,7 +61,7 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        QString value = getSignalValue(m_pVissrequest->getSignalPath());
+        QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
 
         if (isFilterPass(value))
         {
@@ -73,6 +76,8 @@ void SubscribeHandler::processRequest()
             m_pClient->sendTextMessage(message);
         }
 
+        //Let the event loop process events so that signals are not blocked
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
         //Sleep for the period defined by filter
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
@@ -82,11 +87,13 @@ void SubscribeHandler::processRequest()
 
 void SubscribeHandler::socketDisconnected()
 {
+    qDebug() << " socket disconnected slot called in subscribehandler";
     m_dosubscription = false;
 }
 
 void SubscribeHandler::unsubscribe()
 {
+    qDebug() << " usubscribe signal invoked ";
     m_dosubscription = false;
 }
 

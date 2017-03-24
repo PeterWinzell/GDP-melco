@@ -28,12 +28,17 @@ class UnsubNotifier: public QObject
 {
     Q_OBJECT
 public:
-    explicit UnsubNotifier(QObject* parent = nullptr,SubscribeHandler* handler = nullptr);
-    void unsubScribe();
+    explicit UnsubNotifier(QObject* parent = nullptr);
+
+    /**
+     * @brief UnsubNotifier::unsubScribe
+     *
+     */
+    inline void unsubScribe(){
+            emit unsubscribe();
+    }
 signals:
     void unsubscribe();
-private:
-    SubscribeHandler* m_psubscriber;
 };
 
 #endif // UNSUBNOFITIER_H

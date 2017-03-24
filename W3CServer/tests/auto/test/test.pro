@@ -7,6 +7,7 @@ CONFIG += thread
 
 QT += core websockets
 QT -= gui
+QT += xml
 
 HEADERS += \
     tst_jsonrequestparser.h \
@@ -29,8 +30,10 @@ SOURCES += main.cpp \
     ../../../src/request-handler/processrequesttask.cpp \
     ../../../src/request-handler/subscriptions.cpp \
     ../../../src/request-handler/unsubnotifier.cpp \
+    ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
-    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp
+    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    ../../../src/OpenDSHandler/opendshandler.cpp
 
 
 HEADERS += \
@@ -49,9 +52,11 @@ HEADERS += \
     ../../../src/request-handler/processrequesttask.h \
     ../../../src/request-handler/subscriptions.h \
     ../../../src/request-handler/unsubnotifier.h \
+    ../../../src/request-handler/statushandler.h \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
-    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h
+    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h \
+    ../../../src/OpenDSHandler/opendshandler.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging
 INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface
@@ -73,4 +78,6 @@ else:unix:!macx: LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebto
 DISTFILES += \
     data/vss_rel_1.json
 
-QMAKE_POST_LINK += $$quote($$QMAKE_COPY $${PWD}/data/* $${OUT_PWD})
+
+unix:QMAKE_POST_LINK += $$quote($$QMAKE_COPY $${PWD}/data/* $${OUT_PWD})
+else:win32:QMAKE_POST_LINK += $$QMAKE_COPY \"$${PWD}/data\\*\" \"$${OUT_PWD}\"

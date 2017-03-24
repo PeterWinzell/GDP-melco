@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>server.key</file>
         <file>server.crt</file>
+        <file>W3CServer.ini</file>
     </qresource>
 </RCC>

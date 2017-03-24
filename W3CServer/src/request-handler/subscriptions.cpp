@@ -46,9 +46,9 @@ QString Subscriptions::addSubcription(SubscribeHandler* handler)
 
     QString subidStr = QString::number(m_subscriptionIdCounter);
     QWebSocket* client = handler -> getSocketClient() -> getSocket();
-    UnsubNotifier* usubNotifier = new UnsubNotifier(nullptr,handler);
+    UnsubNotifier* usubNotifier = new UnsubNotifier();
     // connect unsubscription
-    connect(usubNotifier,&UnsubNotifier::unsubscribe,handler,&SubscribeHandler::unsubscribe,Qt::QueuedConnection);
+    connect(usubNotifier,&UnsubNotifier::unsubscribe,handler,&SubscribeHandler::unsubscribe);
     // handle unsubscribe
     m_notifiers.insert(subidStr,usubNotifier);
     //handle unsubscribe all

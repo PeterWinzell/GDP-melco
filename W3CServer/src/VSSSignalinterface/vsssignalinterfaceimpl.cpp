@@ -1,8 +1,9 @@
 #include "vsssignalinterfaceimpl.h"
 #include <QJsonObject>
 #include <QString>
-#include <QMutex>
+#include <QMutexLocker>
 #include <QJsonDocument>
+#include <QPointer>
 #include <QFile>
 #include <QDir>
 #include <QDebug>
@@ -10,55 +11,91 @@
 
 VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 {
-    rpm = "3000";
-    speed = "70";
+    m_rpm = "3000";
+    m_speed = "70";
 
     loadJson(vssFile);
+}
+
+void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
+{
+    // qDebug()  << "VSSSignalInterfaceImpl::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    switch (type)
+    {
+        case CarSignalType::RPM:
+            m_rpm = value;
+            break;
+        case CarSignalType::Speed:
+            m_speed = value;
+            break;
+        default:
+            break;
+    }
 }
 
 void VSSSignalInterfaceImpl::loadJson(const QString &fileName)
 {
     QFile jsonFile(fileName);
+    QJsonDocument doc;
 
     if (jsonFile.exists())
     {
         jsonFile.open(QFile::ReadOnly);
+        doc = QJsonDocument().fromJson(jsonFile.readAll());
     }
     else
     {
         qWarning() << "Vss file " << fileName << " not found!";
     }
 
-    QJsonDocument doc = QJsonDocument().fromJson(jsonFile.readAll());
-
     m_vssTree = doc.object();
 }
 
 QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
 {
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
     QString result = "not implemented";
 
     if(path == "Signal.Drivetrain.InternalCombustionEngine.RPM")
     {
-        mutex.lock();
-        result = rpm;
-        mutex.unlock();
-
+        result = m_rpm;
     }
     else if (path == "Signal.Drivetrain.Transmission.Speed")
     {
-        mutex.lock();
-        result = speed;
-        mutex.unlock();
+        result = m_speed;
     }
 
     return result;
 }
 
-qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path)
+qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path, QVariant value)
 {
-    QString p = path;
-    return 0;
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    qint8 result = 0;
+
+    qDebug() << "setSignalValue: path = " << path;
+
+    if(path == "Signal.Drivetrain.InternalCombustionEngine.RPM")
+    {
+        m_rpm = value.toString();
+
+        qDebug() << "m_rpm = " << m_rpm;
+    }
+    else if (path == "Signal.Drivetrain.Transmission.Speed")
+    {
+        m_speed = value.toString();
+
+        qDebug() << "m_speed = " << m_speed;
+    }
+
+    return result;
 }
 
 QJsonObject VSSSignalInterfaceImpl::getVSSNode(const QString& path)
@@ -99,27 +136,26 @@ void VSSSignalInterfaceImpl::getTreeNodes(QJsonObject& tree, QStringList& path, 
     if (path.length() > 0)
     {
         QString key = path[0];
+        JsonNode node;
+        node.isBranch = path.length() > 1;
+        node.key = key;
 
-//        if (key != "*")
-//        {
-        removeAllKeysButOne(tree, key);
-//        }
+        if (node.isBranch)
+        {
+            removeAllKeysButOne(tree, key);
+        }
 
         tree = tree.value(key).toObject();
 
         QJsonObject treeCopy = tree;
-        removeOne(treeCopy, "children");
 
-        JsonNode node;
-        node.isBranch = false;
-        node.json = treeCopy;
-        node.key = key;
-
-        if (path.length() > 1)
+        if (node.isBranch)
         {
+            removeOne(treeCopy, "children");
             tree = tree.value("children").toObject();
-            node.isBranch = true;
         }
+
+        node.json = treeCopy;
 
         nodes.push_front(node);
 
@@ -138,34 +174,7 @@ void VSSSignalInterfaceImpl::createJsonVssTree(QVector<JsonNode>& nodes, QJsonOb
 
         if (node.isBranch)
         {
-//            QStringList keys = node.json.keys();
-//            QVector<JsonNode> jsonObjects;
-
-//            // sort key order to get children last
-
-//            foreach (QString key, keys)
-//            {
-//                JsonNode copyNode;
-//                copyNode.key = key;
-//                copyNode.json = node.json.value(key).toObject();
-//                jsonObjects.push_back(copyNode);
-//            }
-
-//            foreach (QString key, keys)
-//            {
-//                node.json.remove(key);
-//            }
-
-//            foreach (JsonNode n, jsonObjects)
-//            {
-//                node.json.insert(n.key, n.json);
-//            }
-
-//            // will be placed last
-
             node.json.insert("children", json);
-
-            // insert the reordered object
             obj.insert(node.key, node.json);
         }
         else

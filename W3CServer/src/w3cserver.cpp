@@ -18,17 +18,20 @@
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
 #include "messaging/websocketwrapper.h"
+#include "OpenDSHandler/opendshandler.h"
 
 QT_USE_NAMESPACE
 
 class W3CServer;
-
+int W3CServer::m_nrOfClients;
 W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients(),
     m_debug(debug),
     m_secure(usesecureprotocol)
 {
+    QThreadPool::globalInstance()->setMaxThreadCount(100);
+
     if (usesecureprotocol)
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
@@ -74,7 +77,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
         //Connect QWebsocketServer signal with W3CServer signal closed
-       // connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
+        // connect(m_pWebSocketServer,&QWebSocketServer::closed, this, &W3CServer::closed);
         //SSL error handler
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &W3CServer::onSslErrors);
@@ -84,6 +87,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
     const QString vssFile = "/etc/vss_rel_1.json";
     m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
+    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
+    connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
 
 W3CServer::~W3CServer()
@@ -107,14 +112,20 @@ void W3CServer::onNewConnection()
 
     // add socket to list of clients
     m_clients.insert(pSocket, new QMutex());
+    W3CServer::m_nrOfClients++;
 }
 
 void W3CServer::processTextMessage(const QString& message)
 {
+    if (m_debug)
+    {
+        qDebug() << "Message recieved: " << message;
+    }
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
-    if (m_clients.contains(zeClient)){
+    if (m_clients.contains(zeClient))
+    {
         // we need a mutex per client .
         QMutex* mutex = m_clients.find(zeClient).value();
         QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
@@ -125,10 +136,7 @@ void W3CServer::processTextMessage(const QString& message)
         qDebug() << "fatal connection error, websocket client not found ";
     }
 
-    if (m_debug)
-    {
-        qDebug() << "Message recieved: " << message;
-    }
+    qDebug() << "Message received: " << message;
 }
 
 void W3CServer::socketDisconnected()
@@ -144,6 +152,7 @@ void W3CServer::socketDisconnected()
     {
         m_clients.remove(zeClient);
         zeClient->deleteLater();
+        W3CServer::m_nrOfClients--;
     }
 }
 
@@ -152,10 +161,18 @@ void W3CServer::onSslErrors(const QList<QSslError> &)
     qDebug() << "Ssl error occurred";
 }
 
-
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
     ProcessRequestTask* requesttask = new ProcessRequestTask(sw, m_vsssInterface, message, true);
     // QThreadPool takes ownership and deletes 'requesttask' automatically
-    QThreadPool::globalInstance()->start(requesttask);
+
+    if(!QThreadPool::globalInstance()->tryStart(requesttask))
+    {
+        qWarning() << "Failed to start thread! Active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+        qWarning() << "Max threads allowed: " << QThreadPool::globalInstance()->maxThreadCount();
+    }
+    else
+    {
+        qDebug() << "New thread started!, active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+    }
 }

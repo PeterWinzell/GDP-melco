@@ -19,11 +19,14 @@ public:
 signals:
 
 public slots:
+    void socketDisconnected();
+    void socketConnected();
 
 private:
     QWebSocket* m_pSocket;
     QString m_lastMessage;
     QMutex* m_pMutex;
+    bool m_connected;
 };
 
 #endif // WEBSOCKETWRAPPER_H
