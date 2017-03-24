@@ -17,7 +17,7 @@ void StatusHandler::processRequest()
     response.insert("clients", W3CServer::m_nrOfClients);
     response.insert("threads", QThreadPool::globalInstance()->activeThreadCount());
     response.insert("subcriptions", Subscriptions::getInstance()->getSubscriptionCount());
-
+    QString time = QString::number(QDateTime::currentDateTime().toTime_t());
     response.insert("timestamp", time);
 
     QJsonDocument jsonDoc(response);
