@@ -13,4 +13,5 @@ The ability to access vehicle data signals with a standardized API opens up for 
 # Future work
 # References
 [1] https://www.w3.org/blog/auto/2017/01/04/vehicle-data-interfaces/
+
 [2] https://github.com/w3c/automotive/blob/gh-pages/vehicle_data/vehicle_information_service.html
