@@ -18,4 +18,4 @@ The ability to access vehicle data signals with a standardized API opens up for 
 
 [2] https://github.com/w3c/automotive/blob/gh-pages/vehicle_data/vehicle_information_service.html
 
-[3] 
+[3] https://at.projects.genivi.org/wiki/pages/viewpage.action?pageId=14090346
