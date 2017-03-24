@@ -2,11 +2,12 @@
 #include <QDebug>
 #include <QThread>
 #include <QtCore/QCoreApplication>
+#include <QFileInfo>
 #include "testcasedescriptions.h"
 
 W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url,
-        QString swversion, QString timestamp, bool randomize)
-    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize)
+        QString swversion, QString timestamp, bool randomize, const QString& reportDir)
+    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize), m_reportDir(reportDir)
 {
     qRegisterMetaType<QQueue<TestCase>>();
 
@@ -53,16 +54,27 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 
     if(m_finishedClients.length() >= m_clients.length())
     {
-        QString file = QString("/usr/bin/w3c-tests.xml");
+        QString file = QString("./w3c-tests.xml");
+        QString htmlFile = QString("./w3c-tests.html");
+
+        if (m_reportDir != "")
+        {
+            htmlFile = m_reportDir + "/w3c-tests.html";
+            file = m_reportDir + "/w3c-tests.xml";
+        }
+        qDebug() << "Generating reports...";
         writeXMLReport(file);
+        writeHTMLReport(htmlFile);
         QCoreApplication::exit(0);
     }
 }
 void W3cTestClientHandler::writeXMLReport(QString filename)
 {
     QFile file(filename);
+    QFileInfo fileinfo(filename);
     if(!file.open(QFile::WriteOnly |QFile::Text))
     {
+        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
         return;
     }
     TestCaseDescriptions desc;
@@ -110,4 +122,116 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
 
     file.flush();
     file.close();
+
+    qDebug() << "Final report saved at " << fileinfo.absoluteFilePath();
+}
+
+void W3cTestClientHandler::writeHTMLReport(const QString& filename)
+{
+    QFile file(filename);
+    QFileInfo fileinfo(filename);
+    if(!file.open(QFile::WriteOnly |QFile::Text))
+    {
+        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
+        return;
+    }
+
+    TestCaseDescriptions desc;
+
+    QString startDoc = "<!DOCTYPE html> <html>";
+    QString endDoc = "</html>";
+
+    QString startTable = "<table border=\"1\">";
+    QString endTable = "</table>";
+    QString startRow = "<tr>";
+    QString endRow = "</tr>";
+    QString startCol = "<td>";
+    QString endCol = "</td>";
+
+    QString startColGreen = "<td bgcolor=\"#32cb00\">";
+    QString startColRed = "<td bgcolor=\"#fe0000\">";
+
+    QString startHeader = "<th>";
+    QString endHeader = "</th>";
+
+    QString table = startTable;
+
+    // create header from first result
+
+    auto results = m_finishedClients[0]->m_testResults[0];
+
+    table += startRow;
+
+    table += startHeader;
+    table += "Client id";
+    table += endHeader;
+
+    for (auto key : results.keys())
+    {
+        table += startHeader;
+        table += key;
+        table += endHeader;
+    }
+
+    table += endRow;
+
+    // and rest of the table
+
+    for(auto report : m_finishedClients)
+    {
+        for (auto results : report->m_testResults)
+        {
+            table += startRow;
+
+            table += startCol;
+            table += QString::number(report->m_clientId);
+            table += endCol;
+
+            for (auto key : results.keys())
+            {
+                QString value = results.value(key);
+
+                if (key == "outcome")
+                {
+                    if (value == "passed")
+                    {
+                        table += startColGreen;
+                    }
+                    else
+                    {
+                        table += startColRed;
+                    }
+                }
+                else
+                {
+                    table += startCol;
+                }
+
+                if (key == "testcase")
+                {
+                    int caseId = value.toInt();
+                    table += desc.getDescription(caseId)->m_name;
+                }
+                else
+                {
+                    table += value;
+                }
+
+                table += endCol;
+            }
+
+            table += endRow;
+        }
+    }
+
+    table += endTable;
+
+    QString html = startDoc + table + endDoc;
+
+    QTextStream stream( &file );
+
+    stream << html;
+
+    file.close();
+
 }

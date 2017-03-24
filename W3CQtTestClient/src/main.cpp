@@ -44,8 +44,13 @@ int main(int argc, char *argv[])
                                        QCoreApplication::translate("main", "timestamp"));
     parser.addOption(timestampOption);
 
+    QCommandLineOption reportDirOption(QStringList() << "report-dir", QCoreApplication::translate("main", "Path to the output directory for reports to be saved."),
+                                       QCoreApplication::translate("main", "report-dir"));
+    parser.addOption(reportDirOption);
+
 
     parser.process(a);
+    qDebug() << parser.optionNames();
 
     int nrOfClients = 2; // Default number of clients
     if(parser.isSet(clientOption))
@@ -54,6 +59,7 @@ int main(int argc, char *argv[])
     }
 
     QQueue<TestCase> tests;
+
     for(auto test : parser.positionalArguments())
     {
         if (test == "subscribe")
@@ -91,7 +97,7 @@ int main(int argc, char *argv[])
         else
         {
             qDebug() << "Unknown argument: " << test;
-            QCoreApplication::exit(-1);
+            return -1;
         }
     }
 
@@ -126,11 +132,18 @@ int main(int argc, char *argv[])
         url = "wss://127.0.0.1:8080"; // default secure url
     }
 
+    QString reportDir = "";
+
+    if(parser.isSet(reportDirOption))
+    {
+        reportDir = parser.value(reportDirOption);
+    }
+
     qDebug() << "nrOfClients: " << nrOfClients << " randomize: " << randomize << " secure: " << secure << " url: " << url;
 
     QString swversion = parser.value(softwareOption);
     QString timestamp = parser.value(timestampOption);
-    W3cTestClientHandler handler(nrOfClients, tests, url, swversion,timestamp,randomize);
+    W3cTestClientHandler handler(nrOfClients, tests, url, swversion,timestamp,randomize, reportDir);
 
 
     Q_UNUSED(handler);

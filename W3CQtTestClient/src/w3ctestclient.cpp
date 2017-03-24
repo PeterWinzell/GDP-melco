@@ -409,16 +409,12 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
     m_webSocket->sendTextMessage(subMess1);
     m_webSocket->sendTextMessage(subMess2);
     m_webSocket->sendTextMessage(subMess3);
-    /*
-        m_webSocket.sendTextMessage(subMess4);
-        m_webSocket.sendTextMessage(subMess5);
-        m_webSocket.sendTextMessage(subMess6);
-        m_webSocket.sendTextMessage(subMess7);
-        m_webSocket.sendTextMessage(subMess8);
-        m_webSocket.sendTextMessage(subMess9);
-        m_webSocket.sendTextMessage(subMess10);
-        m_webSocket.sendTextMessage(subMess11);
-        m_webSocket.sendTextMessage(subMess12);*/
+/*
+    m_webSocket.sendTextMessage(subMess8);
+    m_webSocket.sendTextMessage(subMess9);
+    m_webSocket.sendTextMessage(subMess10);
+    m_webSocket.sendTextMessage(subMess11);
+    m_webSocket.sendTextMessage(subMess12);*/
 
 
 
