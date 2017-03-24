@@ -10,6 +10,10 @@ The ability to access vehicle data signals with a standardized API opens up for 
   This is a reference implementation of the W3C Vehicle Information Service specification [[2]](https://github.com/w3c/automotive/blob/gh-pages/vehicle_data/vehicle_information_service.html). The implementation is done on the GDP-11 [[3]](https://at.projects.genivi.org/wiki/pages/viewpage.action?pageId=14090346) platform targeting the RPI3 as its primary SOC. It is an open source project where the server is implemented with the Qt framework and added to the yocto based GDP-11 software platform.
   
 # Architecture and Design
+
+The choice of using the Qt platform as the basis for the server implementation was that the Qt framework since v 5.4 has an excellent web socket api. The Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms and it allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool.
+
+
 # Usability
 # Tests and Demo applications
 # Future work
