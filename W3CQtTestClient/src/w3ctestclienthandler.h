@@ -26,7 +26,7 @@ signals:
 private:
 
     void writeXMLReport(QString filename);
-    void writeHTMLReport(const QString &filename);
+    bool writeHTMLReport(const QString &filename);
 
 
     QQueue<TestCase> m_testCases;

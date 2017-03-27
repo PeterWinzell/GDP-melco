@@ -64,8 +64,15 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
         }
         qDebug() << "Generating reports...";
         writeXMLReport(file);
-        writeHTMLReport(htmlFile);
-        QCoreApplication::exit(0);
+        bool allPassed = writeHTMLReport(htmlFile);
+
+        int exitCode = 0;
+        if (!allPassed)
+        {
+            exitCode = -1;
+        }
+
+        QCoreApplication::exit(exitCode);
     }
 }
 
@@ -127,14 +134,17 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
     qDebug() << "Xml report saved at " << fileinfo.absoluteFilePath();
 }
 
-void W3cTestClientHandler::writeHTMLReport(const QString& filename)
+bool W3cTestClientHandler::writeHTMLReport(const QString& filename)
 {
     QFile file(filename);
     QFileInfo fileinfo(filename);
+
+    bool allPassed = true;
+
     if(!file.open(QFile::WriteOnly |QFile::Text))
     {
         qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
-        return;
+        return false;
     }
 
     TestCaseDescriptions desc;
@@ -215,6 +225,7 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
             }
             else
             {
+                allPassed = false;
                 table += startColRed;
             }
 
@@ -236,4 +247,6 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
     file.close();
 
     qDebug() << "Html report saved at " << fileinfo.absoluteFilePath();
+
+    return allPassed;
 }
