@@ -68,6 +68,7 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
         QCoreApplication::exit(0);
     }
 }
+
 void W3cTestClientHandler::writeXMLReport(QString filename)
 {
     QFile file(filename);
@@ -214,7 +215,7 @@ void W3cTestClientHandler::writeHTMLReport(const QString& filename)
             }
             else
             {
-                outcome += startColRed;
+                table += startColRed;
             }
 
             table += outcome;
