@@ -23,7 +23,7 @@
 QT_USE_NAMESPACE
 
 class W3CServer;
-
+int W3CServer::m_nrOfClients;
 W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients(),
@@ -112,6 +112,7 @@ void W3CServer::onNewConnection()
 
     // add socket to list of clients
     m_clients.insert(pSocket, new QMutex());
+    W3CServer::m_nrOfClients++;
 }
 
 void W3CServer::processTextMessage(const QString& message)
@@ -151,6 +152,7 @@ void W3CServer::socketDisconnected()
     {
         m_clients.remove(zeClient);
         zeClient->deleteLater();
+        W3CServer::m_nrOfClients--;
     }
 }
 

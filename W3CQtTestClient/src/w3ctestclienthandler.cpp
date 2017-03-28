@@ -2,11 +2,12 @@
 #include <QDebug>
 #include <QThread>
 #include <QtCore/QCoreApplication>
+#include <QFileInfo>
 #include "testcasedescriptions.h"
 
 W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url,
-        QString swversion, QString timestamp, bool randomize)
-    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize)
+        QString swversion, QString timestamp, bool randomize, const QString& reportDir)
+    : m_testCases(tests), m_url(url), m_swversion(swversion), m_timestamp(timestamp), m_randomize(randomize), m_reportDir(reportDir)
 {
     qRegisterMetaType<QQueue<TestCase>>();
 
@@ -53,17 +54,35 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 
     if(m_finishedClients.length() >= m_clients.length())
     {
-        // TODO: output file should be optionally set as an application argument
         QString file = QString("./w3c-tests.xml");
+        QString htmlFile = QString("./w3c-tests.html");
+
+        if (m_reportDir != "")
+        {
+            htmlFile = m_reportDir + "/w3c-tests.html";
+            file = m_reportDir + "/w3c-tests.xml";
+        }
+        qDebug() << "Generating reports...";
         writeXMLReport(file);
-        QCoreApplication::exit(0);
+        bool allPassed = writeHTMLReport(htmlFile);
+
+        int exitCode = 0;
+        if (!allPassed)
+        {
+            exitCode = -1;
+        }
+
+        QCoreApplication::exit(exitCode);
     }
 }
+
 void W3cTestClientHandler::writeXMLReport(QString filename)
 {
     QFile file(filename);
+    QFileInfo fileinfo(filename);
     if(!file.open(QFile::WriteOnly |QFile::Text))
     {
+        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
         return;
     }
     TestCaseDescriptions desc;
@@ -111,4 +130,123 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
 
     file.flush();
     file.close();
+
+    qDebug() << "Xml report saved at " << fileinfo.absoluteFilePath();
+}
+
+bool W3cTestClientHandler::writeHTMLReport(const QString& filename)
+{
+    QFile file(filename);
+    QFileInfo fileinfo(filename);
+
+    bool allPassed = true;
+
+    if(!file.open(QFile::WriteOnly |QFile::Text))
+    {
+        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
+        return false;
+    }
+
+    TestCaseDescriptions desc;
+
+    QString startDoc = "<!DOCTYPE html> <html>";
+    QString endDoc = "</html>";
+
+    QString startTable = "<table border=\"1\">";
+    QString endTable = "</table>";
+    QString startRow = "<tr>";
+    QString endRow = "</tr>";
+    QString startCol = "<td>";
+    QString endCol = "</td>";
+
+    QString startColGreen = "<td bgcolor=\"#32cb00\">";
+    QString startColRed = "<td bgcolor=\"#fe0000\">";
+
+    QString startHeader = "<th>";
+    QString endHeader = "</th>";
+
+    QString table = startTable;
+
+    // create header
+
+    table += startRow;
+
+    table += startHeader;
+    table += "Client id";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Test case";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Started";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Ended";
+    table += endHeader;
+
+    table += startHeader;
+    table += "Outcome";
+    table += endHeader;
+
+    table += endRow;
+
+    // and rest of the table
+
+    for(auto report : m_finishedClients)
+    {
+        for (auto results : report->m_testResults)
+        {
+            table += startRow;
+
+            table += startCol;
+            table += QString::number(report->m_clientId);
+            table += endCol;
+
+            table += startCol;
+            int caseId = results["testcase"].toInt();
+            table += desc.getDescription(caseId)->m_name;
+            table += endCol;
+
+            table += startCol;
+            table += results["started"];
+            table += endCol;
+
+            table += startCol;
+            table += results["ended"];
+            table += endCol;
+
+            QString outcome = results["outcome"];
+            if (outcome == "passed")
+            {
+                table += startColGreen;
+            }
+            else
+            {
+                allPassed = false;
+                table += startColRed;
+            }
+
+            table += outcome;
+            table += endCol;
+
+            table += endRow;
+        }
+    }
+
+    table += endTable;
+
+    QString html = startDoc + table + endDoc;
+
+    QTextStream stream( &file );
+
+    stream << html;
+
+    file.close();
+
+    qDebug() << "Html report saved at " << fileinfo.absoluteFilePath();
+
+    return allPassed;
 }

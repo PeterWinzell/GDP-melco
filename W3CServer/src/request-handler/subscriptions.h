@@ -40,6 +40,7 @@ public:
     QString addSubcription(SubscribeHandler* handler);
     bool unsubscribe(QString subscriptionId);
     bool unsubscribeAll(WebSocketWrapper *client);
+    int getSubscriptionCount(){ return m_subscriptionIdCounter; }
 
 signals:
     void unsubscribe();

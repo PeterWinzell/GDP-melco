@@ -28,6 +28,7 @@ private:
     bool validateUnsubscribeAllRequest(VISSRequest* request);
     bool validateAuthorizeRequest(VISSRequest* request);
     bool validateGetVSSRequest(VISSRequest* request);
+    bool validateStatusRequest(VISSRequest* request);
 
     bool validateAction(VISSRequest* request);
     bool validatePath(QJsonValue value);

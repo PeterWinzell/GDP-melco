@@ -29,7 +29,7 @@ public:
     void RunSetGetTest();
     void RunSetTest();
     void RunAuthorizeTest();
-
+    void RunStatusTest();
 
     void startClient();
     void runTest();

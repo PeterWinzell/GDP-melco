@@ -30,6 +30,7 @@ SOURCES += main.cpp \
     ../../../src/request-handler/processrequesttask.cpp \
     ../../../src/request-handler/subscriptions.cpp \
     ../../../src/request-handler/unsubnotifier.cpp \
+    ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     ../../../src/OpenDSHandler/opendshandler.cpp
@@ -51,6 +52,7 @@ HEADERS += \
     ../../../src/request-handler/processrequesttask.h \
     ../../../src/request-handler/subscriptions.h \
     ../../../src/request-handler/unsubnotifier.h \
+    ../../../src/request-handler/statushandler.h \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h \
