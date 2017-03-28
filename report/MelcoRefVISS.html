@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-	<title>W3C Vehicle Information Signal Specification reference implementation, Mitsubishi Electric</title>
+	<title>Automotive Working Group Implementation report</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
             class='remove'>
@@ -78,34 +78,25 @@ var respecConfig = {
   <body>
     <section id="abstract">
       <p>
-        The standardization of vehicle information signals is key to facilitate feature growth and innovation for internet based applications inside and outside the vehicle. 
+       This is a report of the Vehicle Information Service specificiation reference implementations. It is the aim fo this report to show that specification and its featureas are interoperable. The xxx test suit is used to as reference.
+	      
       </p>
     </section>
     <section id="sotd">
     </section>
-   <section id="architecture">
-	<h2>Design choices</h2>
+   <section id="implementations">
+	<h2>List of reference implementations</h2>
       <p>
-        One of the criteria was to implement this on a platform that would allow open source development. The Genivi development platform (GDP-11) was a choosen for its availability and …
+        1) Melco implementation
       </p>
       <p>
-      The server implementation is based on a simple idea that client every request is handled by a separate thread. Threads are reused through thread pool mechanism to reduce system memory and performance strains. The server implementation is able to handle multiple requests … 
-    </p>
-    </section>
-    <section >
-      <h3> Interfaces </h3>
-       <p>
-      openDS interface, VSI, RVI + VSI …
+        2) Access implementation
+      </p>	   
+      <p>
+        3) Wonsuk implementation
       </p>
-    </section>
-
-     <section id="usage">
-	<h3> Usage cases </h3>
-       <p>
-       The server deployment is not bound to the infotainment system, i.e the actual IHU. The server can be deployed anywhere on any ECU inside the vehicle, but not only that the server could also be deployed outside the vehicle. The benefits of using internet based protocols is that the deployment of the signal server is boundless. It is a piece of software for the internet-of-things-everywhere. The use cases and features that this opens up for are endless…might move this to the abstract
-       </p>
-    </section>
-     <section id="testing">
+   </section>
+   <section id="testing">
      <h3> Test results </h3>
        <p>
       Table from W3Ctestclient…
