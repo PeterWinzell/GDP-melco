@@ -24,7 +24,7 @@ var respecConfig = {
             data: [
                 {
                     value: 'We are on github.',
-                    href: 'https://github.com/PeterWinzell'
+                    href: 'https://github.com/PeterWinzell/GDP-melco/tree/LP-116/report'
                 },
              ]
           }],
@@ -68,18 +68,17 @@ var respecConfig = {
             width:  120px;
         }
 
-        table.exceptions table {
-            border-spacing: 0;
-            border-collapse:    collapse;
-            width:  100%;
-        }
+        #table.exceptions table {
+        #    border-spacing: 0;
+        #    border-collapse:    collapse;
+        #    width:  100%;
+        #}	table, th, td {    		border: 1px solid black;    		border-collapse: collapse;	}
     </style>
   </head>
   <body>
     <section id="abstract">
       <p>
-       This is a report of the Vehicle Information Service specificiation reference implementations. It is the aim fo this report to show that specification and its featureas are interoperable. The xxx test suit is used to as reference.
-	      
+       This is an implementation report of the Vehicle Information Service<a href="https://www.w3.org/TR/vehicle-information-service/">[1]</a> specificiation and the Vehicle Information Api[2] specification. It is the aim of this report to show that the specifications are implementable and that they  are interoperable. VISS features are defined as the service request actions (GET,SET,SUBSCRIBE,UNSUBSCRIBE,UNSUBSCRIBEALL, AUTHORIZE, GETVSS) and their realisation in the service implementation.
       </p>
     </section>
     <section id="sotd">
@@ -87,20 +86,20 @@ var respecConfig = {
    <section id="implementations">
 	<h2>List of reference implementations</h2>
       <p>
-        1) Melco implementation
+        1) Melco implementation<a href="https://github.com/PeterWinzell/GDP-melco/blob/LP-116/report/report.md">[3]</a>. This a Qt web socket implementation and it is developed for the GDP-11 (Genivi Development platform).
       </p>
       <p>
-        2) Access implementation
+        2) Access implementation t.b.e This a javascript/HMTL based implementation...
       </p>	   
       <p>
-        3) Wonsuk implementation
+        3) Wonsuk implementation t.b.e
       </p>
    </section>
    <section id="testing">
-     <h3> Test results </h3>
+     <h3> Test results example table </h3>
        <p>
       Table from W3Ctestclient…
-      </p>
+      </p>  <table class="report">          <tbody><tr>            <th>              Test            </th>            <th>              <a href="">  Melco VISS</a>            </th>            <th>              <a href="">  Access VISS</a>            </th>	   <th>              <a href="">  Wonsuk VISS</a>            </th>          </tr>          <tr "">            <td>              <a href="#test"3>0070-init-wrong-subproto-error</a>            </td>            <td>              FAIL             </td>            <td> 	     PASS	            </td>            <td> 	     FAIL	            </td>          </tr>                    <tr "">            <td>              <a href="#test">00120-getVSS-incorrect-error</a>            </td>            <td>              FAIL             </td>            <td> 	     FAIL	            </td>            <td> 	     FAIL	            </td>          </tr>        </tbody></table>
     </section>
   </body>
 </html>
