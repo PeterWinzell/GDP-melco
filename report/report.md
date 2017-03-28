@@ -11,10 +11,14 @@ The ability to access vehicle data signals with a standardized API opens up for 
   
 # Architecture and Design
 
-When selecting the Qt platform as the basis for the server implementation we argued that the Qt framework since v 5.4 has an excellent web socket api, and since the Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms, and allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool.
+When selecting the Qt platform as the basis for the server implementation we argued that the Qt framework since v 5.4 inlcudes a web socket api, and since the Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool.
+
+The basic server design is to spawn an independent thread through a thread pool mechanism for each request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, USUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread deisgn will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot scheme[4* link to qt page]: for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
 
 
 # Usability According to Spec
+
+ We are able to use with a limited amount of vehicle signals using openDS car simulation and ODB signals that specification is impementable. We 
 # Tests and Demo applications
 # Future work
 # References
