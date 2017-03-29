@@ -17,6 +17,8 @@ When selecting the Qt platform as the basis for the server implementation we arg
 
 Figure 1 shows the basic architectural design with applications on top and the signal sources at the bottom, or if you prefer applications in the north and signals sources south.
 
+![Server Arch](W3CServerArch.png)<br>
+*Fig 1. W3C ref implementation architecture, (VSIAdapter migh be inluded in actual server process)*
 
 The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread design will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot mechanism[[4]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
 
