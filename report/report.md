@@ -46,9 +46,15 @@ The above example shows how a client would request to read the RPM signal and ho
 Figure 2 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
 
 ![Signal flow](signalFlow-3.png)<br>
-*Fig 2. Basic signal flow through W3C web socket server*
+*Fig 2. Basic signal flow through W3C web socket server for a subscription request*
 
+So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
 
+Ex: T.B.A
+
+This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
+
+VSIAdapter and VISSSignalInterface T.B.A
 
 # Usability According to Spec
 T.B.A
