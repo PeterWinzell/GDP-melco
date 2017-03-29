@@ -16,6 +16,7 @@ class VSSSignalInterfaceImpl : public VSSSignalInterface
 public:
 
     VSSSignalInterfaceImpl(const QString &vssFile);
+    ~VSSSignalInterfaceImpl();
     QString getSignalValue(const QString& path);
     qint8   setSignalValue(const QString& path, QVariant value);
     QJsonObject getVSSNode(const QString& path);
