@@ -49,14 +49,13 @@ Figure 2 shows the flow through the components when subscribing to a signal whic
 *Fig 2. Basic signal flow through W3C web socket server*
 
 
-The server south bound interface uses a tcp socket solution to collect vehicle data signals and promote to the right source. 
-
 
 # Usability According to Spec
-
- We are able to use with a limited amount of vehicle signals using openDS car simulation and ODB signals that specification is impementable. We 
+T.B.A
 # Tests and Demo applications
+T.B.A
 # Future work
+T.B.A
 # References
 [1] https://www.w3.org/blog/auto/2017/01/04/vehicle-data-interfaces/
 
