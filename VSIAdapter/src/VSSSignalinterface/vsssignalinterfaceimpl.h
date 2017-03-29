@@ -1,14 +1,15 @@
 #ifndef VSSSIGNALINTERFACEIMPL_H
 #define VSSSIGNALINTERFACEIMPL_H
 
+extern "C" {
+#include "vsi.h"
+}
+
 #include <QObject>
 #include <QMutex>
 #include "vsssignalinterface.h"
 
-extern "C" {
-#include "vsi.h"
-#include "btree.h"
-}
+
 
 class VSSSignalInterfaceImpl : public VSSSignalInterface
 {

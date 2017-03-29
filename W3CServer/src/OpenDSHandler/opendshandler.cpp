@@ -130,7 +130,7 @@ void OpenDSHandler::readyRead()
 
 void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
 {
-//    qDebug() << "something went wrong...." << error;
+    qDebug() << "OpenDSHandler socketError: something went wrong...." << error;
 
     // check if socket is still connected or if we need to reconnect!
     if(!(m_Socket->state() == QTcpSocket::ConnectedState))

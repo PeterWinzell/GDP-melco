@@ -1,9 +1,10 @@
 #ifndef OPENDSHANDLER_H
 #define OPENDSHANDLER_H
 
+#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
 #include <QObject>
 #include <QTcpSocket>
-#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+
 
 class OpenDSHandler : public QObject
 {

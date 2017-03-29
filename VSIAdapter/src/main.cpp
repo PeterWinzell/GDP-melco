@@ -1,10 +1,13 @@
+#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+#include "opendshandler.h"
+
 #include <QCoreApplication>
 #include <QSettings>
 #include <QPointer>
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-#include "opendshandler.h"
+
 
 
 int main(int argc, char *argv[])

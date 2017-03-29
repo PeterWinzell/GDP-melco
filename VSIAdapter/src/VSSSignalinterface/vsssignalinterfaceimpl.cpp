@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vsssignalinterfaceimpl.h"
+
 extern "C" {
 #include "vsi.h"
-#include "btree.h"
 }
 
-#include "vsssignalinterfaceimpl.h"
 #include <QJsonObject>
 #include <QString>
 #include <QMutexLocker>
@@ -19,6 +19,8 @@ extern "C" {
 #include <QDir>
 #include <QDebug>
 #include <QJsonArray>
+
+
 
 //
 //  A few global data items to make life easier...
@@ -467,7 +469,7 @@ void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
 
     m_result.domainId = m_domainId;
     m_result.signalId = m_signalId;
-    m_result.data[0] = value; //TBD variable size of data!
+    m_result.data[0] = 0; //value; //TBD variable size of data!
     m_result.dataLength = 1; //TBD variable size of data!
 
     int status = 0;
