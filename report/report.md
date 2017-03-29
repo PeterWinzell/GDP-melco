@@ -13,7 +13,11 @@ The ability to access vehicle data signals with a standardized API opens up for 
 
 When selecting the Qt platform as the basis for the server implementation we argued that the Qt framework since v 5.4 inlcudes a web socket api, and since the Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool.
 
-The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, USUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread deisgn will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot scheme[4* link to qt page]: for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
+The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread deisgn will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot scheme[[4]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
+
+Figure 1 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
+
+
 
 The server south bound interface uses a tcp socket solution to collect vehicle data signals and promote to the right source. 
 
