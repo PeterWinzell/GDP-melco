@@ -15,9 +15,11 @@ When selecting the Qt platform as the basis for the server implementation we arg
 
 The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread deisgn will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot scheme[[4]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
 
-Figure 1 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
+Figure 2 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
 
 ![Signal flow](signalFlow-3.png)<br>
+*Fig 2. Basic signal flow through W3C web socket server*
+
 
 The server south bound interface uses a tcp socket solution to collect vehicle data signals and promote to the right source. 
 
