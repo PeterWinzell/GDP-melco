@@ -17,7 +17,7 @@ The basic server design is to spawn an independent thread through a thread pool 
 
 Figure 1 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
 
-
+![Signal flow](signalFlow-3.png)<br>
 
 The server south bound interface uses a tcp socket solution to collect vehicle data signals and promote to the right source. 
 
