@@ -7,6 +7,7 @@ extern "C" {
 
 #include <QObject>
 #include <QMutex>
+#include <QMap>
 #include "vsssignalinterface.h"
 
 
@@ -71,6 +72,8 @@ private:
 
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;
+
+    QMap<CarSignalType, signal_t> SignalLookup;
 
     domain_t m_domainId;
     signal_t m_signalId;

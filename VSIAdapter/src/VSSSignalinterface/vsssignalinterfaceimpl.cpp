@@ -61,40 +61,59 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 
     long     dummyData = 0;
 
+    //Map Open DS signals to VSI signals
+    SignalLookup[RPM] = 42;   //Dummy id
+    SignalLookup[Speed] = 43; //Dummy id
+    SignalLookup[GasPedal] = 21; //Dummy id
+    SignalLookup[BrakePedal] = 22; //Dummy id
+    SignalLookup[SteerAngle] = 23; //Dummy id
+    SignalLookup[Headlights] = 24; //Dummy id
+    SignalLookup[EngineRunning] = 25; //Dummy id
+    SignalLookup[CurrentFuelConsumption] = 26; //Dummy id
+    SignalLookup[FuelTankMax] = 27; //Dummy id
+    SignalLookup[FuelTankActual] = 28; //Dummy id
+    SignalLookup[PositionLatitude] = 29; //Dummy id
+    SignalLookup[PositionLongitude] = 30; //Dummy id
+    SignalLookup[PositionAltitude] = 31; //Dummy id
+    SignalLookup[Orientation] = 32; //Dummy id
+    SignalLookup[Rise] = 33; //Dummy id*
+    SignalLookup[AccelerationLateral] = 34; //Dummy id*
+    SignalLookup[Rotation] = 35; //Dummy id*
+    SignalLookup[AccelerationRotation] = 36; //Dummy id*
+    SignalLookup[Acceleration] = 37; //Dummy id*
 
     //
     //  Call into the API to initialize the memory.
     //
     handle = vsi_initialize ( true );
-    if (!handle)
+    if (handle)
+    {
+        vsi_context* context = (vsi_context*)handle;
+
+        printf("Initialized the VSI API.\n");
+
+        //
+        //  Initialize the result buffer for data to go into.
+        //
+        m_result.name       = "(empty)";
+        m_result.data       = (char*)&dummyData;
+        m_result.dataLength = sizeof(unsigned char);
+
+        //
+        //  Define some signals for the test functions.
+        //
+        vsi_define_signal_name ( (void*)context, 0, 1, 0, "foo" );
+        vsi_define_signal_name ( (void*)context, 0, 2, 0, "bar" );
+        vsi_define_signal_name ( (void*)context, 0, 3, 0, "baz" );
+        vsi_define_signal_name ( (void*)context, 0, 4, 0, "gen" );
+        vsi_define_signal_name ( (void*)context, 0, 5, 0, "ivi" );
+
+        btree_print ( &context->signalNameIndex, printFunction );
+    }
+    else
     {
         printf("Failed to allocate memory for VSI!\n");
-        //return -1;
     }
-    vsi_context* context = (vsi_context*)handle;
-
-    printf("Initialized the VSI API.\n");
-
-    //
-    //  Initialize the result buffer for data to go into.
-    //
-    //  Note that we are only going to store a single byte into the shared
-    //  memory records.
-    //
-    m_result.name       = "(empty)";
-    m_result.data       = (char*)&dummyData;
-    m_result.dataLength = sizeof(unsigned char);
-
-    //
-    //  Define some signals for the test functions.
-    //
-    vsi_define_signal_name ( (void*)context, 0, 1, 0, "foo" );
-    vsi_define_signal_name ( (void*)context, 0, 2, 0, "bar" );
-    vsi_define_signal_name ( (void*)context, 0, 3, 0, "baz" );
-    vsi_define_signal_name ( (void*)context, 0, 4, 0, "gen" );
-    vsi_define_signal_name ( (void*)context, 0, 5, 0, "ivi" );
-
-    btree_print ( &context->signalNameIndex, printFunction );
 }
 
 VSSSignalInterfaceImpl::~VSSSignalInterfaceImpl()
@@ -112,9 +131,11 @@ VSSSignalInterfaceImpl::~VSSSignalInterfaceImpl()
     if ( status )
     {
         printf("Failed to free memory used by VSI!\n");
-        //return -1;
     }
-    printf("Freed the VSI memory.\n");
+    else
+    {
+        printf("Freed the VSI memory.\n");
+    }
 }
 
 void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
@@ -126,91 +147,28 @@ void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
     //
     //  Store signal in the core data store
     //
-
-    switch (type)
-    {
-        case CarSignalType::RPM:
-            m_rpm = value;
-            break;
-        case CarSignalType::Speed:
-            m_speed = value;
-            break;
-
-        case CarSignalType::GasPedal:
-        case CarSignalType::BrakePedal:
-        case CarSignalType::SteerAngle:
-        case CarSignalType::Headlights:
-        case CarSignalType::EngineRunning:
-        case CarSignalType::CurrentFuelConsumption:
-        case CarSignalType::FuelTankMax:
-        case CarSignalType::FuelTankActual:
-        case CarSignalType::PositionLatitude:
-        case CarSignalType::PositionLongitude:
-        case CarSignalType::PositionAltitude:
-        case CarSignalType::Orientation:
-        case CarSignalType::Rise:
-        case CarSignalType::AccelerationLateral:
-        case CarSignalType::Rotation:
-        case CarSignalType::AccelerationRotation:
-        case CarSignalType::Acceleration:
-
-        default:
-            break;
-    }
+    m_signalId = SignalLookup[type];
 
     qDebug()  << "Storing domain :" << m_domainId << " signal: " << m_signalId << " data: " << value;
 
     m_result.domainId = m_domainId;
     m_result.signalId = m_signalId;
 
-    //m_result.data[0] = 0; //value; //TBD variable size of data!
-    //m_result.dataLength = 1; //TBD variable size of data!
-
-    QByteArray ba = value.toLatin1();
-    m_result.data = ba.data();
-    m_result.dataLength = ba.length();
+    QByteArray dataArray = value.toLatin1();
+    m_result.data = dataArray.data();
+    m_result.dataLength = dataArray.length();
 
     int status = 0;
     status = vsi_fire_signal( handle, &m_result );
 
     if ( 0 == status )
     {
-        qDebug()  << "Successfully stored!";
+        qDebug()  << "Successfully stored: " << m_result.data;
     }
     else
     {
         qDebug()  << "Failed to store! Error code: " << status;
     }
-
- #if 0
-    //
-    //  Fire a signal by name.
-    //
-    #define testSignalName "Attribute.Body.BodyType"
-
-    printf ( "\nStoring domain %d, signal [%s], data [%s] in the core data store.\n",
-             0, testSignalName, "name" );
-
-    result.domainId = 0;
-    result.name = testSignalName;
-    result.data = "name";
-    result.dataLength = strlen(result.data);
-
-    status = vsi_fire_signal_by_name ( handle, &result );
-
-    result.status = status;
-    if ( status != 0 )
-    {
-        printf ( "Failed to store %u, [%s]! Error code %d.\n", 0,
-                 testSignalName, status );
-        //return status;
-    }
-    result.data = (char*)&dummyData;
-
-    printf ( "Successfully stored %u, [%s] in the core data store.\n",
-             0, testSignalName );
-
-#endif
 }
 
 void VSSSignalInterfaceImpl::loadJson(const QString &fileName)
