@@ -113,7 +113,7 @@ Matching "real" vehicle signals is done by a module which we have named VSIAdapt
 T.B.A
 # Demo applications
 
-The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[]]() and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
+The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[7]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
 w3C specification. This is something that needs to be adressed by each OEM or implementor. 
 
 Demo examples : T.B.A (iPhone client, JAva application , Qt applicaton, Javascript/HTML application)
@@ -142,3 +142,7 @@ T.B.A
 [5] http://doc.qt.io/qt-4.8/signalsandslots.html
 
 [6] https://jwt.io
+
+[7] https://tools.ietf.org/html/rfc6455
+
+
