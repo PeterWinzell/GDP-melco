@@ -50,8 +50,24 @@ Figure 2 shows the flow through the components when subscribing to a signal whic
 
 So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
 
-In example 2 , we have a call to a request handler factory class that parses the json request from the clients and returns a corresponding handler which then process the request.
+In code example 2  we see how requests are spawned from a threadpool and a request handler factory parses the json request from the clients and returns a corresponding handler which then process the request.
 ```C++
+void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
+{
+    ProcessRequestTask* requesttask = new ProcessRequestTask(sw, m_vsssInterface, message, true);
+    // QThreadPool takes ownership and deletes 'requesttask' automatically
+
+    if(!QThreadPool::globalInstance()->tryStart(requesttask))
+    {
+        qWarning() << "Failed to start thread! Active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+        qWarning() << "Max threads allowed: " << QThreadPool::globalInstance()->maxThreadCount();
+    }
+    else
+    {
+        qDebug() << "New thread started!, active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+    }
+}
+...
 void ProcessRequestTask::run()
 {
     if (m_debug)
@@ -67,8 +83,10 @@ void ProcessRequestTask::run()
     }
 }
 
+
+
 ```
-*Example 2, process reauests
+*Example 2, process requests
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
