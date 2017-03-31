@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     //initiating QSettings
-    QCoreApplication::setApplicationName("W3CServer");
+    QCoreApplication::setApplicationName("VSIAdapter");
     QCoreApplication::setOrganizationName("MelcoGOT");
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QPointer<QSettings> settings = new QSettings();

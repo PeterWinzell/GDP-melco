@@ -50,7 +50,8 @@ public:
         AccelerationLateral,
         Rotation,
         AccelerationRotation,
-        Acceleration
+        Acceleration,
+        CarSignalType_NO_OF_ITEMS
     };
     Q_ENUM(CarSignalType)
 

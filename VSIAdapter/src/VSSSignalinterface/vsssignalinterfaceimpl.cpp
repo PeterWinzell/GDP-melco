@@ -19,7 +19,7 @@ extern "C" {
 #include <QDir>
 #include <QDebug>
 #include <QJsonArray>
-
+#include <QSettings>
 
 
 //
@@ -60,8 +60,25 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
     loadJson(vssFile);
 
     long     dummyData = 0;
+    signal_t signalId = 0;
 
-    //Map Open DS signals to VSI signals
+    //Read settings to map Open DS signals to VSI signals
+    QPointer<QSettings> settings = new QSettings();
+    settings->beginGroup("VSIAdapter");
+    for (int i = 0; i < CarSignalType_NO_OF_ITEMS; i++)
+    {
+        qDebug() << "VSSSignalInterfaceImpl searching for key " << i;
+
+        QString key = QString::number(i);
+        if (settings->contains(key))
+        {
+            SignalLookup[(CarSignalType)i] = settings->value(key).toInt();
+            qDebug() << "VSSSignalInterfaceImpl found key: " << i << ", value: " << SignalLookup[(CarSignalType)i];
+        }
+    }
+    settings->endGroup();
+
+
     SignalLookup[RPM] = 42;   //Dummy id
     SignalLookup[Speed] = 43; //Dummy id
     SignalLookup[GasPedal] = 21; //Dummy id
