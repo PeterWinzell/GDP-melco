@@ -98,9 +98,13 @@ void ProcessRequestTask::run()
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
-Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[]] - the VIS does not specify which type of authorization token. There are two types of tokens in this implementation:
+Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[]] - the VIS does not specify which type of authorization token. 
+```json
+{ "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" 
+```
+*Example 4, authorization
 
-T.B.A
+We are currently authorizing GET,SUBSCRIBE and SET with two separate tokens. 
 
 Matching "real" vehicle signals is done by a module which we have named VSIAdapter. The VSS tree is here matched against signals and the value is then fetched and delivered by the server to the client requesting this signal(s). More T.B.A module currently under development...
 
@@ -108,7 +112,8 @@ Matching "real" vehicle signals is done by a module which we have named VSIAdapt
 T.B.A
 # Demo applications
 
-The real power and benefits with the VIS specification is shown when you start writing demos - any application framework that are able to speak wss[[]]() will be able to interface the server. The applications needs to be authenticated and action authorized
+The real power and benefits with the VIS specification is shown when you start writing demos - any application framework that are able to speak wss[[]]() will be able to interface the server. 
+
 # Tests
 
 We are running two separate test suites where we have developed one of these and this is a Qt test client where we are able to test server performance. This test client is available and should be configurable for any implementation. The client is also a Qt application.
