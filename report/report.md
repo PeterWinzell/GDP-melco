@@ -58,7 +58,7 @@ Figure 2 shows the flow through the components when subscribing to a signal whic
 
 So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
 
-In code example 2  we see how requests are spawned from a threadpool and a request handler factory parses the json request from the clients and returns a corresponding handler which then process the request.
+In code example 3 requests are spawned from a threadpool and a request handler factory parses the json request from the clients and returns a corresponding handler which then process the request.
 ```C++
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
@@ -99,6 +99,7 @@ void ProcessRequestTask::run()
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
 Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[6]](https://jwt.io) - the VIS does not specify which type of authorization token. 
+
 ```json
 { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" 
 ```
