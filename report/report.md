@@ -105,9 +105,9 @@ Authorization and authentication is defined and managed by tokens. This implemen
 ```
 *Example 4, authorization*<br>
 
-We are currently authorizing GET,SUBSCRIBE and SET with two separate tokens. 
+The implementation currently contains two separate authorization tokens: a (GET,SUBSCRIBE) token and a (SET) token.  
 
-Matching "real" vehicle signals is done by a module which we have named VSIAdapter. The VSS tree is here matched against signals and the value is then fetched and delivered by the server to the client requesting this signal(s). More T.B.A module currently under development...
+Matching "real" vehicle signals is done by a module which we have named VSIAdapter. The VSS tree signals is here matched against vehicle signals and the value is then fetched and delivered by the server to the client requesting this signal(s). More T.B.A module currently under development...
 
 # Usability According to Spec
 T.B.A
