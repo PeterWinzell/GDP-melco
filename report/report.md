@@ -18,7 +18,7 @@ When selecting the Qt platform as the basis for the server implementation we arg
 Figure 1 shows the basic architectural design with applications on top and the signal sources at the bottom, or if you prefer applications in the north and signals sources south.
 
 ![Server Arch](W3CServerArch.png)<br>
-*Fig 1. W3C ref implementation architecture, (VSIAdapter migh be inluded in actual server process)*
+*Fig 1. W3C ref implementation architecture, (VSIAdapter might be included in actual server process)*
 
 One key benefit to the W3C VISS specification and its use of web sockets is that any application framework that supports web sockets is available for developers - they are not limited to the web browser and javascript/HTML5. Most application frameworks have support for web sockets today and we will illustrate this with a number of different applications running  across different devices. The application - if it is allowed to interact with the exposed network upon which the w3c server is running - can reside anywhere. It is also true that in theory the w3c server could also reside outside the vehicle and just interface the signal sources through an ip based communication channel. This independency opens up many other use cases - the vehicle is not longer just a connected vehicle, it is actually part of the cloud infrastructure itself. For this implementation we are mainly considering a traditional approach where the w3c server is running inside the main infotainment unit. 
 
