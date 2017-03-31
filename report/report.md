@@ -50,7 +50,25 @@ Figure 2 shows the flow through the components when subscribing to a signal whic
 
 So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
 
-Ex: T.B.A
+In example 2 , we have a call to a request handler factory class that parses the json request from the clients and returns a corresponding handler which then process the request.
+```C++
+void ProcessRequestTask::run()
+{
+    if (m_debug)
+    {
+        qDebug() << "processRequestTask is running " << m_pClient->getSocket()->requestUrl().host() << m_jsonRequestMessage;
+    }
+
+    auto aHandler = RequestHandler::makeRequestHandler(m_jsonRequestMessage, m_pClient, m_pSignalInterface);
+    if(aHandler)
+    {
+        //blocking
+        aHandler->processRequest();
+    }
+}
+
+```
+*Example 2, process reauests
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
