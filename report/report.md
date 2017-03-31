@@ -22,7 +22,7 @@ Figure 1 shows the basic architectural design with applications on top and the s
 
 One key benefit to the W3C VISS specification and its use of web sockets is that any application framework that supports web sockets is available for developers - they are not limited to the web browser and javascript/HTML5. Most application frameworks have support for web sockets today and we will illustrate this with a number of different applications running  across different devices. The application - if it is allowed to interact with the exposed network upon which the w3c server is running - can reside anywhere. It is also true that in theory the w3c server could also reside outside the vehicle and just interface the signal sources through an ip based communication channel. This independency opens up many other use cases - the vehicle is not longer just a connected vehicle, it is actually part of the cloud infrastructure itself. For this implementation we are mainly considering a traditional approach where the w3c server is running inside the main infotainment unit. 
 
-The VISS specification identifies 7 different requests that are sent from a client using wss (secure web socket protocol) using a json based request protocol. 
+The VIS specification identifies GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL and AUTHORIZE requests. These are sent from a client over wss (secure web socket protocol) using a json based request protocol. 
 ![Server Arch](https://github.com/GENIVI/vehicle_signal_specification/blob/develop/pics/tree.png)<br>
 *Example 1, Vehicle Signal Specification Tree.
 
