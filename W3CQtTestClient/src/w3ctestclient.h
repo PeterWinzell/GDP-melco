@@ -48,9 +48,12 @@ private Q_SLOTS:
     void RunGetTest();
     void unsubscribe();
     void unsubscribeAll();
+    void pendingTestTimeout();
+
 private:
     void passTestRun();
     void failTestRun();
+    QString getTestCaseAsString(TestCase testCase);
 
     bool m_clientStarted = false;
     ClientReport *m_clientReport;
@@ -64,6 +67,8 @@ private:
     QQueue<TestCase> m_tests;
     TestCase m_currentTest;
     QDateTime m_testStartTime;
+    bool m_pendingTest;
+
 };
 
 #endif // W3CTESTCLIENT_H

@@ -1,8 +1,10 @@
-#include "w3ctestclienthandler.h"
 #include <QDebug>
 #include <QThread>
 #include <QtCore/QCoreApplication>
 #include <QFileInfo>
+#include <QMutexLocker>
+
+#include "w3ctestclienthandler.h"
 #include "testcasedescriptions.h"
 
 W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url,
@@ -49,6 +51,8 @@ W3cTestClientHandler::~W3cTestClientHandler()
 
 void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 {
+    QMutexLocker locker(&m_mutex);
+
     qDebug() << "[Client#" << report->m_clientId << "] " << " Test Client Finished!";
     m_finishedClients.append(report);
 

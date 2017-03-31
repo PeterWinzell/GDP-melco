@@ -27,7 +27,7 @@ GetVSSHandler::GetVSSHandler(QObject* parent, QSharedPointer<VSSSignalInterface>
 
 void GetVSSHandler::processRequest()
 {
-    qDebug() << " processing get handler requests";
+    qDebug() << " processing getVss handler requests";
 
     QString path = m_pVissrequest->getSignalPath();
     QString id = m_pVissrequest->getRequestId();

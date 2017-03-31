@@ -44,51 +44,114 @@ void W3cTestClient::onConnected()
     connect(m_webSocket, &QWebSocket::textMessageReceived,
             this, &W3cTestClient::onTextMessageReceived);
 
+    m_currentTest = TestCase::UNKNOWN;
+    m_pendingTest = false;
+
     runTest();
 }
 
 void W3cTestClient::runTest()
 {
-    m_currentTest = m_tests.dequeue();
-    m_testStartTime = QDateTime::currentDateTime();
+    if(!m_pendingTest)
+    {
+        if (m_tests.length() > 0)
+        {
+            m_currentTest = m_tests.dequeue();
+            m_testStartTime = QDateTime::currentDateTime();
 
-    switch (m_currentTest)
+            switch (m_currentTest)
+            {
+                case TestCase::SUBSCRIBE_UNSUBSCRIBE:
+                    RunSubscribeUnsubscribeTest();
+                    break;
+
+                case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
+                    RunSubscribeUnsubscribeAllTest();
+                    break;
+
+                case TestCase::GET_VSS:
+                    RunGetVssTest();
+                    break;
+
+                case TestCase::SET_GET:
+                    RunSetGetTest();
+                    break;
+
+                case TestCase::SET:
+                    RunSetTest();
+                    break;
+
+                case TestCase::GET:
+                    RunGetTest();
+                    break;
+
+                case TestCase::AUTHORIZE_SUCCESS:
+                    RunAuthorizeTest();
+                    break;
+
+                case TestCase::STATUS:
+                    RunStatusTest();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            emit testsfinished(m_clientReport);
+        }
+    }
+    else
+    {
+        debugOutput("Test: " + getTestCaseAsString(m_currentTest) + " pending, waiting...");
+    }
+
+}
+
+QString W3cTestClient::getTestCaseAsString(TestCase testCase)
+{
+    QString caseStr = "UNKNOWN";
+
+    switch (testCase)
     {
         case TestCase::SUBSCRIBE_UNSUBSCRIBE:
-            RunSubscribeUnsubscribeTest();
+            caseStr = "SUBSCRIBE_UNSUBSCRIBE";
             break;
 
         case TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL:
-            RunSubscribeUnsubscribeAllTest();
+            caseStr = "SUBSCRIBEALL_UNSUBSCRIBEALL";
             break;
 
         case TestCase::GET_VSS:
-            RunGetVssTest();
+            caseStr = "GET_VSS";
             break;
 
         case TestCase::SET_GET:
-            RunSetGetTest();
+            caseStr = "SET_GET";
             break;
 
         case TestCase::SET:
-            RunSetTest();
+            caseStr = "SET";
             break;
 
         case TestCase::GET:
-            RunGetTest();
+            caseStr = "GET";
             break;
 
         case TestCase::AUTHORIZE_SUCCESS:
-            RunAuthorizeTest();
+            caseStr = "AUTHORIZE_SUCCESS";
             break;
 
         case TestCase::STATUS:
-            RunStatusTest();
+            caseStr = "STATUS";
             break;
 
         default:
             break;
     }
+
+    return caseStr;
 }
 
 void W3cTestClient::onTextMessageReceived(QString message)
@@ -113,7 +176,8 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
                 failTestRun();
                 return;
-            };
+            }
+
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())
@@ -140,7 +204,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
                 failTestRun();
                 return;
-            };
+            }
 
             QString  subscriptionId = jsonObject["subscriptionId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
@@ -165,8 +229,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
                 failTestRun();
                 return;
-            };
-
+            }
 
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
@@ -191,10 +254,10 @@ void W3cTestClient::onTextMessageReceived(QString message)
             if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
             {
                 debugOutput("Received Subscribing action when not requested");
-
                 failTestRun();
                 return;
-            };
+            }
+
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())
@@ -227,7 +290,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
                 failTestRun();
                 return;
-            };
+            }
 
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
@@ -254,7 +317,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
                 failTestRun();
                 return;
-            };
+            }
 
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
@@ -280,7 +343,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 debugOutput("Received Get action when not requested");
                 failTestRun();
                 return;
-            };
+            }
 
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
@@ -409,12 +472,12 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
     m_webSocket->sendTextMessage(subMess1);
     m_webSocket->sendTextMessage(subMess2);
     m_webSocket->sendTextMessage(subMess3);
-/*
-    m_webSocket.sendTextMessage(subMess8);
-    m_webSocket.sendTextMessage(subMess9);
-    m_webSocket.sendTextMessage(subMess10);
-    m_webSocket.sendTextMessage(subMess11);
-    m_webSocket.sendTextMessage(subMess12);*/
+    /*
+        m_webSocket.sendTextMessage(subMess8);
+        m_webSocket.sendTextMessage(subMess9);
+        m_webSocket.sendTextMessage(subMess10);
+        m_webSocket.sendTextMessage(subMess11);
+        m_webSocket.sendTextMessage(subMess12);*/
 
 
 
@@ -484,8 +547,7 @@ void W3cTestClient::passTestRun()
 
     m_clientReport->m_testResults.append(finishedTest);
 
-    if(m_tests.length() > 0) { runTest(); }
-    else { emit testsfinished(m_clientReport); }
+    runTest();
 }
 void W3cTestClient::failTestRun()
 {
@@ -495,27 +557,43 @@ void W3cTestClient::failTestRun()
     finishedTest.insert("started", m_testStartTime.toString());
     finishedTest.insert("ended", QDateTime::currentDateTime().toString());
 
+    debugOutput("Test case failed! Testcase: " + getTestCaseAsString(m_currentTest));
+
     // Handle special cases here also, if needed.
 
     m_clientReport->m_testResults.append(finishedTest);
 
-    if(m_tests.length() > 0) { runTest(); }
-    else { emit testsfinished(m_clientReport); }
+    runTest();
 }
 
 
 void W3cTestClient::unsubscribe()
 {
+    m_pendingTest = true;
     debugOutput("Unsubscribing " + m_unsubscribeCachedSubscriptionId);
     QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE,m_unsubscribeCachedSubscriptionId);
     m_webSocket->sendTextMessage(unsubMess);
+
+    // wait a while for subscriptions to end
+    QTimer::singleShot(2000,this,SLOT(pendingTestTimeout()));
 }
 
 void W3cTestClient::unsubscribeAll()
 {
+    m_pendingTest = true;
     debugOutput("Unsubscribing All");
     QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL);
     m_webSocket->sendTextMessage(usubscribeAllMess);
+
+    // wait a while for subscriptions to end
+    QTimer::singleShot(2000,this,SLOT(pendingTestTimeout()));
+}
+
+void W3cTestClient::pendingTestTimeout()
+{
+    m_pendingTest = false;
+    debugOutput("Pending test ready, continue with next test.");
+    runTest();
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)

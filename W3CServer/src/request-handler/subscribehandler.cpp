@@ -70,8 +70,6 @@ void SubscribeHandler::processRequest()
             //Format response on JSON format
             QString message = getSubscriptionNotificationJson(value);
 
-            qDebug() << "Sending message:" << message;
-
             //Send message to client
             m_pClient->sendTextMessage(message);
         }

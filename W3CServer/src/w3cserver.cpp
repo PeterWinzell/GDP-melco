@@ -119,7 +119,7 @@ void W3CServer::processTextMessage(const QString& message)
 {
     if (m_debug)
     {
-        qDebug() << "Message recieved: " << message;
+        //qDebug() << "Message received: " << message;
     }
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
@@ -135,8 +135,6 @@ void W3CServer::processTextMessage(const QString& message)
     {
         qDebug() << "fatal connection error, websocket client not found ";
     }
-
-    qDebug() << "Message received: " << message;
 }
 
 void W3CServer::socketDisconnected()
