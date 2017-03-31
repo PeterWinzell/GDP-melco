@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    ../../../src/OpenDSHandler/opendshandler.cpp
+    ../../../src/OpenDSHandler/opendshandler.cpp \
+    ../../../src/VSSSignalinterface/vsiimpl.cpp
 
 
 HEADERS += \
@@ -56,8 +57,15 @@ HEADERS += \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h \
-    ../../../src/OpenDSHandler/opendshandler.h
-
+    ../../../src/OpenDSHandler/opendshandler.h\
+    ../../../src/VSSSignalinterface/vsiimpl.h \
+    ../../../../lib/vsi/vsi_list.h \
+    ../../../../lib/vsi/vsi.h \
+    ../../../../lib/vsi/sharedMemory.h \
+    ../../../../lib/vsi/utils.h \
+    ../../../../lib/vsi/btree.h \
+    ../../../../lib/vsi/sharedMemoryLocks.h \
+    ../../../../lib/vsi/vsi_core_api.h
 INCLUDEPATH += $$PWD/../../../src/messaging
 INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface
 INCLUDEPATH += $$PWD/../../../src/OpenDSTCPClient
@@ -78,6 +86,6 @@ else:unix:!macx: LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebto
 DISTFILES += \
     data/vss_rel_1.json
 
-
+LIBS += /home/vagrant/qt-projects/vsi_test/lib/vsi/*
 unix:QMAKE_POST_LINK += $$quote($$QMAKE_COPY $${PWD}/data/* $${OUT_PWD})
 else:win32:QMAKE_POST_LINK += $$QMAKE_COPY \"$${PWD}/data\\*\" \"$${OUT_PWD}\"

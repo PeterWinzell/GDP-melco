@@ -5,7 +5,7 @@
 #include <QJsonArray>
 
 int GetVissTestDataJson::m_requestId = 0;
-QString GetVissTestDataJson::m_setValue = "0";
+QString GetVissTestDataJson::m_setValue = "42";
 
 GetVissTestDataJson::GetVissTestDataJson()
 {

@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
-    request-handler/statushandler.cpp
+    request-handler/statushandler.cpp \
+    VSSSignalinterface/vsiimpl.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -51,7 +52,15 @@ HEADERS += \
     OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
-    request-handler/statushandler.h
+    request-handler/statushandler.h \
+    VSSSignalinterface/vsiimpl.h \
+    ../../lib/vsi/vsi_list.h \
+    ../../lib/vsi/vsi.h \
+    ../../lib/vsi/sharedMemory.h \
+    ../../lib/vsi/utils.h \
+    ../../lib/vsi/btree.h \
+    ../../lib/vsi/sharedMemoryLocks.h \
+    ../../lib/vsi/vsi_core_api.h
 
 target.path = /home/pi
 INSTALLS += target
@@ -59,6 +68,7 @@ INSTALLS += target
 RESOURCES += \
     ../ssl.qrc
 
+LIBS += /home/vagrant/qt-projects/vsi_test/lib/vsi/*
 INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken

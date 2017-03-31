@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMutex>
 #include "vsssignalinterface.h"
-
+#include <QRegularExpression>
 
 class VSSSignalInterfaceImpl : public VSSSignalInterface
 {

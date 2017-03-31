@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     parser.process(a);
     qDebug() << parser.optionNames();
 
-    int nrOfClients = 2; // Default number of clients
+    int nrOfClients = 1; // Default number of clients
     if(parser.isSet(clientOption))
     {
         nrOfClients = parser.value(clientOption).toInt();    // Needs better validation
@@ -103,23 +103,25 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
-        //tests << TestCase::AUTHORIZE_SUCCESS;
-
-        tests << TestCase::STATUS;
-
-        //tests << TestCase::GET_VSS;
-
-        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        tests << TestCase::GET;
 
         //tests << TestCase::AUTHORIZE_SUCCESS;
 
-        tests << TestCase::STATUS;
+        //tests << TestCase::STATUS;
+
+        tests << TestCase::GET_VSS;
+
+        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+
+        //tests << TestCase::AUTHORIZE_SUCCESS;
+
+        //tests << TestCase::STATUS;
     }
     bool randomize = parser.isSet(randomizeOption);
     bool secure = parser.isSet(secureOption);
 
 
-    QString url = "ws://127.0.0.1:8080"; // default url
+    QString url = "wss://127.0.0.1:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
 
 
