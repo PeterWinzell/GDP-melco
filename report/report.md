@@ -24,7 +24,7 @@ One key benefit to the W3C VISS specification and its use of web sockets is that
 
 The VIS specification identifies GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL and AUTHORIZE requests. These are sent from a client over wss (secure web socket protocol) using a json based request protocol. 
 ![Server Arch](https://github.com/GENIVI/vehicle_signal_specification/blob/develop/pics/tree.png)<br>
-*Example 1, Vehicle Signal Specification Tree.
+*Example 1, Vehicle Signal Specification Tree.*
 
 The Vehicle Signal Specification[[4]](https://github.com/GENIVI/vehicle_signal_specification) is used to expose signals, below we have an example signal tree. We will expose a limited number of signals in this reference implementation.
 
@@ -94,7 +94,7 @@ void ProcessRequestTask::run()
 
 
 ```
-*Example 3, process requests<br>
+*Example 3, process requests*<br>
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
@@ -103,7 +103,7 @@ Authorization and authentication is defined and managed by tokens. This implemen
 ```json
 { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }
 ```
-*Example 4, authorization<br>
+*Example 4, authorization*<br>
 
 We are currently authorizing GET,SUBSCRIBE and SET with two separate tokens. 
 
@@ -120,7 +120,7 @@ The real power and benefits with the VIS specification is shown when you start w
 We are running two separate test suites where we have developed one of these and this is a Qt test client where we are able to test server performance. This test client is available and should be configurable for any implementation. The client is also a Qt application.
 
 <table border="1"><tr><th>Client id</th><th>Test case</th><th>Started</th><th>Ended</th><th>Outcome</th></tr><tr><td>1</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>1</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>1</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>2</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>2</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>2</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>4</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>4</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>4</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>7</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>7</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>7</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>5</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>5</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>5</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>9</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>9</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>9</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>3</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>3</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>3</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>6</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>6</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>6</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>10</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>10</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>10</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>8</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>8</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>8</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr></table>
-*Test results from W3CClient<br>
+*Test results from W3CClient*<br>
 
 We are also testing our implementation against a javascript/html based test client. T.B.A test client under development.
 
