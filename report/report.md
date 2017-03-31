@@ -11,7 +11,7 @@ The ability to access vehicle data signals with a standardized API opens up for 
   
 # Architecture and Design
 
-The goal with this implementation is to provide the W3C VISS specification with a reference. This means that we are prioritizing specification feature implementation and will not enforce any performance optimizing on this design. Furthermore , we are not imposing nor are we suggesting any other security layers other than those specified.  For production both performance optimization and layered security would have to be added.
+The goal with this implementation is to provide the W3C VIS specification with a reference. This means that we are prioritizing specification feature implementation and will not enforce any performance optimizing on this design. Furthermore , we are not imposing nor are we suggesting any other security layers other than those specified.  For production both performance optimization and layered security would have to be added.
 
 When selecting the Qt platform as the basis for the server implementation we argued that the Qt framework since v 5.4 inlcudes a web socket api, and since the Qt platform is currently one of the prefered application frameworks on Linux based infotainment platforms is a natural choice. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool. Keeping the server implementation within Qt facilitates portability to other base platforms and systems.
 
@@ -23,6 +23,10 @@ Figure 1 shows the basic architectural design with applications on top and the s
 One key benefit to the W3C VISS specification and its use of web sockets is that any application framework that supports web sockets is available for developers - they are not limited to the web browser and javascript/HTML5. Most application frameworks have support for web sockets today and we will illustrate this with a number of different applications running  across different devices. The application - if it is allowed to interact with the exposed network upon which the w3c server is running - can reside anywhere. It is also true that in theory the w3c server could also reside outside the vehicle and just interface the signal sources through an ip based communication channel. This independency opens up many other use cases - the vehicle is not longer just a connected vehicle, it is actually part of the cloud infrastructure itself. For this implementation we are mainly considering a traditional approach where the w3c server is running inside the main infotainment unit. 
 
 The VISS specification identifies 7 different requests that are sent from a client using wss (secure web socket protocol) using a json based request protocol. 
+![Server Arch](https://github.com/GENIVI/vehicle_signal_specification/blob/develop/pics/tree.png)<br>
+*Example 1, Vehicle Signal Specification Tree.
+
+The Vehicle Signal Specification[[4]](https://github.com/GENIVI/vehicle_signal_specification) is used to expose signals, below we have an example signal tree. We will expose a limited number of signals in this reference implementation.
 
 
 
@@ -40,10 +44,10 @@ client -> {
 		"timestamp": <DOMTimeStamp>
 	}
 ```
-*Example 1, get request and response*
+*Example 2, get request and response*
 <br>
 
-The Vehicle Signal Specification[[4]](https://github.com/GENIVI/vehicle_signal_specification) is used to expose signals, below we have an example signal tree. We will expose a limited number of signals in this reference implementation.
+
 
 The above example shows how a client would request to read the RPM signal and how that would be returned to the client. The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread design will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot mechanism[[5]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
 
@@ -90,7 +94,7 @@ void ProcessRequestTask::run()
 
 
 ```
-*Example 2, process requests
+*Example 3, process requests
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
