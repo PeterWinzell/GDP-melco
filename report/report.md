@@ -101,7 +101,7 @@ This is the basic and simple principle behind the server implementation. However
 Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[6]](https://jwt.io) - the VIS does not specify which type of authorization token. 
 
 ```json
-{ "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" 
+{ "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }
 ```
 *Example 4, authorization<br>
 
