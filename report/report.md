@@ -1,5 +1,5 @@
 # Author
-Peter Winzell MSc, Mitsubishi Electric, Gothenburg office. 2017-24-03
+Peter Winzell MSc, Mitsubishi Electric, Gothenburg office. 2017-24-03, draft version.
 
 # Abstract
 
@@ -22,7 +22,9 @@ Figure 1 shows the basic architectural design with applications on top and the s
 
 One key benefit to the W3C VISS specification and its use of web sockets is that any application framework that supports web sockets is available for developers - they are not limited to the web browser and javascript/HTML5. Most application frameworks have support for web sockets today and we will illustrate this with a number of different applications running  across different devices. The application - if it is allowed to interact with the exposed network upon which the w3c server is running - can reside anywhere. It is also true that in theory the w3c server could also reside outside the vehicle and just interface the signal sources through an ip based communication channel. This independency opens up many other use cases - the vehicle is not longer just a connected vehicle, it is actually part of the cloud infrastructure itself. For this implementation we are mainly considering a traditional approach where the w3c server is running inside the main infotainment unit. 
 
-The VISS specification identifies 7 different requests that are sent from a client using wss (secure web socket protocol) using a json based request protocol. The Vehicle Signal Specification[[]] is used as... 
+The VISS specification identifies 7 different requests that are sent from a client using wss (secure web socket protocol) using a json based request protocol. 
+
+
 
 ``` json
 client -> {
@@ -41,7 +43,9 @@ client -> {
 *Example 1, get request and response*
 <br>
 
-The above example shows how a client would request to read the RPM signal and how that would be returned to the client. The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread design will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot mechanism[[4]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
+The Vehicle Signal Specification[[4]](https://github.com/GENIVI/vehicle_signal_specification) is used to expose signals, below we have an example signal tree. We will expose a limited number of signals in this reference implementation.
+
+The above example shows how a client would request to read the RPM signal and how that would be returned to the client. The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following requests are defined in the specification: GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread design will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot mechanism[[5]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
 
 Figure 2 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
 
@@ -104,3 +108,7 @@ T.B.A
 [2] https://github.com/w3c/automotive/blob/gh-pages/vehicle_data/vehicle_information_service.html
 
 [3] https://at.projects.genivi.org/wiki/pages/viewpage.action?pageId=14090346
+
+[4] https://github.com/GENIVI/vehicle_signal_specification
+
+[5] http://doc.qt.io/qt-4.8/signalsandslots.html
