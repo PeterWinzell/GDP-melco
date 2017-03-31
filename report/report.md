@@ -98,7 +98,7 @@ void ProcessRequestTask::run()
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
-VSIAdapter and VISSSignalInterface T.B.A
+Matching "real" vehicle signals is done by a module which we have named VSIAdapter. The VSS tree is here matched against signals and the value is then fetched and delivered by the server to the client requesting this signal(s). More T.B.A module currently under development...
 
 # Usability According to Spec
 T.B.A
