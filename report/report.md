@@ -98,7 +98,7 @@ void ProcessRequestTask::run()
 
 This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
 
-Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[]] - the VIS does not specify which type of authorization token. 
+Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[6]](https://jwt.io) - the VIS does not specify which type of authorization token. 
 ```json
 { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" 
 ```
@@ -135,3 +135,5 @@ T.B.A
 [4] https://github.com/GENIVI/vehicle_signal_specification
 
 [5] http://doc.qt.io/qt-4.8/signalsandslots.html
+
+[6] https://jwt.io
