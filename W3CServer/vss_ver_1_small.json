@@ -1,0 +1,1119 @@
+{
+  "Body": {
+    "description": "All body components", 
+    "type": "branch", 
+    "children": {}
+  }, 
+  "Drivetrain": {
+    "description": "Drivetrain data for internal combustion engines, transmissions, electric motors, etc.", 
+    "type": "branch", 
+    "children": {
+      "FuelCell": {
+        "type": "branch", 
+        "children": {}, 
+        "description": "Fuel Cell signals"
+      }, 
+      "FuelSystem": {
+        "description": "Fuel system signals", 
+        "type": "branch", 
+        "children": {
+          "ConsumptionSinceStart": {
+            "description": "Fuel amount consumed since start in milliliters.", 
+            "type": "UInt32", 
+            "id": 25, 
+            "unit": "ml"
+          }, 
+          "TimeSinceStart": {
+            "type": "UInt32", 
+            "id": 26, 
+            "unit": "s", 
+            "description": "Time elapsed since start in seconds."
+          }, 
+          "InstantConsumption": {
+            "description": "Current consumption in milliliters per 100 km.", 
+            "type": "UInt32", 
+            "id": 23, 
+            "unit": "ml/100km"
+          }, 
+          "Level": {
+            "type": "UInt8", 
+            "id": 21, 
+            "unit": "percentage", 
+            "description": "Level in fuel tank as percentage of capacity. 0 = empty. 100 = full."
+          }, 
+          "Range": {
+            "description": "Range in meters.", 
+            "type": "UInt32", 
+            "id": 22, 
+            "unit": "m"
+          }, 
+          "AverageConsumption": {
+            "description": "Average consumption in milliliters per 100 km.", 
+            "type": "UInt32", 
+            "id": 24, 
+            "unit": "ml/100km"
+          }
+        }
+      }, 
+      "Transmission": {
+        "type": "branch", 
+        "children": {
+          "Gear": {
+            "type": "Int8", 
+            "description": "Current gear. 0=Neutral. -1=Reverse", 
+            "min": -1, 
+            "max": 16, 
+            "id": 12
+          }, 
+          "Odometer": {
+            "type": "UInt32", 
+            "id": 16, 
+            "unit": "m", 
+            "description": "Odometer reading"
+          }, 
+          "PerformanceMode": {
+            "description": "Current gearbox performance mode.", 
+            "type": "String", 
+            "enum": [
+              "normal", 
+              "sport", 
+              "economy", 
+              "snow", 
+              "rain"
+            ], 
+            "id": 13
+          }, 
+          "ClutchWear": {
+            "description": "Clutch wear as a percentage. 0 = no wear. 100 = worn.", 
+            "type": "UInt8", 
+            "id": 18, 
+            "unit": "percentage"
+          }, 
+          "TripMeter": {
+            "description": "Current trip meter reading", 
+            "type": "UInt32", 
+            "id": 17, 
+            "unit": "m"
+          }, 
+          "Speed": {
+            "description": "Vehicle speed, as sensed by the gearbox.", 
+            "min": -250, 
+            "max": 250, 
+            "type": "Int32", 
+            "id": 11, 
+            "unit": "m/s"
+          }, 
+          "GearChangeMode": {
+            "description": "Is the gearbox in automatic or manual (paddle) mode.", 
+            "type": "String", 
+            "enum": [
+              "manual", 
+              "automatic"
+            ], 
+            "id": 14
+          }, 
+          "Temperature": {
+            "min": -50, 
+            "max": 200, 
+            "type": "Int16", 
+            "id": 15, 
+            "unit": "celsius", 
+            "description": "The current gearbox temperature"
+          }
+        }, 
+        "description": "Transmission-specific data, stopping at the drive shafts."
+      }, 
+      "ElectricMotor": {
+        "description": "Electric Motor specific signals.", 
+        "type": "branch", 
+        "children": {}
+      }, 
+      "InternalCombustionEngine": {
+        "description": "Engine-specific data, stopping at the bell housing.", 
+        "type": "branch", 
+        "children": {
+          "EOP": {
+            "description": "Engine oil pressure.", 
+            "min": 0, 
+            "max": 10000, 
+            "type": "Int16", 
+            "id": 8, 
+            "unit": "mbar"
+          }, 
+          "MAP": {
+            "description": "Manifold air pressure possibly boosted using forced induction.", 
+            "min": 0, 
+            "max": 10000, 
+            "type": "Int16", 
+            "id": 5, 
+            "unit": "mbar"
+          }, 
+          "Power": {
+            "description": "Current engine power output.", 
+            "min": 0, 
+            "max": 2000, 
+            "type": "Int16", 
+            "id": 9, 
+            "unit": "kW"
+          }, 
+          "EOT": {
+            "description": "Engine oil temperature.", 
+            "min": -50, 
+            "max": 300, 
+            "type": "Int16", 
+            "id": 4, 
+            "unit": "celsius"
+          }, 
+          "Torque": {
+            "description": "Current engine torque.", 
+            "min": 0, 
+            "max": 3000, 
+            "type": "Int16", 
+            "id": 10, 
+            "unit": "Nm"
+          }, 
+          "ECT": {
+            "description": "Engine coolant temperature.", 
+            "min": -50, 
+            "max": 200, 
+            "type": "Int16", 
+            "id": 3, 
+            "unit": "celsius"
+          }, 
+          "TPS": {
+            "description": "Current throttle position.", 
+            "min": 0, 
+            "max": 100, 
+            "type": "Int8", 
+            "id": 7, 
+            "unit": "percent"
+          }, 
+          "MAF": {
+            "description": "Grams of air drawn into engine per second.", 
+            "min": 0, 
+            "max": 3000, 
+            "type": "Int16", 
+            "id": 6, 
+            "unit": "g/s"
+          }, 
+          "RPM": {
+            "description": "Engine speed measured as rotations per minute.", 
+            "min": 0, 
+            "max": 20000, 
+            "type": "UInt16", 
+            "id": 2, 
+            "unit": "rpm"
+          }
+        }
+      }, 
+      "BatteryManagement": {
+        "description": "Battery Management signals", 
+        "type": "branch", 
+        "children": {
+          "BatteryCapacity": {
+            "description": "Remaining capacity of the batter pack", 
+            "type": "Int8", 
+            "id": 20, 
+            "unit": "percentage"
+          }, 
+          "BatteryTemperature": {
+            "type": "Float", 
+            "id": 19, 
+            "unit": "celsius", 
+            "description": "Temperature of the battery pack"
+          }
+        }
+      }
+    }
+  }, 
+  "OBD": {
+    "description": "OBD data.", 
+    "type": "branch", 
+    "children": {
+      "TimingAdvance": {
+        "description": "PID 0E - Time advance", 
+        "type": "Float", 
+        "id": 42, 
+        "unit": "degree"
+      }, 
+      "DistanceSinceDTCClear": {
+        "description": "PID 31 - Distance traveled since codes cleared", 
+        "type": "Float", 
+        "id": 99, 
+        "unit": "km"
+      }, 
+      "AmbiantAirTemperature": {
+        "description": "PID 46 - Ambiant air temperature", 
+        "type": "Float", 
+        "id": 113, 
+        "unit": "celsius"
+      }, 
+      "IntakeTemp": {
+        "description": "PID 0F - Intake temperature", 
+        "type": "Float", 
+        "id": 43, 
+        "unit": "celsius"
+      }, 
+      "LongTermO2Trim1": {
+        "description": "PID 56 - Long term secondary O2 trim - Bank 1", 
+        "type": "UInt8", 
+        "id": 128, 
+        "unit": "percent"
+      }, 
+      "WarmupsSinceDTCClear": {
+        "description": "PID 30 - Number of warm-ups since codes cleared", 
+        "type": "UInt16", 
+        "id": 98
+      }, 
+      "MaxMAF": {
+        "description": "PID 50 - Maximum flow for mass air flow sensor", 
+        "type": "Float", 
+        "id": 122, 
+        "unit": "g/s"
+      }, 
+      "ControlModuleVoltage": {
+        "description": "PID 42 - Control module voltage", 
+        "type": "Float", 
+        "id": 109, 
+        "unit": "V"
+      }, 
+      "AcceleratorPositionE": {
+        "type": "UInt8", 
+        "id": 117, 
+        "unit": "percent", 
+        "description": "PID 4A - Accelerator pedal position E"
+      }, 
+      "FuelStatus": {
+        "description": "PID 03 - Fuel status", 
+        "type": "String", 
+        "id": 31
+      }, 
+      "FuelPressure": {
+        "description": "PID 0A - Fuel pressure", 
+        "type": "Float", 
+        "id": 38, 
+        "unit": "kpa"
+      }, 
+      "O2SensorsAlt": {
+        "type": "branch", 
+        "children": {
+          "Bank2": {
+            "type": "branch", 
+            "children": {
+              "Sensor1": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "type": "Boolean", 
+                    "id": 68, 
+                    "description": "Sensor present - True = sensor present, False = sensor not present"
+                  }
+                }
+              }, 
+              "Sensor3": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 70
+                  }
+                }
+              }, 
+              "Sensor2": {
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 69
+                  }
+                }, 
+                "description": "Alternate oxygen sensor"
+              }, 
+              "Sensor4": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 71
+                  }
+                }
+              }
+            }, 
+            "description": "Alternate oxygen sensors on bank 2, at most 4 sensors per bank"
+          }, 
+          "Bank1": {
+            "description": "Alternate oxygen sensors on bank 1, at most 4 sensors per bank", 
+            "type": "branch", 
+            "children": {
+              "Sensor1": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 64
+                  }
+                }
+              }, 
+              "Sensor3": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 66
+                  }
+                }
+              }, 
+              "Sensor2": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 65
+                  }
+                }
+              }, 
+              "Sensor4": {
+                "description": "Alternate oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 67
+                  }
+                }
+              }
+            }
+          }
+        }, 
+        "description": "PID 1D - Presence of alternate oxygen sensors for the banks"
+      }, 
+      "ShortTermFuelTrim2": {
+        "description": "PID 08 - Short Term (immediate) Fuel Trim - Bank 2 - negative percentage leaner, positive percentage richer", 
+        "type": "Int8", 
+        "id": 36, 
+        "unit": "percentage"
+      }, 
+      "TimeSinceDTCCleared": {
+        "description": "PID 4E - Time since trouble codes cleared", 
+        "type": "UInt32", 
+        "id": 121, 
+        "unit": "min"
+      }, 
+      "AuxInputStatus": {
+        "description": "PID 1E - Auxiliary input status (power take off)", 
+        "type": "Boolean", 
+        "id": 72
+      }, 
+      "ShortTermFuelTrim1": {
+        "description": "PID 06 - Short Term (immediate) Fuel Trim - Bank 1 - negative percentage leaner, positive percentage richer", 
+        "type": "Int8", 
+        "id": 34, 
+        "unit": "percentage"
+      }, 
+      "FuelRailPressureDirect": {
+        "description": "PID 23 - Fuel rail pressure direct inject", 
+        "type": "Float", 
+        "id": 77, 
+        "unit": "kpa"
+      }, 
+      "RelativeThrottlePosition": {
+        "type": "UInt8", 
+        "id": 112, 
+        "unit": "percent", 
+        "description": "PID 45 - Relative throttle position"
+      }, 
+      "Status": {
+        "description": "PID 01 - OBD status", 
+        "type": "branch", 
+        "children": {
+          "DTCCount": {
+            "description": "Number of Diagnostic Trouble Codes (DTC)", 
+            "type": "UInt32", 
+            "id": 29
+          }, 
+          "IgnitionType": {
+            "description": "Type of the ignition for ICE - spark = spark plug ignition, compression = self-igniting (Diesel engines)", 
+            "enum": [
+              "spark", 
+              "compression"
+            ], 
+            "type": "branch", 
+            "children": {}
+          }, 
+          "MIL": {
+            "description": "Malfunction Indicator Light (MIL) False = Off, True = On", 
+            "type": "Boolean", 
+            "id": 28
+          }
+        }
+      }, 
+      "AirStatus": {
+        "description": "PID 12 - Secondary air status", 
+        "type": "String", 
+        "id": 46
+      }, 
+      "EVAPVaporPressure": {
+        "description": "PID 32 - Evaporative purge (EVAP) system pressure", 
+        "type": "Float", 
+        "id": 100, 
+        "unit": "pa"
+      }, 
+      "FuelInjectionTiming": {
+        "type": "Int16", 
+        "id": 135, 
+        "unit": "degree", 
+        "description": "PID 5D - Fuel injection timing"
+      }, 
+      "LongTermFuelTrim1": {
+        "description": "PID 07 - Long Term (learned) Fuel Trim - Bank 1 - negative percentage leaner, positive percentage richer", 
+        "type": "Int8", 
+        "id": 35, 
+        "unit": "percentage"
+      }, 
+      "AcceleratorPositionF": {
+        "type": "UInt8", 
+        "id": 118, 
+        "unit": "percent", 
+        "description": "PID 4B - Accelerator pedal position F"
+      }, 
+      "EthanolPercent": {
+        "type": "UInt8", 
+        "id": 124, 
+        "unit": "percent", 
+        "description": "PID 52 - Percentage of ethanol in the fuel"
+      }, 
+      "LongTermFuelTrim2": {
+        "type": "Int8", 
+        "id": 37, 
+        "unit": "percentage", 
+        "description": "PID 09 - Long Term (learned) Fuel Trim - Bank 2 - negative percentage leaner, positive percentage richer"
+      }, 
+      "CoolantTemperature": {
+        "description": "PID 05 - Coolant temperature", 
+        "type": "Float", 
+        "id": 33, 
+        "unit": "celsius"
+      }, 
+      "CommandedEVAP": {
+        "description": "PID 2E - Commanded evaporative purge (EVAP) valve", 
+        "type": "UInt8", 
+        "id": 96, 
+        "unit": "percentage"
+      }, 
+      "Catalyst": {
+        "type": "branch", 
+        "children": {
+          "Bank2": {
+            "type": "branch", 
+            "children": {
+              "Temperature2": {
+                "description": "PID 3F - Catalyst temperature from bank 2, sensor 2", 
+                "type": "Float", 
+                "id": 105, 
+                "unit": "celsius"
+              }, 
+              "Temperature1": {
+                "type": "Float", 
+                "id": 104, 
+                "unit": "celsius", 
+                "description": "PID 3D - Catalyst temperature from bank 2, sensor 1"
+              }
+            }, 
+            "description": "Catalyst bank 2 signals"
+          }, 
+          "Bank1": {
+            "description": "Catalyst bank 1 signals", 
+            "type": "branch", 
+            "children": {
+              "Temperature2": {
+                "description": "PID 3E - Catalyst temperature from bank 1, sensor 2", 
+                "type": "Float", 
+                "id": 103, 
+                "unit": "celsius"
+              }, 
+              "Temperature1": {
+                "description": "PID 3C - Catalyst temperature from bank 1, sensor 1", 
+                "type": "Float", 
+                "id": 102, 
+                "unit": "celsius"
+              }
+            }
+          }
+        }, 
+        "description": "Catalyst signals"
+      }, 
+      "AcceleratorPositionD": {
+        "description": "PID 49 - Accelerator pedal position D", 
+        "type": "UInt8", 
+        "id": 116, 
+        "unit": "percent"
+      }, 
+      "RPM": {
+        "description": "PID 0C - Engine speed measured as rotations per minute", 
+        "type": "Float", 
+        "id": 40, 
+        "unit": "rpm"
+      }, 
+      "PidsB": {
+        "type": "UInt32", 
+        "id": 74, 
+        "description": "PID 20 - Bitarry of the supported pids 21 to 40"
+      }, 
+      "PidsA": {
+        "description": "PID 00 - Bitarry of the supported pids 01 to 20", 
+        "type": "UInt32", 
+        "id": 27
+      }, 
+      "AbsoluteLoad": {
+        "type": "UInt8", 
+        "id": 110, 
+        "unit": "percent", 
+        "description": "PID 43 - Absolute load value"
+      }, 
+      "EGRError": {
+        "description": "PID 2D - Exhaust gas recirculation (EGR) error", 
+        "type": "UInt8", 
+        "id": 95, 
+        "unit": "percentage"
+      }, 
+      "RunTimeMIL": {
+        "description": "PID 4D - Run time with MIL on", 
+        "type": "UInt32", 
+        "id": 120, 
+        "unit": "min"
+      }, 
+      "CommandedEGR": {
+        "type": "UInt8", 
+        "id": 94, 
+        "unit": "percentage", 
+        "description": "PID 2C - Commanded exhaust gas recirculation (EGR)"
+      }, 
+      "FuelRailPressureAbsolute": {
+        "type": "Float", 
+        "id": 131, 
+        "unit": "kpa", 
+        "description": "PID 59 - Absolute fuel rail pressure"
+      }, 
+      "FuelLevel": {
+        "type": "UInt8", 
+        "id": 97, 
+        "unit": "percentage", 
+        "description": "PID 2F - Fuel level in the fuel tank"
+      }, 
+      "CommandedEquivalenceRatio": {
+        "description": "PID 44 - Commanded equivalence ratio", 
+        "type": "Float", 
+        "id": 111, 
+        "unit": "ratio"
+      }, 
+      "EVAPVaporPressureAbsolute": {
+        "type": "Float", 
+        "id": 125, 
+        "unit": "kpa", 
+        "description": "PID 53 - Absolute evaporative purge (EVAP) system pressure"
+      }, 
+      "ThrottlePositionB": {
+        "description": "PID 47 - Absolute throttle position B", 
+        "type": "UInt8", 
+        "id": 114, 
+        "unit": "percent"
+      }, 
+      "ThrottlePositionC": {
+        "type": "UInt8", 
+        "id": 115, 
+        "unit": "percent", 
+        "description": "PID 48 - Absolute throttle position C"
+      }, 
+      "ShortTermO2Trim1": {
+        "description": "PID 55 - Short term secondary O2 trim - Bank 1", 
+        "type": "UInt8", 
+        "id": 127, 
+        "unit": "percent"
+      }, 
+      "DistanceWithMIL": {
+        "description": "PID 21 - Distance traveled with MIL on", 
+        "type": "UInt32", 
+        "id": 75, 
+        "unit": "kilometer"
+      }, 
+      "ShortTermO2Trim2": {
+        "description": "PID 57 - Short term secondary O2 trim - Bank 2", 
+        "type": "UInt8", 
+        "id": 129, 
+        "unit": "percent"
+      }, 
+      "ThrottleActuator": {
+        "type": "UInt8", 
+        "id": 119, 
+        "unit": "percent", 
+        "description": "PID 4C - Commanded throttle actuator"
+      }, 
+      "O2SensorsWR": {
+        "description": "Wide range/band oxygen sensors", 
+        "type": "branch", 
+        "children": {
+          "Sensor8": {
+            "description": "Wide range/band oxygen senor 8", 
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "description": "PID 3B - Lambda current for wide range/band oxygen sensor 8", 
+                "type": "Float", 
+                "id": 93, 
+                "unit": "A"
+              }, 
+              "Voltage": {
+                "description": "PID 2B - Lambda voltage for wide range/band oxygen sensor 8", 
+                "type": "Float", 
+                "id": 92, 
+                "unit": "V"
+              }
+            }
+          }, 
+          "Sensor1": {
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "description": "PID 34 - Lambda current for wide range/band oxygen sensor 1", 
+                "type": "Float", 
+                "id": 79, 
+                "unit": "A"
+              }, 
+              "Voltage": {
+                "type": "Float", 
+                "id": 78, 
+                "unit": "V", 
+                "description": "PID 24 - Lambda voltage for wide range/band oxygen sensor 1"
+              }
+            }, 
+            "description": "Wide range/band oxygen senor 1"
+          }, 
+          "Sensor3": {
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "type": "Float", 
+                "id": 83, 
+                "unit": "A", 
+                "description": "PID 36 - Lambda current for wide range/band oxygen sensor 4"
+              }, 
+              "Voltage": {
+                "type": "Float", 
+                "id": 82, 
+                "unit": "V", 
+                "description": "PID 26 - Lambda voltage for wide range/band oxygen sensor 3"
+              }
+            }, 
+            "description": "Wide range/band oxygen senor 3"
+          }, 
+          "Sensor2": {
+            "description": "Wide range/band oxygen senor 2", 
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "type": "Float", 
+                "id": 81, 
+                "unit": "A", 
+                "description": "PID 35 - Lambda current for wide range/band oxygen sensor 2"
+              }, 
+              "Voltage": {
+                "description": "PID 25 - Lambda voltage for wide range/band oxygen sensor 2", 
+                "type": "Float", 
+                "id": 80, 
+                "unit": "V"
+              }
+            }
+          }, 
+          "Sensor5": {
+            "description": "Wide range/band oxygen senor 5", 
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "description": "PID 38 - Lambda current for wide range/band oxygen sensor 5", 
+                "type": "Float", 
+                "id": 87, 
+                "unit": "A"
+              }, 
+              "Voltage": {
+                "description": "PID 28 - Lambda voltage for wide range/band oxygen sensor 5", 
+                "type": "Float", 
+                "id": 86, 
+                "unit": "V"
+              }
+            }
+          }, 
+          "Sensor4": {
+            "description": "Wide range/band oxygen senor 4", 
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "type": "Float", 
+                "id": 85, 
+                "unit": "A", 
+                "description": "PID 37 - Lambda current for wide range/band oxygen sensor 4"
+              }, 
+              "Voltage": {
+                "description": "PID 27 - Lambda voltage for wide range/band oxygen sensor 4", 
+                "type": "Float", 
+                "id": 84, 
+                "unit": "V"
+              }
+            }
+          }, 
+          "Sensor7": {
+            "description": "Wide range/band oxygen senor 7", 
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "description": "PID 3A - Lambda current for wide range/band oxygen sensor 7", 
+                "type": "Float", 
+                "id": 91, 
+                "unit": "A"
+              }, 
+              "Voltage": {
+                "description": "PID 2A - Lambda voltage for wide range/band oxygen sensor 7", 
+                "type": "Float", 
+                "id": 90, 
+                "unit": "V"
+              }
+            }
+          }, 
+          "Sensor6": {
+            "description": "Wide range/band oxygen senor 6", 
+            "type": "branch", 
+            "children": {
+              "Current": {
+                "description": "PID 39 - Lambda current for wide range/band oxygen sensor 6", 
+                "type": "Float", 
+                "id": 89, 
+                "unit": "A"
+              }, 
+              "Voltage": {
+                "type": "Float", 
+                "id": 88, 
+                "unit": "V", 
+                "description": "PID 29 - Lambda voltage for wide range/band oxygen sensor 6"
+              }
+            }
+          }
+        }
+      }, 
+      "OilTemperature": {
+        "description": "PID 5C - Engine oil temperature", 
+        "type": "UInt8", 
+        "id": 134, 
+        "unit": "celsius"
+      }, 
+      "MAP": {
+        "description": "PID 0B - Intake manifold pressure", 
+        "type": "Float", 
+        "id": 39, 
+        "unit": "kpa"
+      }, 
+      "LongTermO2Trim2": {
+        "description": "PID 58 - Long term secondary O2 trim - Bank 2", 
+        "type": "UInt8", 
+        "id": 130, 
+        "unit": "percent"
+      }, 
+      "OBDCompliance": {
+        "type": "String", 
+        "id": 63, 
+        "description": "PID 1C - Compliance details of OBD"
+      }, 
+      "DriveCycleStatus": {
+        "description": "PID 41 - OBD status for the current drive cycle", 
+        "type": "branch", 
+        "children": {
+          "DTCCount": {
+            "type": "UInt32", 
+            "id": 108, 
+            "description": "Number of Diagnostic Trouble Codes (DTC)"
+          }, 
+          "IgnitionType": {
+            "description": "Type of the ignition for ICE - spark = spark plug ignition, compression = self-igniting (Diesel engines)", 
+            "enum": [
+              "spark", 
+              "compression"
+            ], 
+            "type": "branch", 
+            "children": {}
+          }, 
+          "MIL": {
+            "description": "Malfunction Indicator Light (MIL) - False = Off, True = On", 
+            "type": "Boolean", 
+            "id": 107
+          }
+        }
+      }, 
+      "O2Sensors": {
+        "description": "PID 13 - Presence of oxygen sensors for the banks", 
+        "type": "branch", 
+        "children": {
+          "Bank2": {
+            "description": "Oxygen sensors on bank 2, at most 4 sensors per bank", 
+            "type": "branch", 
+            "children": {
+              "Sensor1": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 18 - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 56, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 55
+                  }
+                }
+              }, 
+              "Sensor3": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 1A - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 60, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "type": "Boolean", 
+                    "id": 59, 
+                    "description": "Sensor present - True = sensor present, False = sensor not present"
+                  }
+                }
+              }, 
+              "Sensor2": {
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "type": "Float", 
+                    "id": 58, 
+                    "unit": "V", 
+                    "description": "PID 19 - Sensor voltage"
+                  }, 
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 57
+                  }
+                }, 
+                "description": "Oxygen sensor"
+              }, 
+              "Sensor4": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 1B - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 62, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 61
+                  }
+                }
+              }
+            }
+          }, 
+          "Bank1": {
+            "description": "Oxygen sensors on bank 1, at most 4 sensors per bank", 
+            "type": "branch", 
+            "children": {
+              "Sensor1": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 14 - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 48, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 47
+                  }
+                }
+              }, 
+              "Sensor3": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 16 - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 52, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "description": "Sensor present - True = sensor present, False = sensor not present", 
+                    "type": "Boolean", 
+                    "id": 51
+                  }
+                }
+              }, 
+              "Sensor2": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 15 - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 50, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "type": "Boolean", 
+                    "id": 49, 
+                    "description": "Sensor present - True = sensor present, False = sensor not present"
+                  }
+                }
+              }, 
+              "Sensor4": {
+                "description": "Oxygen sensor", 
+                "type": "branch", 
+                "children": {
+                  "Voltage": {
+                    "description": "PID 17 - Sensor voltage", 
+                    "type": "Float", 
+                    "id": 54, 
+                    "unit": "V"
+                  }, 
+                  "Present": {
+                    "type": "Boolean", 
+                    "id": 53, 
+                    "description": "Sensor present - True = sensor present, False = sensor not present"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }, 
+      "FuelRate": {
+        "description": "PID 5E - Engine fuel rate", 
+        "type": "Float", 
+        "id": 136, 
+        "unit": "l/h"
+      }, 
+      "PidsC": {
+        "description": "PID 40 - Bitarry of the supported pids 41 to 60", 
+        "type": "UInt32", 
+        "id": 106
+      }, 
+      "HybridBatteryRemaining": {
+        "type": "UInt8", 
+        "id": 133, 
+        "unit": "percent", 
+        "description": "PID 5B - Remaining life of hybrid battery"
+      }, 
+      "RelativeAcceleratorPosition": {
+        "type": "UInt8", 
+        "id": 132, 
+        "unit": "percent", 
+        "description": "PID 5A - Relative accelerator pedal position"
+      }, 
+      "FreezeDTC": {
+        "description": "PID 02 - DTC that triggered the freeze frame", 
+        "type": "String", 
+        "id": 30
+      }, 
+      "FuelType": {
+        "description": "PID 51 - Fuel type", 
+        "type": "String", 
+        "id": 123
+      }, 
+      "EngineLoad": {
+        "description": "PID 04 - Engine load in percent - 0 = no load, 100 = full load", 
+        "type": "UInt8", 
+        "id": 32, 
+        "unit": "percentage"
+      }, 
+      "BarometricPressure": {
+        "type": "Float", 
+        "id": 101, 
+        "unit": "kpa", 
+        "description": "PID 33 - Barometric pressure"
+      }, 
+      "FuelRailPressureVac": {
+        "type": "Float", 
+        "id": 76, 
+        "unit": "kpa", 
+        "description": "PID 22 - Fuel rail pressure relative to vacuum"
+      }, 
+      "MAF": {
+        "type": "Int16", 
+        "id": 44, 
+        "unit": "g/s", 
+        "description": "PID 10 - Grams of air drawn into engine per second"
+      }, 
+      "EVAPVaporPressureAlternate": {
+        "description": "PID 54 - Alternate evaporative purge (EVAP) system pressure", 
+        "type": "Float", 
+        "id": 126, 
+        "unit": "pa"
+      }, 
+      "RunTime": {
+        "description": "PID 1F - Engine run time", 
+        "type": "UInt32", 
+        "id": 73, 
+        "unit": "s"
+      }, 
+      "Speed": {
+        "description": "PID 0D - Vehicle speed", 
+        "type": "Float", 
+        "id": 41, 
+        "unit": "km/h"
+      }, 
+      "ThrottlePosition": {
+        "type": "UInt8", 
+        "id": 45, 
+        "unit": "percentage", 
+        "description": "PID 11 - Throttle position - 0 = closed throttle, 100 = open throttle"
+      }
+    }
+  }, 
+  "ADAS": {
+    "description": "All Advanced Driver Assist Systems signals", 
+    "type": "branch", 
+    "children": {}
+  }, 
+  "Chassis": {
+    "description": "All signals concerning steering, suspension, wheels, and brakes.", 
+    "type": "branch", 
+    "children": {}
+  }, 
+  "Vehicle": {
+    "type": "branch", 
+    "children": {}, 
+    "description": "Highlevel vehicle data."
+  }, 
+  "Cabin": {
+    "description": "All in-cabin components, including doors.", 
+    "type": "branch", 
+    "children": {}
+  }
+}

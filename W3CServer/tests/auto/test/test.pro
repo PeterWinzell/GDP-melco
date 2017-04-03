@@ -81,11 +81,10 @@ INCLUDEPATH += $$PWD/../../../src
 INCLUDEPATH += ../../../../lib/QJsonWebToken
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/release/ -lqjsonwebtoken
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
-else:unix:!macx: LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebtoken
+else:unix:!macx: LIBS += $$PWD/../../../../lib/vsi/* -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebtoken
 
 DISTFILES += \
     data/vss_rel_1.json
 
-LIBS += /home/vagrant/qt-projects/vsi_test/lib/vsi/*
 unix:QMAKE_POST_LINK += $$quote($$QMAKE_COPY $${PWD}/data/* $${OUT_PWD})
 else:win32:QMAKE_POST_LINK += $$QMAKE_COPY \"$${PWD}/data\\*\" \"$${OUT_PWD}\"

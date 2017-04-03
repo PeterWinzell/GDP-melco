@@ -68,9 +68,10 @@ INSTALLS += target
 RESOURCES += \
     ../ssl.qrc
 
-LIBS += /home/vagrant/qt-projects/vsi_test/lib/vsi/*
 INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
-else:unix: LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
+else:unix: LIBS += $$PWD/../../lib/vsi/* -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
+
+

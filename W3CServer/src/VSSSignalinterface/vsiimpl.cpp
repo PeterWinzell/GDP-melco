@@ -7,12 +7,17 @@
 #include <QJsonDocument>
 
 vsi_handle VSIImpl::handle;
-VSIImpl::VSIImpl(const QString &vssFile)
+VSIImpl::VSIImpl(const QString &vssDir, const QString &vssName)
 {
     VSIImpl::handle = vsi_initialize ( false );
 
-    loadVSSFile();
-    loadJson(vssFile);
+    QString vsiFile = vssDir + "/" + vssName + ".vsi";
+    QString vssjson = vssDir + "/" + vssName + ".json";
+
+    loadVSSFile(vsiFile);
+    loadJson(vssjson);
+
+    vsi_VSS_import(handle, vsiFile.toStdString().c_str());
 }
 void VSIImpl::loadJson(const QString &fileName)
 {
@@ -32,9 +37,9 @@ void VSIImpl::loadJson(const QString &fileName)
     m_vssTree = doc.object();
 }
 
-void VSIImpl::loadVSSFile()
+void VSIImpl::loadVSSFile(const QString& vsiFile)
 {
-    QFile file("vss_rel_1.vsi");
+    QFile file(vsiFile);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {

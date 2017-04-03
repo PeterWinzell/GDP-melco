@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QPointer>
+#include <QSettings>
 
 #include "w3cserver.h"
 #include "jsonrequestparser.h"
@@ -86,8 +87,12 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
 
     // TODO: select implementation based on application configuration
 
-    const QString vssFile = "vss_rel_1.json";
-    m_vsssInterface = QSharedPointer<VSIImpl>(new VSIImpl(vssFile));
+    QPointer<QSettings> settings = new QSettings();
+    settings->beginGroup("W3CServer");
+    QString vssName = settings->value("vss_name").toString();
+    QString vssDir = settings->value("vss_dir").toString();
+
+    m_vsssInterface = QSharedPointer<VSIImpl>(new VSIImpl(vssDir, vssName));
     //m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
     //m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
     //connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);

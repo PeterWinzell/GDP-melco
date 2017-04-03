@@ -1,8 +1,8 @@
 #ifndef VSIIMPL_H
 #define VSIIMPL_H
 extern "C" {
-    #include "/home/vagrant/GDP/GDP-melco/lib/vsi/vsi.h"
-    #include "/home/vagrant/GDP/GDP-melco/lib/vsi/vsi_core_api.h"
+    #include "../../../lib/vsi/vsi.h"
+    #include "../../../lib/vsi/vsi_core_api.h"
 }
 //#undef signal
 //#include <qobjectdefs.h>
@@ -17,7 +17,7 @@ extern "C" {
 class VSIImpl : public VSSSignalInterface
 {
 public:
-    VSIImpl(const QString &vssFile);
+    VSIImpl(const QString &vssDir, const QString &vssName);
     QString getSignalValue(const QString& path);
     qint8   setSignalValue(const QString& path, QVariant value);
     QJsonObject getVSSNode(const QString& path);
@@ -37,7 +37,7 @@ private:
     QMap<QString, int> m_nameKeyMap;
 
     void loadJson(const QString& fileName);
-    void loadVSSFile();
+    void loadVSSFile(const QString &vsiFile);
     void getTreeNodes(QJsonObject& tree, QStringList& path, QVector<JsonNode>& nodes);
     void removeAllKeysButOne(QJsonObject &json, const QString &filter);
     void removeOne(QJsonObject &json, const QString &filter);
