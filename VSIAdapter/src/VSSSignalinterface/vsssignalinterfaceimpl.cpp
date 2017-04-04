@@ -22,15 +22,9 @@ extern "C" {
 #include <QSettings>
 
 
-//
-//  A few global data items to make life easier...
-//
-static vsi_handle handle;
-
-static unsigned char data;
-
 extern void btree_print ( btree_t* btree, printFunc printCB );
 
+vsi_handle VSSSignalInterfaceImpl::handle;
 
 //
 //  This function will be called by the btree code when it has been called to
@@ -42,25 +36,28 @@ void printFunction ( char* leader, void* data )
 {
     if ( data == NULL )
     {
-        printf ( "%s(nil)\n", leader );
-        return;
+        qDebug() << leader << "(nil)";
     }
-    vsi_id_name_definition* userDataPtr = (vsi_id_name_definition*)data;
+    else
+    {
+        vsi_id_name_definition* userDataPtr = (vsi_id_name_definition*)data;
 
-    printf ( "%sUserData: domainId: %lu, signalId: %lu, privateId: %lu, name[%s]\n",
-             leader, userDataPtr->domainId, userDataPtr->signalId,
-             userDataPtr->privateId, userDataPtr->name );
+        qDebug() <<  leader << "UserData: "
+                            << "domainId: " << userDataPtr->domainId
+                            << "signalId: " << userDataPtr->signalId
+                            << "privateId: " << userDataPtr->privateId
+                            << "name[%s]" << userDataPtr->name;
+    }
 }
 
 VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 {
-    m_rpm = "3000";
-    m_speed = "70";
+    m_rpm = "0";
+    m_speed = "0";
 
     loadJson(vssFile);
 
     long     dummyData = 0;
-    signal_t signalId = 0;
 
     //Read settings to map Open DS signals to VSI signals
     QPointer<QSettings> settings = new QSettings();
@@ -78,36 +75,15 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
     }
     settings->endGroup();
 
-
-    SignalLookup[RPM] = 42;   //Dummy id
-    SignalLookup[Speed] = 43; //Dummy id
-    SignalLookup[GasPedal] = 21; //Dummy id
-    SignalLookup[BrakePedal] = 22; //Dummy id
-    SignalLookup[SteerAngle] = 23; //Dummy id
-    SignalLookup[Headlights] = 24; //Dummy id
-    SignalLookup[EngineRunning] = 25; //Dummy id
-    SignalLookup[CurrentFuelConsumption] = 26; //Dummy id
-    SignalLookup[FuelTankMax] = 27; //Dummy id
-    SignalLookup[FuelTankActual] = 28; //Dummy id
-    SignalLookup[PositionLatitude] = 29; //Dummy id
-    SignalLookup[PositionLongitude] = 30; //Dummy id
-    SignalLookup[PositionAltitude] = 31; //Dummy id
-    SignalLookup[Orientation] = 32; //Dummy id
-    SignalLookup[Rise] = 33; //Dummy id*
-    SignalLookup[AccelerationLateral] = 34; //Dummy id*
-    SignalLookup[Rotation] = 35; //Dummy id*
-    SignalLookup[AccelerationRotation] = 36; //Dummy id*
-    SignalLookup[Acceleration] = 37; //Dummy id*
-
     //
     //  Call into the API to initialize the memory.
     //
-    handle = vsi_initialize ( true );
+    handle = vsi_initialize ( false ); // false means that if shared memory area already exists, use it
     if (handle)
     {
         vsi_context* context = (vsi_context*)handle;
 
-        printf("Initialized the VSI API.\n");
+        qDebug() << "Initialized the VSI API.";
 
         //
         //  Initialize the result buffer for data to go into.
@@ -116,20 +92,13 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
         m_result.data       = (char*)&dummyData;
         m_result.dataLength = sizeof(unsigned char);
 
-        //
-        //  Define some signals for the test functions.
-        //
-        vsi_define_signal_name ( (void*)context, 0, 1, 0, "foo" );
-        vsi_define_signal_name ( (void*)context, 0, 2, 0, "bar" );
-        vsi_define_signal_name ( (void*)context, 0, 3, 0, "baz" );
-        vsi_define_signal_name ( (void*)context, 0, 4, 0, "gen" );
-        vsi_define_signal_name ( (void*)context, 0, 5, 0, "ivi" );
+        m_domainId = 0; //Currently not used - always set to 0 in both producer and consumer
 
         btree_print ( &context->signalNameIndex, printFunction );
     }
     else
     {
-        printf("Failed to allocate memory for VSI!\n");
+        qDebug() << "Failed to allocate memory for VSI!";
     }
 }
 
@@ -143,15 +112,15 @@ VSSSignalInterfaceImpl::~VSSSignalInterfaceImpl()
     //  freed.
     //
     int status = 0;
-    printf ( "\n(11) Closing the VSI system.\n" );
+    qDebug() << "Closing the VSI system.";
     status = vsi_destroy ( handle );
     if ( status )
     {
-        printf("Failed to free memory used by VSI!\n");
+        qDebug() << "Failed to free memory used by VSI!";
     }
     else
     {
-        printf("Freed the VSI memory.\n");
+        qDebug() << "Freed the VSI memory.";
     }
 }
 

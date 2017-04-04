@@ -79,6 +79,8 @@ private:
     domain_t m_domainId;
     signal_t m_signalId;
     vsi_result m_result;
+
+    static vsi_handle handle;
 };
 
 #endif // VSSSIGNALINTERFACEIMPL_H
