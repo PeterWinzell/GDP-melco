@@ -1,8 +1,8 @@
 #ifndef VSIIMPL_H
 #define VSIIMPL_H
 extern "C" {
-    #include "../../../lib/vsi/vsi.h"
-    #include "../../../lib/vsi/vsi_core_api.h"
+    #include "vsi.h"
+    #include "vsi_core_api.h"
 }
 //#undef signal
 //#include <qobjectdefs.h>
