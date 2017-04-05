@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
-    request-handler/statushandler.cpp
+    request-handler/statushandler.cpp \
+    logger.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -51,7 +52,8 @@ HEADERS += \
     OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
-    request-handler/statushandler.h
+    request-handler/statushandler.h \
+    logger.h
 
 target.path = /home/pi
 INSTALLS += target
