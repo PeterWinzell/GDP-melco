@@ -54,6 +54,8 @@ void OpenDSHandler::delay(int delay)
 
 void OpenDSHandler::xmlParser(QString xmlData)
 {
+    qDebug() << "All OpenDS data: " << xmlData;
+
     //Get your xml into xmlText(you can use QString instead og QByteArray)
     QDomDocument doc;
     doc.setContent(xmlData);
@@ -95,11 +97,11 @@ void OpenDSHandler::xmlParser(QString xmlData)
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionLongitude, longitude.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionAltitude, altitude.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Orientation, orientation.at(0).toElement().text());
-//    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rise, rise.at(0).toElement().text());
-//    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationLateral, accelerationLateral.at(0).toElement().text());
-//    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rotation, rotation.at(0).toElement().text());
-//    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationRotation, accelerationRotation.at(0).toElement().text());
-//    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Acceleration, acceleration.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rise, rise.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationLateral, accelerationLateral.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rotation, rotation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationRotation, accelerationRotation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Acceleration, acceleration.at(0).toElement().text());
 }
 
 void OpenDSHandler::connected()
@@ -130,7 +132,7 @@ void OpenDSHandler::readyRead()
 
 void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
 {
-//    qDebug() << "something went wrong...." << error;
+    qDebug() << "OpenDSHandler socketError: something went wrong...." << error;
 
     // check if socket is still connected or if we need to reconnect!
     if(!(m_Socket->state() == QTcpSocket::ConnectedState))
