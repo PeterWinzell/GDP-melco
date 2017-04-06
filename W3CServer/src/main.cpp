@@ -14,9 +14,6 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    qInstallMessageHandler(Logger::messageHandler);
-
-
 
     //initiating QSettings
     QCoreApplication::setApplicationName("W3CServer");
@@ -25,23 +22,21 @@ int main(int argc, char *argv[])
     QPointer<QSettings> settings = new QSettings();
     QSharedPointer<QFileInfo> checkFile(new QFileInfo(settings->fileName()));
 
-    qDebug() << "Try to open settings file: " << settings->fileName();
+    INFO("Server", "Trying to open settings file: " + settings->fileName());
 
     //check if settings file exists on local filesystem otherwise copy
     //the default settings file from resources
     if(!checkFile->isFile())
     {
-        qDebug() << "No settings file found";
+        INFO("Server","No settings file found, trying to copy defualt settings file...");
 
         if(QDir().mkpath(checkFile->absolutePath()))
         {
-            qDebug() << "Path exists";
-
+            TRACE("Server","Settings file path exists.");
             //could we copy?
             if (QFile::copy(":/W3CServer.ini",settings->fileName()))
             {
-                qDebug() << "Default settings file copied";
-
+                TRACE("Server","Default settings file copied.");
                 //waits for settings file to become available and loads content
                 while(!checkFile->isFile());
                 settings->sync();
