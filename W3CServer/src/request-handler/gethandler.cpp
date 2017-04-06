@@ -2,22 +2,20 @@
 #include <QDebug>
 #include <QJsonDocument>
 
-
 GetHandler::GetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client)
 {
-    qDebug() << " GetHandler is created.";
+    TRACE("Server", "< GetHandler > created.");
 }
 
 GetHandler::~GetHandler()
 {
-    qDebug() << " GetHandler is dying...";
+    TRACE("Server", "< GetHandler > destroyed.");
 }
 
 void GetHandler::processRequest()
 {
-    qDebug() << " processing get handler requests";
-
+    DEBUG("Server", "Processing < Get > request.");
 
     QString key = m_pVissrequest->getSignalPath();
     QString value = m_pSignalInterface->getSignalValue(key);

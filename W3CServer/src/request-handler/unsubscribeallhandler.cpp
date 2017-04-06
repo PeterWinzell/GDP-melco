@@ -23,9 +23,10 @@
 #include "unsubscribeallhandler.h"
 #include "subscriptions.h"
 
-UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent, signalInterface, vissrequest,client)
+UnsubscribeAllHandler::UnsubscribeAllHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
+        WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest,client)
 {
+    TRACE("Server", "< UnsubscribeAllHandler > created.");
 }
 
 QString UnsubscribeAllHandler::responseBuilder(bool valid)
@@ -52,7 +53,7 @@ QString UnsubscribeAllHandler::responseBuilder(bool valid)
 
 void UnsubscribeAllHandler::processRequest()
 {
-    qDebug() << " processing usubscribe All request";
+    DEBUG("Server","Processing < UnsubscribeAll > request.");
 
     Subscriptions* subs = Subscriptions::getInstance();
     bool valid = true;
@@ -61,5 +62,5 @@ void UnsubscribeAllHandler::processRequest()
         valid = subs -> unsubscribeAll(m_pClient); // should kill subscription thread
     }
 
-     m_pClient -> sendTextMessage( responseBuilder(valid) );
+    m_pClient -> sendTextMessage( responseBuilder(valid) );
 }
