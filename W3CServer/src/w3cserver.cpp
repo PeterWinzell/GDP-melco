@@ -133,7 +133,6 @@ void W3CServer::processTextMessage(const QString& message)
     else
     {
         WARNING("Server","Fatal connection error, Websocket client not found.");
-        qDebug() << "EEEEEEEEEEEEEEEEE";
     }
 }
 
