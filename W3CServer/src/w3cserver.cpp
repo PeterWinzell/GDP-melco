@@ -47,7 +47,9 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
         certFile.open(QIODevice::ReadOnly);
         const QByteArray bytes = certFile.readAll();
         QJsonWebToken e;
+
         TRACE("Server","Certification file length : " + QString::number(bytes.length()));
+
         QSslCertificate certificate(bytes, QSsl::Pem);
 
         keyFile.open(QIODevice::ReadOnly);
@@ -70,7 +72,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
     }
     if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
-        INFO("Server","W3CServer is listening on port " + port);
+        INFO("Server","W3CServer is listening on port " + QString::number(port));
 
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
@@ -100,8 +102,9 @@ W3CServer::~W3CServer()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-    // pSocket ->
+
     DEBUG("Server","Attemping to connect");
+
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &W3CServer::processTextMessage);
     // Connect socket disconnected signal with server socketDisconnected slot
@@ -130,6 +133,7 @@ void W3CServer::processTextMessage(const QString& message)
     else
     {
         WARNING("Server","Fatal connection error, Websocket client not found.");
+        qDebug() << "EEEEEEEEEEEEEEEEE";
     }
 }
 

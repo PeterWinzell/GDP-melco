@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     // TODO Add as arguments
     Logger::logEnabled = true;
-    Logger::logLevel = 1;
-    Logger::logToFile = false;
+    Logger::logLevel = 0;
+    Logger::logToFile = true;
     Logger::logFilename = "w3c-server-log.log";
 
     //initiating QSettings

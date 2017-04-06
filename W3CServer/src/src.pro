@@ -29,8 +29,7 @@ SOURCES += main.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
-    request-handler/statushandler.cpp \
-    logger.cpp
+    request-handler/statushandler.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -52,8 +51,7 @@ HEADERS += \
     OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
-    request-handler/statushandler.h \
-    logger.h
+    request-handler/statushandler.h
 
 target.path = /home/pi
 INSTALLS += target
@@ -61,8 +59,19 @@ INSTALLS += target
 RESOURCES += \
     ../ssl.qrc
 
-INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
+INCLUDEPATH += $$PWD/../../lib/QJsonWebToken \
+                $$PWD/../../lib/Logger
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
-else:unix: LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
+win32:CONFIG(release, debug|release){
+    LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken \
+             L$$OUT_PWD/../../lib/Logger/release/ -llogger
+
+}
+win32:CONFIG(debug, debug|release){
+    LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken \
+             L$$OUT_PWD/../../lib/Logger/debug/ -llogger
+}
+unix{
+    LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken \
+            -L$$OUT_PWD/../../lib/Logger/ -llogger
+}
