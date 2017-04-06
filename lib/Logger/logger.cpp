@@ -9,13 +9,22 @@
 
 #include <iostream>
 
-bool Logger::logEnabled = true;
-int Logger::logLevel = 0;
-QString Logger::logFilename = "w3c-log.log";
-bool Logger::logToFile = true;
+Logger *Logger::instance = 0;
+Logger::Logger(QObject *parent): QObject(parent)
+{
+    qDebug() << "Constructor"; // Testing
+}
+
+Logger *Logger::getInstance()
+{
+  if (!instance)
+      instance = new Logger();
+  return instance;
+}
 
 void Logger::log(LogLevel logType, QString source, QString message, QString file, int lineNr, QString function)
 {
+    if(!Logger::logEnabled) { return; }
     static QMutex mutex;
     QMutexLocker lock(&mutex);
 
@@ -56,9 +65,10 @@ void Logger::log(LogLevel logType, QString source, QString message, QString file
         if(logToFile) { writeLogToFile(msg); }
     }
 }
+
 void Logger::writeLogToFile(QString message)
 {
-    static QFile file("logfile.log");
+    static QFile file(Logger::logFilename);
 
     if(!file.isOpen()) { file.open(QIODevice::Append); }
     QTextStream stream(&file);

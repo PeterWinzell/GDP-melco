@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     // TODO Add as arguments
-    Logger::logEnabled = true;
-    Logger::logLevel = 1;
-    Logger::logToFile = true;
-    Logger::logFilename = "w3c-server-log.log";
+    //Logger::getInstance()->logEnabled = false;
+    //Logger::getInstance()->logLevel = 1;
+    //Logger::getInstance()->logToFile = false;
+    Logger::getInstance()->logFilename = "w3c-server-log.log";
 
     //initiating QSettings
     QCoreApplication::setApplicationName("W3CServer");
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     bool serverDebug = settings->value("server_debug").toBool();
     settings->endGroup();
 
-    Logger::logEnabled = serverDebug ? true : false;
+    Logger::getInstance()->logEnabled = serverDebug ? true : false;
 
     W3CServer *server = new W3CServer(serverPort,serverWSS);
     QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
