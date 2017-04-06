@@ -20,8 +20,12 @@ public:
 
     static void log(LogLevel logLevel, QString source, QString message, QString file, int lineNr, QString function);
 
+    static bool logEnabled;
     static int logLevel;
+
+    static QString logFilename;
     static bool logToFile;
+
 private:
     static void writeLogToFile(QString message);
 };

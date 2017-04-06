@@ -26,10 +26,9 @@ QT_USE_NAMESPACE
 
 class W3CServer;
 int W3CServer::m_nrOfClients;
-W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *parent) : QObject(parent),
+W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients(),
-    m_debug(debug),
     m_secure(usesecureprotocol)
 {
     QThreadPool::globalInstance()->setMaxThreadCount(100);
@@ -49,21 +48,21 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         const QByteArray bytes = certFile.readAll();
         QJsonWebToken e;
         TRACE("Server","Certification file length : " + QString::number(bytes.length()));
-              QSslCertificate certificate(bytes, QSsl::Pem);
+        QSslCertificate certificate(bytes, QSsl::Pem);
 
-              keyFile.open(QIODevice::ReadOnly);
-              const QByteArray passphrase("6610");
-              QSslKey sslKey(&keyFile, QSsl::Rsa, QSsl::Pem,QSsl::PrivateKey,passphrase);
+        keyFile.open(QIODevice::ReadOnly);
+        const QByteArray passphrase("6610");
+        QSslKey sslKey(&keyFile, QSsl::Rsa, QSsl::Pem,QSsl::PrivateKey,passphrase);
 
-              certFile.close();
-              keyFile.close();
+        certFile.close();
+        keyFile.close();
 
-              sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
-              sslConfiguration.setLocalCertificate(certificate);
-              sslConfiguration.setPrivateKey(sslKey);
-              sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
+        sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
+        sslConfiguration.setLocalCertificate(certificate);
+        sslConfiguration.setPrivateKey(sslKey);
+        sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
 
-              m_pWebSocketServer->setSslConfiguration(sslConfiguration);
+        m_pWebSocketServer->setSslConfiguration(sslConfiguration);
     }
     else
     {
@@ -71,10 +70,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     }
     if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
-        if (m_debug)
-        {
-            INFO("Server","W3CServer is listening on port " + port);
-        }
+        INFO("Server","W3CServer is listening on port " + port);
 
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
@@ -118,11 +114,9 @@ void W3CServer::onNewConnection()
 
 void W3CServer::processTextMessage(const QString& message)
 {
-    if (m_debug)
-    {
-        DEBUG("Server","Message received");
-        TRACE("Server", message);
-    }
+
+    DEBUG("Server","Message received");
+    TRACE("Server", message);
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
@@ -142,10 +136,8 @@ void W3CServer::processTextMessage(const QString& message)
 void W3CServer::socketDisconnected()
 {
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
-    if (m_debug)
-    {
-        DEBUG("Server","Socket disconnected");// : " + zeClient);
-    }
+
+    DEBUG("Server","Socket disconnected");// : " + zeClient);
 
     //remove from client list and delete from heap
     if (zeClient)
