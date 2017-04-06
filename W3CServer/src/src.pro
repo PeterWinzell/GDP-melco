@@ -13,7 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     w3cserver.cpp \
     jsonrequestparser.cpp \
-    vissrequest.cpp \
     request-handler/requesthandler.cpp \
     request-handler/gethandler.cpp \
     request-handler/authorizationhandler.cpp \
