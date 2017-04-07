@@ -1,7 +1,6 @@
 #include "getvisstestdatajson.h"
 #include "qjsonwebtoken.h"
 #include <QDateTime>
-#include <QDebug>
 #include <QJsonArray>
 
 int GetVissTestDataJson::m_requestId = 0;

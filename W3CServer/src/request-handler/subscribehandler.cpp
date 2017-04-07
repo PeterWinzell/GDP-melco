@@ -31,22 +31,21 @@
 
 const int SubscribeHandler::m_defaultIntervalMs = 1000;
 
-
-SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
+SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
+                                   WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
+    TRACE("Server", "< SubscribeHandler > created.");
     m_pSignalInterface = signalInterface;
 }
 
 void SubscribeHandler::processRequest()
 {
+    DEBUG("Server","Processing < Subscribe > request.");
     connect(m_pClient->getSocket(), &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
 
     //Add to subscriptions and store subscriptions ID
     Subscriptions* subscriptions = Subscriptions::getInstance();
     m_subId = subscriptions -> addSubcription(this);
-
-    qDebug() << " processing subscribe handler requests";
 
     //Setup filter params
     initializeFilter();
@@ -80,18 +79,18 @@ void SubscribeHandler::processRequest()
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
 
-    qDebug() << " subscription cancelled ";
+    DEBUG("Server","Subscription cancelled.");
 }
 
 void SubscribeHandler::socketDisconnected()
 {
-    qDebug() << " socket disconnected slot called in subscribehandler";
+    DEBUG("Server","Socket disconnected during subscription.");
     m_dosubscription = false;
 }
 
 void SubscribeHandler::unsubscribe()
 {
-    qDebug() << " usubscribe signal invoked ";
+    DEBUG("Server","Subscription cancelled due to unsubscription.");
     m_dosubscription = false;
 }
 

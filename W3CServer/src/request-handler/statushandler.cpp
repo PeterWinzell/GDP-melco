@@ -6,12 +6,17 @@
 StatusHandler::StatusHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,signalInterface, vissrequest,client)
 {
+    TRACE("Server", "< StatusHandler > created.");
+}
+
+StatusHandler::~StatusHandler()
+{
+    TRACE("Server", "< StatusHandler > destroyed.");
 }
 
 void StatusHandler::processRequest()
 {
-    qDebug() << "Processing status handler request";
-
+    DEBUG("Server", "Processing < Status > request.");
 
     QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
     response.insert("clients", W3CServer::m_nrOfClients);
@@ -24,8 +29,4 @@ void StatusHandler::processRequest()
     QString message = jsonDoc.toJson();
 
     m_pClient->sendTextMessage(message);
-}
-StatusHandler::~StatusHandler()
-{
-    qDebug() << " StatusHandler is dying...";
 }

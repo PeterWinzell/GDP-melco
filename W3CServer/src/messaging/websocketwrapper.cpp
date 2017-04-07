@@ -1,10 +1,10 @@
 #include "websocketwrapper.h"
-
+#include "logger.h"
 
 WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *parent)
     : QObject(parent), m_pSocket(socket),m_pMutex(mutex)
 {
-    //qDebug() << "WebSocketWrapper created.";
+    TRACE("Server", "< WebSocketWrapper > created.");
 
     connect(socket, &QWebSocket::connected, this, &WebSocketWrapper::socketConnected);
     connect(socket, &QWebSocket::disconnected, this, &WebSocketWrapper::socketDisconnected);
@@ -15,8 +15,7 @@ WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *pa
 
 WebSocketWrapper::~WebSocketWrapper()
 {
-
-    //qDebug() << "WebSocketWrapper is dying...";
+    TRACE("Server", "< WebSocketWrapper > destroyed.");
 }
 
 qint64 WebSocketWrapper::sendTextMessage(const QString &message)
@@ -26,16 +25,20 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
 
     if (m_connected)
     {
+<<<<<<< HEAD
         qDebug() << "Sending: " << message ;
+=======
+        TRACE("Server", "Sending message : " + message);
+>>>>>>> 2be540b533bceacded03eb83d9bef2a89a88d5d5
         bytesSent = m_pSocket->sendTextMessage(message);
         m_pSocket->flush(); // well, sometimes you really need to flush
         qDebug() << "Sending: byte sent " << bytesSent;
     }
     else
     {
-        qWarning() << "SOCKET NOT CONNECTED!" << message;
-        qDebug() << "Message: " << message;
-    }
+        WARNING("Server", "Socket not connected. Unable to send.");
+        TRACE("Server", "Message : " + message);
+   }
 
     m_lastMessage = message;
 

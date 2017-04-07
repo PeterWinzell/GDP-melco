@@ -20,7 +20,7 @@ class W3CServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit W3CServer(quint16 port,bool usesecureprotocol = false,bool debug=false, QObject *parent = Q_NULLPTR);
+    explicit W3CServer(quint16 port,bool usesecureprotocol = false, QObject *parent = Q_NULLPTR);
     ~W3CServer();
 
     //static int getNumberOfClients() {return m_nrOfClients; }
@@ -40,7 +40,6 @@ private:
     QMap<QWebSocket *,QMutex*> m_clients;
     QSharedPointer<VSSSignalInterface> m_vsssInterface;
     QSharedPointer<OpenDSHandler> m_openDSHandler;
-    bool m_debug;
     bool m_secure;
 
 };

@@ -23,10 +23,10 @@
 #include "unsubscribehandler.h"
 #include "subscriptions.h"
 
-
-UnsubscribeHandler::UnsubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent, signalInterface, vissrequest, client)
+UnsubscribeHandler::UnsubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
+                                       WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest, client)
 {
+    TRACE("Server", "< UnsubscribeHandler > created.");
 }
 
 
@@ -54,7 +54,7 @@ QString UnsubscribeHandler::Responsebuilder(bool valid)
 
 void UnsubscribeHandler::processRequest()
 {
-    qDebug() << " processing unsubscribe handler requests";
+    DEBUG("Server","Processing < Unsubscribe > request.");
 
     // retrive on ongoing subscriptions
     Subscriptions* subs = Subscriptions::getInstance();
