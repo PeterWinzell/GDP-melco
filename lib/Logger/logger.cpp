@@ -24,6 +24,11 @@ Logger *Logger::getInstance()
 
 void Logger::log(LogLevel logType, QString source, QString message, QString file, int lineNr, QString function)
 {
+    // Add these to output. I wan't to add a --verbose setting to enable/disable this extra information.
+    Q_UNUSED(file);
+    Q_UNUSED(lineNr);
+    Q_UNUSED(function);
+
     if(!Logger::logEnabled) { return; }
     static QMutex mutex;
     QMutexLocker lock(&mutex);
