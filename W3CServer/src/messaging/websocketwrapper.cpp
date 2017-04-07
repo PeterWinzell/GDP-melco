@@ -26,8 +26,10 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
 
     if (m_connected)
     {
-        qDebug() << "Sending: " << message;
+        qDebug() << "Sending: " << message ;
         bytesSent = m_pSocket->sendTextMessage(message);
+        m_pSocket->flush(); // well, sometimes you really need to flush
+        qDebug() << "Sending: byte sent " << bytesSent;
     }
     else
     {

@@ -103,7 +103,7 @@ WebSocketWrapper* SubscribeHandler::getSocketClient()
 QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)
 {
     QJsonObject jsonObject;
-    jsonObject.insert("action", "subscribing");
+    jsonObject.insert("action", "subscription");
     jsonObject.insert("subscriptionId", m_subId);
     jsonObject.insert("value", signalValue);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));

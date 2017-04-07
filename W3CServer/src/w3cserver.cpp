@@ -66,6 +66,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     else
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
+
     }
     if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
@@ -102,8 +103,9 @@ W3CServer::~W3CServer()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+    pSocket ->ignoreSslErrors();
     // pSocket ->
-    qDebug() << " attempting to connect ";
+    qDebug() << " attempting to connect " << pSocket;
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &W3CServer::processTextMessage);
@@ -123,7 +125,6 @@ void W3CServer::processTextMessage(const QString& message)
     }
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
-
     if (m_clients.contains(zeClient))
     {
         // we need a mutex per client .
@@ -154,7 +155,7 @@ void W3CServer::socketDisconnected()
     }
 }
 
-void W3CServer::onSslErrors(const QList<QSslError> &)
+void W3CServer::onSslErrors(const QList<QSslError> &l)
 {
     qDebug() << "Ssl error occurred";
 }

@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     bool secure = parser.isSet(secureOption);
 
 
-    QString url = "ws://127.0.0.1:8080"; // default url
+    QString url = "ws://192.168.31.128:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
 
 
