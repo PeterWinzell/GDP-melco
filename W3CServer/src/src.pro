@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
-    request-handler/statushandler.cpp
+    request-handler/statushandler.cpp \
+    authorization/authorizationmanager.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -37,7 +38,6 @@ HEADERS += \
     jsonrequestparser.h \
     vissrequest.h \
     request-handler/gethandler.h \
-    request-handler/authorizationhandler.h \
     request-handler/sethandler.h \
     request-handler/subscribehandler.h \
     request-handler/unsubscribeallhandler.h \
@@ -50,7 +50,9 @@ HEADERS += \
     OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
-    request-handler/statushandler.h
+    request-handler/statushandler.h \
+    request-handler/authorizationhandler.h \
+    authorization/authorizationmanager.h
 
 target.path = /home/pi
 INSTALLS += target
