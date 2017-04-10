@@ -32,6 +32,7 @@ SOURCES += main.cpp \
     ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp \
+    ../../../src/VSSSignalinterface/websocketbroker.cpp \
     ../../../src/OpenDSHandler/opendshandler.cpp
 
 
@@ -55,6 +56,7 @@ HEADERS += \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
     ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h \
+    ../../../src/VSSSignalinterface/websocketbroker.h \
     ../../../src/OpenDSHandler/opendshandler.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging

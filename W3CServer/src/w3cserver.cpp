@@ -17,6 +17,7 @@
 #include "jwt-utility/visstokenvalidator.h"
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
+#include "VSSSignalinterface/websocketbroker.h"
 #include "messaging/websocketwrapper.h"
 #include "OpenDSHandler/opendshandler.h"
 
@@ -87,7 +88,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
     // TODO: select implementation based on application configuration
 
     const QString vssFile = "/etc/vss_rel_1.json";
-    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
+    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssFile));
     m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
     connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
@@ -103,14 +104,10 @@ W3CServer::~W3CServer()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-<<<<<<< HEAD
+
     pSocket ->ignoreSslErrors();
-    // pSocket ->
-    qDebug() << " attempting to connect " << pSocket;
-=======
 
     DEBUG("Server","Attemping to connect");
->>>>>>> 2be540b533bceacded03eb83d9bef2a89a88d5d5
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &W3CServer::processTextMessage);
