@@ -106,7 +106,6 @@ void W3cTestClient::runTest()
     {
         debugOutput("Test: " + getTestCaseAsString(m_currentTest) + " pending, waiting...");
     }
-
 }
 
 QString W3cTestClient::getTestCaseAsString(TestCase testCase)
@@ -246,8 +245,6 @@ void W3cTestClient::onTextMessageReceived(QString message)
             debugOutput("Succesfully performed unsubscribe all");
 
             passTestRun();
-
-
         }
         else if (actionString == "subscribing")
         {
