@@ -34,7 +34,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
 {
     QThreadPool::globalInstance()->setMaxThreadCount(100);
 
-    if (usesecureprotocol)
+    if (false)
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer"),
                 QWebSocketServer::SecureMode,
@@ -87,10 +87,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
 
     // TODO: select implementation based on application configuration
 
-    const QString vssFile = "/etc/vss_rel_1.json";
+    const QString vssFile = "vss_rel_1.json";
     m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssFile));
-    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
 
 W3CServer::~W3CServer()

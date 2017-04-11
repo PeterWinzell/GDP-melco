@@ -54,7 +54,7 @@ void VSSSignalInterfaceImpl::loadJson(const QString &fileName)
     m_vssTree = doc.object();
 }
 
-QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
+QJsonObject VSSSignalInterfaceImpl::getSignalValue(const QString& path)
 {
     QMutex mutex;
     QMutexLocker locker(&mutex);
@@ -73,7 +73,7 @@ QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
     return result;
 }
 
-qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path, QVariant value)
+QJsonObject VSSSignalInterfaceImpl::setSignalValue(const QString& path, QVariant value)
 {
     QMutex mutex;
     QMutexLocker locker(&mutex);

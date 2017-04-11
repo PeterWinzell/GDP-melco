@@ -60,9 +60,9 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
+        //QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
 
-        if (isFilterPass(value))
+        /*if (isFilterPass(value))
         {
             m_lastValue = value.toInt();
 
@@ -71,7 +71,7 @@ void SubscribeHandler::processRequest()
 
             //Send message to client
             m_pClient->sendTextMessage(message);
-        }
+        }*/
 
         //Let the event loop process events so that signals are not blocked
         QCoreApplication::processEvents(QEventLoop::AllEvents);

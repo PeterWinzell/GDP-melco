@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     qDebug() << "Client: main started";
     QCoreApplication a(argc, argv);
-
+    Logger::getInstance()->logLevel = 0;
     QCommandLineParser parser;
     parser.setApplicationDescription("Melco Gothenburg W3C VISS Reference Implementation - Test Client Application");
     parser.addHelpOption();
@@ -106,9 +106,9 @@ int main(int argc, char *argv[])
     if(tests.length() == 0)
     {
         //tests << TestCase::AUTHORIZE_SUCCESS;
-        tests << TestCase::GET;
+        //tests << TestCase::GET;
         //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
-        //tests << TestCase::GET_VSS;
+        tests << TestCase::GET_VSS;
 
 //        tests << TestCase::STATUS;
 //        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     bool randomize = parser.isSet(randomizeOption);
     bool secure = parser.isSet(secureOption);
 
-    QString url = "wss://127.0.0.1:8080"; // default url
+    QString url = "ws://127.0.0.1:8080"; // default url
 
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
     if(parser.isSet(urlOption))

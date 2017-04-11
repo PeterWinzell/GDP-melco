@@ -1,6 +1,7 @@
 #include "websocketbroker.h"
 #include "logger.h"
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QVector>
 #include <QFile>
 
@@ -10,31 +11,55 @@ WebSocketBroker::WebSocketBroker(const QString& vssFile)
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
-
     m_webSocket.open(QUrl("ws://localhost:42"));
 }
 
 QString WebSocketBroker::getSignalValue(const QString& path)
 {
     QMutexLocker locker(&m_mutex);
+    m_receivedMessage = QJsonObject();
 
     Q_UNUSED(path);
 
-    QString result = "not implemented";
+    // Check if path is single leaf.
+    // Check if path is single branch.
+    // Check if path contains asterisk.
+    // Check if path contains asterisk and leaf.
 
-    return result;
+    QJsonObject msg;
+    QJsonObject val1;
+    val1.insert("Something.Something.Darkside","");
+    QJsonObject val2;
+    val2.insert("Something.Something.Pancake","");
+    QJsonObject val3;
+    val3.insert("Something.Something.Offside","");
+    QJsonArray data = { val1,val2, val3 };
+
+    msg.insert("get",data);
+
+    QJsonDocument jsonDoc(msg);
+    QString message = jsonDoc.toJson();
+
+    sendMessage(message);
+    while(m_receivedMessage.isEmpty())
+    {
+        //DEBUG("TEST","Waiting for response...");
+    }
+    qDebug() << m_receivedMessage;
+
+    QJsonDocument jsonDoc2(m_receivedMessage);
+    return jsonDoc2.toJson();
 }
 
-qint8 WebSocketBroker::setSignalValue(const QString& path, QVariant value)
+QString WebSocketBroker::setSignalValue(const QString& path, QVariant value)
 {
     QMutexLocker locker(&m_mutex);
 
     Q_UNUSED(path);
     Q_UNUSED(value);
 
-    qint8 result = 0;
-
-    return result;
+    QJsonDocument jsonDoc(m_receivedMessage);
+    return jsonDoc.toJson();
 }
 
 QJsonObject WebSocketBroker::getVSSNode(const QString& path)
@@ -78,6 +103,12 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
 }
 
 
+void WebSocketBroker::sendMessage(QString& message)
+{
+    m_webSocket.sendTextMessage(message);
+    m_webSocket.flush();
+}
+
 void WebSocketBroker::onConnected()
 {
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketBroker::onTextMessageReceived);
@@ -87,20 +118,17 @@ void WebSocketBroker::onConnected()
 void WebSocketBroker::onTextMessageReceived(QString message)
 {
     INFO("TEST",message);
-    m_webSocket.close();
+    //m_webSocket.close();
+
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+    if(!parseError.NoError)
+    {
+        m_receivedMessage = doc.object(); // Change to error.
+        return;
+    }
+    m_receivedMessage = doc.object();
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void WebSocketBroker::getTreeNodes(QJsonObject& tree, QStringList& path, QVector<JsonNode>& nodes)

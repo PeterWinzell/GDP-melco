@@ -78,7 +78,7 @@ QString GetVissTestDataJson::getGetJson()
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
-    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
+    jsonObject.insert("path","Signal.Drivetrain.Transmission.GearCount");
     jsonObject.insert("requestId","1");
 
     QJsonDocument jsonDoc(jsonObject);

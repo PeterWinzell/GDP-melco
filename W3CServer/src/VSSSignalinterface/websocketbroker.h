@@ -20,7 +20,7 @@ public:
     };
 
     QString getSignalValue(const QString& path);
-    qint8   setSignalValue(const QString& path, QVariant value);
+    QString setSignalValue(const QString& path, QVariant value);
     QJsonObject getVSSNode(const QString& path);
     QJsonObject getVSSTree(const QString& path);
 
@@ -39,12 +39,16 @@ private:
     void removeOne(QJsonObject &json, const QString &filter);
     void createJsonVssTree(QVector<JsonNode>& nodes, QJsonObject &json);
 
+    void sendMessage(QString& message);
+
     QMutex m_mutex;
 
     QWebSocket m_webSocket;
 
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;
+
+    QJsonObject m_receivedMessage;
 };
 
 #endif // WEBSOCKETBROKER_H

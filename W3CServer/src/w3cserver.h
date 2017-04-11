@@ -39,7 +39,6 @@ private:
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
     QSharedPointer<VSSSignalInterface> m_vsssInterface;
-    QSharedPointer<OpenDSHandler> m_openDSHandler;
     bool m_secure;
 
 };

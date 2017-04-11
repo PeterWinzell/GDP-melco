@@ -17,13 +17,14 @@ void GetHandler::processRequest()
 {
     DEBUG("Server", "Processing < Get > request.");
 
-    QString key = m_pVissrequest->getSignalPath();
-    QString value = m_pSignalInterface->getSignalValue(key);
+    QString path = m_pVissrequest->getSignalPath();
+
+    QString value = m_pSignalInterface->getSignalValue(path);
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
 
     QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
 
-    response.insert("value", value);
+    //response.insert("value", value);
     response.insert("timestamp", time);
 
     QJsonDocument jsonDoc(response);
