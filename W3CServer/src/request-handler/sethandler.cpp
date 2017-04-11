@@ -23,16 +23,18 @@
 SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,signalInterface, vissrequest,client)
 {
+    TRACE("Server", "< SetHandler > created.");
 }
 
 void SetHandler::processRequest()
 {
-    qDebug() << "Processing set handler requests";
+    DEBUG("Server","Processing < Set > request.");
 
     QString key = m_pVissrequest->getSignalPath();
     QVariant value = m_pVissrequest->getValue();
 
-    qDebug() << "key = " << key << ", value = " << value;
+    TRACE("Server", QString("Key : %1, Value : %2").arg(key, value.toString()));
+
     m_pSignalInterface->setSignalValue(key, value);
 
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());

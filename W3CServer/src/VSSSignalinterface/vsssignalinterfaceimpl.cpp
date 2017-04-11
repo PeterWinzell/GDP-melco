@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QJsonArray>
+#include "logger.h"
 
 VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 {
@@ -19,7 +20,6 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 
 void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
 {
-    // qDebug()  << "VSSSignalInterfaceImpl::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
     QMutex mutex;
     QMutexLocker locker(&mutex);
 
@@ -48,7 +48,7 @@ void VSSSignalInterfaceImpl::loadJson(const QString &fileName)
     }
     else
     {
-        qWarning() << "Vss file " << fileName << " not found!";
+        WARNING("Server",QString("VSS File %1 not found!").arg(fileName));
     }
 
     m_vssTree = doc.object();
@@ -80,19 +80,13 @@ qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path, QVariant value
 
     qint8 result = 0;
 
-    qDebug() << "setSignalValue: path = " << path;
-
     if(path == "Signal.Drivetrain.InternalCombustionEngine.RPM")
     {
         m_rpm = value.toString();
-
-        qDebug() << "m_rpm = " << m_rpm;
     }
     else if (path == "Signal.Drivetrain.Transmission.Speed")
     {
         m_speed = value.toString();
-
-        qDebug() << "m_speed = " << m_speed;
     }
 
     return result;
@@ -106,12 +100,12 @@ QJsonObject VSSSignalInterfaceImpl::getVSSNode(const QString& path)
 
     if (m_vssTree.empty())
     {
-        qDebug() << "Empty vss tree! Returning empty node.";
+        DEBUG("Server","Empty VSS tree. Returning empty node.");
         return m_vssTreeNode;
     }
     else if (path == "")
     {
-        qDebug() << "Empty path, returning full tree.";
+        DEBUG("Server","Empty path. Returning full tree.");
         return m_vssTree;
     }
     else

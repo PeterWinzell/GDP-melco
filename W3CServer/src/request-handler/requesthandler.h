@@ -7,6 +7,7 @@
 #include "vissrequest.h"
 #include "messaging/websocketwrapper.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
+#include "logger.h"
 
 class RequestHandler : public QObject
 {

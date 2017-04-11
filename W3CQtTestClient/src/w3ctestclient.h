@@ -33,7 +33,6 @@ public:
 
     void startClient();
     void runTest();
-    void debugOutput(QString text);
 
 signals:
     void testresult(TestResult *result);

@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QCommandLineParser>
 
+#include "logger.h"
+
 int main(int argc, char *argv[])
 {
     qDebug() << "Client: main started";
@@ -96,17 +98,17 @@ int main(int argc, char *argv[])
         }
         else
         {
-            qDebug() << "Unknown argument: " << test;
+            CRITICAL("Client Handler", "Unknown argument : " + test);
             return -1;
         }
     }
 
     if(tests.length() == 0)
     {
-        tests << TestCase::AUTHORIZE_SUCCESS;
+        //tests << TestCase::AUTHORIZE_SUCCESS;
         tests << TestCase::GET;
-        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
-        tests << TestCase::GET_VSS;
+        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        //tests << TestCase::GET_VSS;
 
 //        tests << TestCase::STATUS;
 //        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
@@ -117,8 +119,8 @@ int main(int argc, char *argv[])
     bool randomize = parser.isSet(randomizeOption);
     bool secure = parser.isSet(secureOption);
 
-
-    QString url = "ws://127.0.0.1:8080"; // default url
+    // QString url = "ws://192.168.31.128:8080"; // default url
+    QString url = "wss://127.0.0.1:8080"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
 
 
@@ -138,7 +140,7 @@ int main(int argc, char *argv[])
         reportDir = parser.value(reportDirOption);
     }
 
-    qDebug() << "nrOfClients: " << nrOfClients << " randomize: " << randomize << " secure: " << secure << " url: " << url;
+    INFO("Client Handler",  QString("nrOfClients : %1, randomize : %2, secure : %3, url : %4").arg(QString::number(nrOfClients), QString(randomize), QString(secure), url));
 
     QString swversion = parser.value(softwareOption);
     QString timestamp = parser.value(timestampOption);

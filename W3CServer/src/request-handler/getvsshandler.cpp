@@ -23,11 +23,12 @@
 GetVSSHandler::GetVSSHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest, client)
 {
+    TRACE("Server", "< GetVSSHandler > created.");
 }
 
 void GetVSSHandler::processRequest()
 {
-    qDebug() << " processing getVss handler requests";
+    DEBUG("Server", "Processing < GetVSS > request.");
 
     QString path = m_pVissrequest->getSignalPath();
     QString id = m_pVissrequest->getRequestId();

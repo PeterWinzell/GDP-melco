@@ -1,4 +1,3 @@
-#include <QDebug>
 #include <QThread>
 #include <QtCore/QCoreApplication>
 #include <QFileInfo>
@@ -6,6 +5,7 @@
 
 #include "w3ctestclienthandler.h"
 #include "testcasedescriptions.h"
+#include "logger.h"
 
 W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tests, QString url,
         QString swversion, QString timestamp, bool randomize, const QString& reportDir)
@@ -45,15 +45,14 @@ W3cTestClientHandler::W3cTestClientHandler(int nrOfClients, QQueue<TestCase> tes
 
 W3cTestClientHandler::~W3cTestClientHandler()
 {
-    qDebug() << " Handler Deleted!";
-
+    TRACE("Client Handler", "< W3cTestClientHandler > destroyed.");
 }
 
 void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
 {
     QMutexLocker locker(&m_mutex);
 
-    qDebug() << "[Client#" << report->m_clientId << "] " << " Test Client Finished!";
+    DEBUG("Client Handler",QString("< Client# %1 > finished.").arg(QString::number(report->m_clientId)));
     m_finishedClients.append(report);
 
     if(m_finishedClients.length() >= m_clients.length())
@@ -66,7 +65,7 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
             htmlFile = m_reportDir + "/w3c-tests.html";
             file = m_reportDir + "/w3c-tests.xml";
         }
-        qDebug() << "Generating reports...";
+        DEBUG("Client Handler","Generating reports ...");
         writeXMLReport(file);
         bool allPassed = writeHTMLReport(htmlFile);
 
@@ -86,7 +85,7 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
     QFileInfo fileinfo(filename);
     if(!file.open(QFile::WriteOnly |QFile::Text))
     {
-        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
+        WARNING("Client Handler","Failed to open file for writing : " + fileinfo.absoluteFilePath());
         return;
     }
     TestCaseDescriptions desc;
@@ -135,7 +134,7 @@ void W3cTestClientHandler::writeXMLReport(QString filename)
     file.flush();
     file.close();
 
-    qDebug() << "Xml report saved at " << fileinfo.absoluteFilePath();
+    DEBUG("Client Handler","Xml report saved at : " + fileinfo.absoluteFilePath());
 }
 
 bool W3cTestClientHandler::writeHTMLReport(const QString& filename)
@@ -147,7 +146,7 @@ bool W3cTestClientHandler::writeHTMLReport(const QString& filename)
 
     if(!file.open(QFile::WriteOnly |QFile::Text))
     {
-        qWarning() << "Failed to open file " << fileinfo.absoluteFilePath() << " for writing";
+        WARNING("Client Handler","Failed to open file for writing : " + fileinfo.absoluteFilePath());
         return false;
     }
 
@@ -250,7 +249,6 @@ bool W3cTestClientHandler::writeHTMLReport(const QString& filename)
 
     file.close();
 
-    qDebug() << "Html report saved at " << fileinfo.absoluteFilePath();
-
+    DEBUG("Client Handler","Html report saved at : " + fileinfo.absoluteFilePath());
     return allPassed;
 }
