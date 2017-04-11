@@ -12,12 +12,15 @@
 QT_USE_NAMESPACE
 
 W3cTestClient::W3cTestClient(int clientId, QQueue<TestCase> tests, bool randomize, const QUrl &url, QObject *parent) :
-    QObject(parent), m_clientId(clientId), m_tests(tests), m_url(url)
+    QObject(parent), m_clientId(clientId), m_tests(tests), m_url(url), m_testTimeoutSec(60)
 {
     qRegisterMetaType<TestResult>();
     m_clientReport = new ClientReport(m_clientId);
     if(randomize) { std::random_shuffle(tests.begin(), tests.end()); }
     TRACE(QString("Client# %1").arg(m_clientId),"< W3cTestClient > created.");
+
+    m_runningTestTimer = new QTimer(this);
+    connect(m_runningTestTimer, SIGNAL(timeout()), this, SLOT(testTimeout()));
 }
 
 W3cTestClient::~W3cTestClient()
@@ -99,6 +102,9 @@ void W3cTestClient::runTest()
                 default:
                     break;
             }
+
+            m_runningTestTimer->setSingleShot(true);
+            m_runningTestTimer->start(m_testTimeoutSec * 1000);
         }
         else
         {
@@ -532,6 +538,8 @@ void W3cTestClient::RunStatusTest()
 
 void W3cTestClient::passTestRun()
 {
+    m_runningTestTimer->stop();
+
     QHash <QString, QString> finishedTest;
     finishedTest.insert("testcase", QString::number((int)m_currentTest));
     finishedTest.insert("outcome", "passed");
@@ -592,6 +600,12 @@ void W3cTestClient::pendingTestTimeout()
 
     m_pendingTest = false;
     runTest();
+}
+
+void W3cTestClient::testTimeout()
+{
+    WARNING(QString("Client# %1").arg(m_clientId), QString("No response from server! Waited %1 seconds").arg(m_testTimeoutSec));
+    failTestRun();
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
