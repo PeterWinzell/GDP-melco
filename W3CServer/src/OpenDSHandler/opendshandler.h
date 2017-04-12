@@ -25,6 +25,7 @@ public slots:
 private:
     void connectToOpenDS();
     QByteArray getSubscribeMessage();
+    QByteArray getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value);
     void reconnect();
     void delay(int delay);
     void xmlParser(QString xmlData);

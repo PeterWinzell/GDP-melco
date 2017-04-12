@@ -81,6 +81,10 @@ void OpenDSHandler::xmlParser(QString xmlData)
     QDomNodeList rotation=doc.elementsByTagName("rotation");
     QDomNodeList accelerationRotation=doc.elementsByTagName("accelerationRotation");
     QDomNodeList acceleration=doc.elementsByTagName("acceleration");
+    QDomNodeList handBrakeOn=doc.elementsByTagName("handBrakeOn");
+    QDomNodeList cruiseControlActivated=doc.elementsByTagName("cruiseControlActivated");
+    QDomNodeList cruiseControlIncrease=doc.elementsByTagName("cruiseControlIncrease");
+    QDomNodeList cruiseControlDecrease=doc.elementsByTagName("cruiseControlDecrease");
 
     //notify listners for valueChanged
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Speed, speed.at(0).toElement().text());
@@ -102,12 +106,22 @@ void OpenDSHandler::xmlParser(QString xmlData)
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rotation, rotation.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationRotation, accelerationRotation.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Acceleration, acceleration.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControl, cruiseControlActivated.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::HandBrake, handBrakeOn.at(0).toElement().text());
 }
 
 void OpenDSHandler::connected()
 {
     qDebug() << "connected to OpenDS Server, sending subscribe message";
+
     QByteArray message = getSubscribeMessage();
+    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::HandBrake, "true");
+    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::CruiseControl, "true");
+    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, "15");
+    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, "25");
+
     qDebug() << message;
 
     m_Socket->write(message);
@@ -132,7 +146,7 @@ void OpenDSHandler::readyRead()
 
 void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
 {
-    qDebug() << "OpenDSHandler socketError: something went wrong...." << error;
+//    qDebug() << "OpenDSHandler socketError: something went wrong...." << error;
 
     // check if socket is still connected or if we need to reconnect!
     if(!(m_Socket->state() == QTcpSocket::ConnectedState))
@@ -169,3 +183,42 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     return message.toLocal8Bit();
 }
 
+QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
+{
+    QString entry = "";
+
+    switch (signal)
+    {
+        case VSSSignalInterfaceImpl::CarSignalType::CruiseControl:
+            entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated";
+            break;
+
+    case VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp:
+        entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
+        break;
+
+    case VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown:
+        entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
+        break;
+
+        case VSSSignalInterfaceImpl::CarSignalType::HandBrake:
+            entry = "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn";
+            break;
+
+        default:
+            break;
+    }
+
+    // Constructing XML request to OpenDS
+    QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
+    message = message % "<Message>""\r";
+
+    QString key = "SetValue";
+
+    QString event = "<Event Name=\"" % key % "\" Value=\"" % value % "\">" % entry % "</Event>\r";
+    message = message % event;
+
+    message = message % "</Message>\r";
+
+    return message.toLocal8Bit();
+}
