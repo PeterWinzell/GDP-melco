@@ -4,10 +4,13 @@
 #include <QJsonArray>
 #include <QVector>
 #include <QFile>
+#include <QCoreApplication>
+#include <QRegularExpression>
 
 WebSocketBroker::WebSocketBroker(const QString& vssFile)
 {
     loadJson(vssFile);
+    loadTempSignalList();
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
@@ -24,30 +27,18 @@ QString WebSocketBroker::getSignalValue(const QString& path)
     // Check if path is single leaf.
     // Check if path is single branch.
     // Check if path contains asterisk.
-    // Check if path contains asterisk and leaf.
-
-    QJsonObject msg;
-    QJsonObject val1;
-    val1.insert("Something.Something.Darkside","");
-    QJsonObject val2;
-    val2.insert("Something.Something.Pancake","");
-    QJsonObject val3;
-    val3.insert("Something.Something.Offside","");
-    QJsonArray data = { val1,val2, val3 };
-
-    msg.insert("get",data);
-
-    QJsonDocument jsonDoc(msg);
-    QString message = jsonDoc.toJson();
-
-    sendMessage(message);
+    // Check if path contains asterisk and leaf.  
+    QString msg = parsePath(path);
+    sendMessage(msg);
+    WARNING("",msg);
     while(m_receivedMessage.isEmpty())
     {
         //DEBUG("TEST","Waiting for response...");
     }
-    qDebug() << m_receivedMessage;
+
 
     QJsonDocument jsonDoc2(m_receivedMessage);
+    WARNING("",jsonDoc2.toJson());
     return jsonDoc2.toJson();
 }
 
@@ -229,4 +220,74 @@ void WebSocketBroker::loadJson(const QString &fileName)
     }
 
     m_vssTree = doc.object();
+}
+
+void WebSocketBroker::loadTempSignalList()
+{
+    QRegularExpression regex(QString("^(\\S+) \\d+"));
+
+    QFile file(QCoreApplication::applicationDirPath() + "/vss_rel_1.vsi");
+    file.open(QFile::ReadOnly);
+
+    while(!file.atEnd())
+    {
+        QRegularExpressionMatch match = regex.match(file.readLine());
+        if(match.hasMatch()) { m_tempSignalList.append(match.captured(1).trimmed()); }
+    }
+}
+
+QString WebSocketBroker::parsePath(QString path)
+{
+    QStringList sl = splitPath(path);
+
+    QJsonObject msg;
+    QJsonArray values;
+
+
+    if(sl.length() == 1)
+        foreach(auto item, getPath(sl.first()))
+    {
+        QJsonObject value;
+        value.insert(item,"");
+        values.append(value);
+    }
+    else
+        foreach(auto item, getPath(sl.first(), sl.last()))
+    {
+        //qDebug() << item;
+        QJsonObject value;
+        value.insert(item,"");
+        values.append(value);
+    }
+    msg.insert("get", values);
+
+    QJsonDocument jsonDoc(msg);
+    return jsonDoc.toJson();
+}
+
+QStringList WebSocketBroker::getPath(QString startsWith)
+{
+    return getPath(startsWith, "");
+}
+
+QStringList WebSocketBroker::getPath(QString startsWith, QString endsWith)
+{
+    return m_tempSignalList.filter(QRegularExpression(QString("^%1.*%2$").arg(startsWith, endsWith)));
+}
+
+QStringList WebSocketBroker::splitPath(QString path)
+{
+    QStringList sl;
+    int i = path.lastIndexOf("*");
+    if(i == -1) { sl << path; return sl; }
+
+    foreach(QString item, path.split("*"))
+    {
+        // Trim '.' from items.
+        if(item.startsWith(".")) { item = item.remove(0,1); }
+        if(item.endsWith(".")) { item = item.remove(item.length() -1, 1); }
+
+        sl << item;
+    }
+    return sl;
 }

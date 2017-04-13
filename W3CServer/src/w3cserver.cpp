@@ -87,7 +87,7 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
 
     // TODO: select implementation based on application configuration
 
-    const QString vssFile = "vss_rel_1.json";
+    const QString vssFile = "./vss_rel_1.json";
     m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssFile));
 }
 

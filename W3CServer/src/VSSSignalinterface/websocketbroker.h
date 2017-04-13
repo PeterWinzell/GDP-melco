@@ -41,6 +41,15 @@ private:
 
     void sendMessage(QString& message);
 
+    void loadTempSignalList();
+    QString parsePath(QString path);
+    QStringList getPath(QString startsWith);
+    QStringList getPath(QString startsWith, QString endsWith);
+    QStringList splitPath(QString path);
+
+
+
+
     QMutex m_mutex;
 
     QWebSocket m_webSocket;
@@ -49,6 +58,8 @@ private:
     QJsonObject m_vssTreeNode;
 
     QJsonObject m_receivedMessage;
+
+    QStringList m_tempSignalList;
 };
 
 #endif // WEBSOCKETBROKER_H
