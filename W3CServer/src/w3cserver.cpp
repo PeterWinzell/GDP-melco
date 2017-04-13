@@ -103,14 +103,10 @@ W3CServer::~W3CServer()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-<<<<<<< HEAD
+
     pSocket ->ignoreSslErrors();
-    // pSocket ->
-    qDebug() << " attempting to connect " << pSocket;
-=======
 
     DEBUG("Server","Attemping to connect");
->>>>>>> 2be540b533bceacded03eb83d9bef2a89a88d5d5
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &W3CServer::processTextMessage);
