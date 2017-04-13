@@ -1,9 +1,6 @@
 #ifndef VSSSIGNALINTERFACEIMPL_H
 #define VSSSIGNALINTERFACEIMPL_H
 
-extern "C" {
-#include "vsi.h"
-}
 
 #include <QObject>
 #include <QMutex>
@@ -78,13 +75,7 @@ private:
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;
 
-    QMap<CarSignalType, signal_t> SignalLookup;
-
-    domain_t m_domainId;
-    signal_t m_signalId;
-    vsi_result m_result;
-
-    static vsi_handle handle;
+    QMap<CarSignalType, QString> SignalLookup;
 };
 
 #endif // VSSSIGNALINTERFACEIMPL_H

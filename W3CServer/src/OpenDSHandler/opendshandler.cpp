@@ -54,7 +54,7 @@ void OpenDSHandler::delay(int delay)
 
 void OpenDSHandler::xmlParser(QString xmlData)
 {
-    qDebug() << "All OpenDS data: " << xmlData;
+//    qDebug() << "All OpenDS data: " << xmlData;
 
     //Get your xml into xmlText(you can use QString instead og QByteArray)
     QDomDocument doc;
