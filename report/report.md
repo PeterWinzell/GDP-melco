@@ -13,7 +13,7 @@ The ability to access vehicle data signals with a standardized API opens up for 
 
 The goal with this implementation is to provide the W3C VIS specification with a reference. This means that we are prioritizing specification feature implementation and will not enforce any performance optimizing on this design. Furthermore , we are not imposing nor are we suggesting any other security layers other than those specified.  For production both performance optimization and layered security would have to be added.
 
-The Qt framework is one of the preferred development tool for infotainment application development and since v5.4 it supports web sockets. It is a natural choice for a server implementation. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool. Keeping the server implementation within Qt facilitates portability to other base platforms and systems. We have also explored using a standard C++ solution based on xxx and java based solution. These options would also be valid implementation choices.
+The Qt framework is one of the preferred development tools for infotainment application development and since v5.4 it supports web sockets. It is a natural choice for a server implementation. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool. Keeping the server implementation within Qt facilitates portability to other base platforms and systems. We have also explored using a standard C++ solution based on boost:asio and pure a java-se based solution. These options would also be valid implementation choices.
 
 Figure 1 shows the basic architectural design with applications on top and the signal sources at the bottom, or if you prefer applications in the north and signals sources south.
 
@@ -96,9 +96,9 @@ void ProcessRequestTask::run()
 ```
 *Example 3, process requests*<br>
 
-This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
+This is the basic and simple principle behind the client-server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. For the southbound interface we have chosen to implement a getSignal, setSignal protocol based on tcp-sockets. The socket implementation could be replaced by any other inter-process data commincation channel such as VSI shared memory b-tree , CommonAPI[[6]](http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf) or any valid ipc. The actual signal retrieval is done by a SignalBroker which is executed in its own process. We have chosen this design for mainly one reason to keep the server independent of signal provider. The get,set protocol can be directly mapped to a signal provider within the server if needed. 
 
-Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[6]](https://jwt.io) - the VIS does not specify which type of authorization token. 
+Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[7]](https://jwt.io) - the VIS does not specify which type of authorization token. 
 
 ```json
 { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }
@@ -141,8 +141,10 @@ T.B.A
 
 [5] http://doc.qt.io/qt-4.8/signalsandslots.html
 
-[6] https://jwt.io
+[6] http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf
 
-[7] https://tools.ietf.org/html/rfc6455
+[7] https://jwt.io
+
+[8] https://tools.ietf.org/html/rfc6455
 
 
