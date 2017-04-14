@@ -53,7 +53,7 @@ The above example shows how a client would request to read the RPM signal and ho
 
 Figure 2 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
 
-![Signal flow](signalFlow-3.png)<br>
+![Signal flow](signalFlow.png)<br>
 *Fig 2. Basic signal flow through W3C web socket server for a subscription request*
 
 So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
