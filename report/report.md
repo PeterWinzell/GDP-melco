@@ -96,9 +96,9 @@ void ProcessRequestTask::run()
 ```
 *Example 3, process requests*<br>
 
-This is the basic and simple principle behind the client-server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. For the southbound interface we have chosen to implement a getSignal, setSignal protocol based on tcp-sockets. The socket implementation could be replaced by any other inter-process data commincation channel such as VSI shared memory b-tree , CommonAPI[[6]](http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf) or any valid ipc. The actual signal retrieval is done by a SignalBroker which is executed in its own process. We have chosen this design for mainly one reason to keep the server independent of signal provider. The get,set protocol can be directly mapped to a signal provider within the server if needed. 
+This is the basic and simple principle behind the client-server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. For the southbound interface we have chosen to implement a getSignal, setSignal protocol based on tcp-sockets. The socket implementation could be replaced by any other inter-process data commincation channel such as VSI[[6]](https://github.com/GENIVI/vehicle_signal_interface/blob/master/README.md) shared memory b-tree , CommonAPI[[7]](http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf) or any valid ipc. The actual signal retrieval is done by a SignalBroker which is executed in its own process. We have chosen this design for mainly one reason to keep the server independent of signal provider. The get,set protocol can be directly mapped to a signal provider within the server if needed. 
 
-Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[7]](https://jwt.io) - the VIS does not specify which type of authorization token. 
+Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[8]](https://jwt.io) - the VIS does not specify which type of authorization token. 
 
 ```json
 { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }
@@ -113,7 +113,7 @@ Matching "real" vehicle signals is done by a module which we have named VSIAdapt
 T.B.A
 # Demo applications
 
-The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[7]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
+The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[9]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
 w3C specification. This is something that needs to be adressed by each OEM or implementor. 
 
 Demo examples : T.B.A (iPhone client, JAva application , Qt applicaton, Javascript/HTML application)
@@ -141,10 +141,12 @@ T.B.A
 
 [5] http://doc.qt.io/qt-4.8/signalsandslots.html
 
-[6] http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf
+[6] https://github.com/GENIVI/vehicle_signal_interface/blob/master/README.md
 
-[7] https://jwt.io
+[7] http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf
 
-[8] https://tools.ietf.org/html/rfc6455
+[8] https://jwt.io
+
+[9] https://tools.ietf.org/html/rfc6455
 
 
