@@ -100,6 +100,11 @@ W3CServer::~W3CServer()
     m_vsssInterface.clear();
 }
 
+void W3CServer::closingDown()
+{
+    DEBUG("Server", "closing down...");
+}
+
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();

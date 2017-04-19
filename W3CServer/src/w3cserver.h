@@ -33,6 +33,7 @@ private  Q_SLOTS:
     void processTextMessage(const QString& message);
     void socketDisconnected();
     void onSslErrors(const QList<QSslError> &errors);
+    void closingDown();
 
 private:
     void startRequestProcess(WebSocketWrapper* sw, const QString& message);

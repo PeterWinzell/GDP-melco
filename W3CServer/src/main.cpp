@@ -11,9 +11,16 @@
 #include <OpenDSHandler/opendshandler.h>
 #include <logger.h>
 
+void cleanExit()
+{
+    DEBUG("Exit", "Bye!");
+    QCoreApplication::exit(0);
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
     // TODO Add as arguments
     //Logger::getInstance()->logEnabled = false;
     //Logger::getInstance()->logLevel = 1;
@@ -59,7 +66,13 @@ int main(int argc, char *argv[])
     Logger::getInstance()->logEnabled = serverDebug ? true : false;
 
     W3CServer *server = new W3CServer(serverPort,serverWSS);
-    QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
+    //QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
+
+    QObject::connect(&a, SIGNAL(aboutToQuit()), server, SLOT(closingDown()));
+
+    signal(SIGINT, [](int sig){ QCoreApplication::exit(0); });
+    signal(SIGTERM, [](int sig){ QCoreApplication::exit(0); });
+    signal(SIGBREAK, [](int sig){ QCoreApplication::exit(0); });
 
     return a.exec(); // start exec loop
 }
