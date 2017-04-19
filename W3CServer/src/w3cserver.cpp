@@ -94,15 +94,18 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
 
 W3CServer::~W3CServer()
 {
-    m_pWebSocketServer->close();
-    //clean out all connected clients
-    qDeleteAll(m_clients.begin(),m_clients.end());
-    m_vsssInterface.clear();
+    //printf("server killed!!!!!!!!!!!!!!!!!!!!!!\n");
+    closingDown();
 }
 
 void W3CServer::closingDown()
 {
-    DEBUG("Server", "closing down...");
+    DEBUG("Server", "closing down.");
+
+    m_pWebSocketServer->close();
+    //clean out all connected clients
+    qDeleteAll(m_clients.begin(),m_clients.end());
+    m_vsssInterface.clear();
 }
 
 void W3CServer::onNewConnection()

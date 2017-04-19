@@ -8,13 +8,15 @@
 #include <QFile>
 #include <QDir>
 
+#include <signal.h>
+
 #include <OpenDSHandler/opendshandler.h>
 #include <logger.h>
 
-void cleanExit()
+void cleanExit(int sig)
 {
-    DEBUG("Exit", "Bye!");
-    QCoreApplication::exit(0);
+    DEBUG("Server", QString("Got signal: %1").arg(sig));
+    QCoreApplication::quit();
 }
 
 int main(int argc, char *argv[])
@@ -66,13 +68,16 @@ int main(int argc, char *argv[])
     Logger::getInstance()->logEnabled = serverDebug ? true : false;
 
     W3CServer *server = new W3CServer(serverPort,serverWSS);
-    //QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
 
+    //QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
     QObject::connect(&a, SIGNAL(aboutToQuit()), server, SLOT(closingDown()));
 
-    signal(SIGINT, [](int sig){ QCoreApplication::exit(0); });
-    signal(SIGTERM, [](int sig){ QCoreApplication::exit(0); });
-    signal(SIGBREAK, [](int sig){ QCoreApplication::exit(0); });
+    // Do a clean exit on unix signals
+    signal(SIGQUIT, cleanExit);
+    signal(SIGINT, cleanExit);
+    signal(SIGTERM, cleanExit);
+    signal(SIGHUP, cleanExit);
+    //signal(SIGBREAK, [](int sig){ QCoreApplication::exit(0); });
 
     return a.exec(); // start exec loop
 }
