@@ -52,8 +52,8 @@ private Q_SLOTS:
     void testTimeout();
 
 private:
-    void passTestRun();
-    void failTestRun();
+    void passTestRun(bool success);
+
     QString getTestCaseAsString(TestCase testCase);
 
     bool m_clientStarted = false;

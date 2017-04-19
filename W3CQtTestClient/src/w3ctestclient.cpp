@@ -33,12 +33,19 @@ W3cTestClient::~W3cTestClient()
 void W3cTestClient::startClient()
 {
     if(m_clientStarted) { return; }
-    DEBUG(QString("Client# %1").arg(m_clientId),"Starting client.");
+    INFO(QString("Client# %1").arg(m_clientId), QString("Starting client. Connecting to %1 ...").arg(m_url.toString()));
     m_webSocket = new QWebSocket();
 
     connect(m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
     typedef void (QWebSocket:: *sslErrorsSignal)(const QList<QSslError> &);
     connect(m_webSocket, static_cast<sslErrorsSignal>(&QWebSocket::sslErrors), this, &W3cTestClient::onSslErrors);
+
+    connect(m_webSocket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
+            [=]()
+    {
+        WARNING(QString("Client# %1").arg(m_clientId), QString("Socket error: %1").arg(m_webSocket->errorString()));
+        QCoreApplication::exit(-1);
+    });
 
     m_webSocket->open(QUrl(m_url));
     m_clientStarted = true;
@@ -46,7 +53,7 @@ void W3cTestClient::startClient()
 
 void W3cTestClient::onConnected()
 {
-    DEBUG(QString("Client# %1").arg(m_clientId),"WebSocket connected..");
+    INFO(QString("Client# %1").arg(m_clientId),"WebSocket connected..");
     connect(m_webSocket, &QWebSocket::textMessageReceived,
             this, &W3cTestClient::onTextMessageReceived);
 
@@ -182,7 +189,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
             if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Subcribe action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -194,7 +201,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
             QString path = jsonObject["path"].toString();
@@ -209,7 +216,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
             if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Unsubcribe action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -222,12 +229,12 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
             INFO(QString("Client# %1").arg(m_clientId),"Successfully unsubscribed from Sub ID : " + subscriptionId);
 
-            passTestRun();
+            passTestRun(true);
 
         }
         else if (actionString == "unsubscribeAll")
@@ -235,7 +242,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
             if(m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received UnsubcribeAll action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -247,19 +254,19 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
             INFO(QString("Client# %1").arg(m_clientId),"Successfully unsubscribed from all signals.");
 
-            passTestRun();
+            passTestRun(true);
         }
         else if (actionString == "subscription")
         {
             if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Subscribing action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -271,7 +278,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
             //QString subId = jsonObject["subscriptionId"].toString();
@@ -286,14 +293,14 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
             TRACE(QString("Client# %1").arg(m_clientId),"Received Subscribing message.");
 
-            //passTestRun(); //Add a counter of some sort before we pass?
+            //passTestRun(true); //Add a counter of some sort before we pass?
         }
         else if (actionString == "getVSS")
         {
             if(m_currentTest != TestCase::GET_VSS)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received GetVSS action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -305,21 +312,21 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
             //QJsonObject vssObject = jsonObject["vss"].toObject();
             INFO(QString("Client# %1").arg(m_clientId),"Successfully received VSS Data.");
             TRACE(QString("Client# %1").arg(m_clientId), jsonObject["vss"].toString());
-            passTestRun();
+            passTestRun(true);
         }
         else if (actionString == "authorize")
         {
             if(m_currentTest != TestCase::AUTHORIZE_SUCCESS)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Authorize action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -331,19 +338,19 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
             INFO(QString("Client# %1").arg(m_clientId),"Successfully authorized.");
-            passTestRun();
+            passTestRun(true);
         }
         else if (actionString == "get")
         {
             if((m_currentTest != TestCase::GET) && (m_currentTest != TestCase::SET_GET))
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Get action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -355,7 +362,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -367,14 +374,14 @@ void W3cTestClient::onTextMessageReceived(QString message)
             }
 
             INFO(QString("Client# %1").arg(m_clientId),"Successfully got value.");
-            passTestRun();
+            passTestRun(true);
         }
         else if (actionString == "set")
         {
             if((m_currentTest != TestCase::SET) && (m_currentTest != TestCase::SET_GET))
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Set action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -386,14 +393,14 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
             if(m_currentTest == TestCase::SET)
             {
                 INFO(QString("Client# %1").arg(m_clientId),"Successfully set value.");
-                passTestRun();
+                passTestRun(true);
             }
             else
             {
@@ -405,7 +412,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
             if(m_currentTest != TestCase::STATUS)
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Status action when not requested.");
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
@@ -417,23 +424,23 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 QString errorMessage = errorObject["message"].toString();
                 DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
 
-                failTestRun();
+                passTestRun(false);
                 return;
             }
 
             INFO(QString("Client# %1").arg(m_clientId),"Successfully received status.");
-            passTestRun();
+            passTestRun(true);
         }
         else
         {
             WARNING(QString("Client# %1").arg(m_clientId),"Received unknown request : " + actionString);
-            failTestRun();
+            passTestRun(false);
         }
     }
     else
     {
         WARNING(QString("Client# %1").arg(m_clientId),"JSON parse error : " + parseError.errorString());
-        failTestRun();
+        passTestRun(false);
     }
 }
 
@@ -536,13 +543,13 @@ void W3cTestClient::RunStatusTest()
 }
 
 
-void W3cTestClient::passTestRun()
+void W3cTestClient::passTestRun(bool success)
 {
     m_runningTestTimer->stop();
 
     QHash <QString, QString> finishedTest;
     finishedTest.insert("testcase", QString::number((int)m_currentTest));
-    finishedTest.insert("outcome", "passed");
+    finishedTest.insert("outcome", success ? "passed" : "failed");
     finishedTest.insert("started", m_testStartTime.toString());
     finishedTest.insert("ended", QDateTime::currentDateTime().toString());
 
@@ -552,23 +559,6 @@ void W3cTestClient::passTestRun()
 
     runTest();
 }
-void W3cTestClient::failTestRun()
-{
-    QHash <QString, QString> finishedTest;
-    finishedTest.insert("testcase", (QString)(int)m_currentTest);
-    finishedTest.insert("outcome", "failed");
-    finishedTest.insert("started", m_testStartTime.toString());
-    finishedTest.insert("ended", QDateTime::currentDateTime().toString());
-
-    WARNING(QString("Client# %1").arg(m_clientId),"Test case failed! Testcase: " + getTestCaseAsString(m_currentTest));
-
-    // Handle special cases here also, if needed.
-
-    m_clientReport->m_testResults.append(finishedTest);
-
-    runTest();
-}
-
 
 void W3cTestClient::unsubscribe()
 {
@@ -605,7 +595,7 @@ void W3cTestClient::pendingTestTimeout()
 void W3cTestClient::testTimeout()
 {
     WARNING(QString("Client# %1").arg(m_clientId), QString("No response from server! Waited %1 seconds").arg(m_testTimeoutSec));
-    failTestRun();
+    passTestRun(false);
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
@@ -616,10 +606,10 @@ void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
     // The proper way to handle self-signed certificates is to add a custom root
     // to the CA store.
 
-    //foreach( const QSslError &error, errors )
-    //{
-    //qDebug() << "SSL Error: " << error.errorString();
-    //}
+    foreach( const QSslError &error, errors )
+    {
+        WARNING(QString("Client# %1").arg(m_clientId), QString("SSL Error: %1").arg(error.errorString()));
+    }
 
 
     m_webSocket->ignoreSslErrors();
