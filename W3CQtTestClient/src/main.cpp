@@ -105,10 +105,10 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
-        //tests << TestCase::AUTHORIZE_SUCCESS;
+        tests << TestCase::AUTHORIZE_SUCCESS;
         tests << TestCase::GET;
-        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
-        //tests << TestCase::GET_VSS;
+        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        tests << TestCase::GET_VSS;
 
 //        tests << TestCase::STATUS;
 //        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
