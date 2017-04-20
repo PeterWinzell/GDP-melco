@@ -83,8 +83,10 @@ int main(int argc, char *argv[])
     signal(SIGBREAK, cleanExit);
 #else
     // unix
-    //signal(SIGQUIT, cleanExit);
-    //signal(SIGHUP, cleanExit);
+    signal(SIGQUIT, cleanExit);
+    signal(SIGHUP, cleanExit);
+    signal(SIGKILL, cleanExit);
+
 #endif
 
     return a.exec(); // start exec loop
