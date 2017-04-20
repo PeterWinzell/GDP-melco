@@ -101,7 +101,6 @@ W3CServer::~W3CServer()
 void W3CServer::closingDown()
 {
     DEBUG("Server", "closing down.");
-
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());

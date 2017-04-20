@@ -72,12 +72,20 @@ int main(int argc, char *argv[])
     //QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
     QObject::connect(&a, SIGNAL(aboutToQuit()), server, SLOT(closingDown()));
 
-    // Do a clean exit on unix signals
-    signal(SIGQUIT, cleanExit);
+    // Do a clean exit on signals
+
+    // general
     signal(SIGINT, cleanExit);
     signal(SIGTERM, cleanExit);
-    signal(SIGHUP, cleanExit);
-    //signal(SIGBREAK, [](int sig){ QCoreApplication::exit(0); });
+
+#ifdef WIN32
+    // windows
+    signal(SIGBREAK, cleanExit);
+#else
+    // unix
+    //signal(SIGQUIT, cleanExit);
+    //signal(SIGHUP, cleanExit);
+#endif
 
     return a.exec(); // start exec loop
 }
