@@ -29,20 +29,22 @@ SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signa
 void SetHandler::processRequest()
 {
     DEBUG("Server","Processing < Set > request.");
-
-    QString key = m_pVissrequest->getSignalPath();
-    QVariant value = m_pVissrequest->getValue();
-
-    TRACE("Server", QString("Key : %1, Value : %2").arg(key, value.toString()));
-
-    m_pSignalInterface->setSignalValue(key, value);
-
-    QString time = QString::number(QDateTime::currentDateTime().toTime_t());
-
     QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
+
+    if(!m_pSignalInterface->setSignalValue(m_pVissrequest->getSignalPath(), m_pVissrequest->getValue()))
+    {
+        // TODO Need to be able to differentiate between different errors.
+        QJsonObject error;
+        error.insert("number", 400);
+        error.insert("reason", "bad_request");
+        error.insert("message", "Something something bad side.");
+        response.insert("error", error);
+    }
 
     response.remove("path");
     response.remove("value");
+
+    QString time = QString::number(QDateTime::currentDateTime().toTime_t());
     response.insert("timestamp", time);
 
     QJsonDocument jsonDoc(response);

@@ -18,9 +18,8 @@ public:
         QString key;
         bool isBranch;
     };
-
-    QJsonArray getSignalValue(const QString& path);
-    QString setSignalValue(const QString& path, QVariant value);
+    bool getSignalValue(const QString& path, QJsonArray& values);
+    bool setSignalValue(const QString& path, const QVariant& value);
     QJsonObject getVSSNode(const QString& path);
     QJsonObject getVSSTree(const QString& path);
 

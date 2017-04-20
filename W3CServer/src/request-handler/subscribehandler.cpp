@@ -60,19 +60,25 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        //QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
-
-        /*if (isFilterPass(value))
+        QJsonArray values;
+        if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values))
         {
-            m_lastValue = value.toInt();
+            QString value = values.takeAt(0).toString();
+            if (isFilterPass(value))
+            {
+                m_lastValue = value.toInt();
 
-            //Format response on JSON format
-            QString message = getSubscriptionNotificationJson(value);
+                //Format response on JSON format
+                QString message = getSubscriptionNotificationJson(value);
 
-            //Send message to client
-            m_pClient->sendTextMessage(message);
-        }*/
-
+                //Send message to client
+                m_pClient->sendTextMessage(message);
+            }
+        }
+        else
+        {
+            //TODO Error, not able to get value.
+        }
         //Let the event loop process events so that signals are not blocked
         QCoreApplication::processEvents(QEventLoop::AllEvents);
         //Sleep for the period defined by filter
@@ -102,7 +108,7 @@ WebSocketWrapper* SubscribeHandler::getSocketClient()
 QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)
 {
     QJsonObject jsonObject;
-    jsonObject.insert("action", "subscription");
+    jsonObject.insert("action", "subscribing");
     jsonObject.insert("subscriptionId", m_subId);
     jsonObject.insert("value", signalValue);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));

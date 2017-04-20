@@ -17,7 +17,7 @@ WebSocketBroker::WebSocketBroker(const QString& vssFile)
     m_webSocket.open(QUrl("ws://localhost:42"));
 }
 
-QJsonArray WebSocketBroker::getSignalValue(const QString& path)
+bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 {
     QMutexLocker locker(&m_mutex);
     m_receivedMessage = QJsonObject();
@@ -37,10 +37,21 @@ QJsonArray WebSocketBroker::getSignalValue(const QString& path)
     }
 
     QJsonDocument jsonDoc(m_receivedMessage);
-    return jsonDoc.object()["get"].toArray();
+
+    // TODO Add check of Success in response.
+
+    if(jsonDoc.object()["get"].isArray())
+    {
+        values = jsonDoc.object()["get"].toArray(); // Test this
+        //foreach (QJsonValue value, jsonDoc.object()["get"].toArray()) {
+        //    values.append(value);
+        //}
+        return true;
+    }
+    return false;
 }
 
-QString WebSocketBroker::setSignalValue(const QString& path, QVariant value)
+bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& value)
 {
     QMutexLocker locker(&m_mutex);
     m_receivedMessage = QJsonObject();
@@ -56,7 +67,9 @@ QString WebSocketBroker::setSignalValue(const QString& path, QVariant value)
     }
 
     QJsonDocument jsonDoc(m_receivedMessage);
-    return jsonDoc.toJson();
+
+    // Should return false, or 0 if not bool. So should work without checking if bool
+    return jsonDoc.object()["set"].toBool();
 }
 
 QJsonObject WebSocketBroker::getVSSNode(const QString& path)
