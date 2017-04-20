@@ -13,7 +13,7 @@
 #include "signalserver.h"
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
-#include "opendshandler.h"
+//#include "opendshandler.h"
 
 QT_USE_NAMESPACE
 

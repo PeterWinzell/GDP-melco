@@ -28,7 +28,7 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
 
     loadJson(vssFile);
 
-    //Read settings to map to Open DS signals
+    //Read settings to map to car signals
     QPointer<QSettings> settings = new QSettings();
     settings->beginGroup("SignalServer");
     for (int i = 0; i < CarSignalType_NO_OF_ITEMS; i++)
@@ -38,8 +38,12 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
         QString key = QString::number(i);
         if (settings->contains(key))
         {
-            SignalLookup[(CarSignalType)i] = settings->value(key).toInt();
-            qDebug() << "VSSSignalInterfaceImpl found key: " << i << ", value: " << SignalLookup[(CarSignalType)i];
+            QString vssKey = settings->value(key).toString();
+            m_signalLookup[(CarSignalType)i] = vssKey;
+            qDebug() << "VSSSignalInterfaceImpl found key: " << i << ", value: " << m_signalLookup[(CarSignalType)i];
+
+            //Initialize values to empty strings
+            m_values.insert(vssKey, "");
         }
     }
     settings->endGroup();
@@ -56,11 +60,13 @@ void VSSSignalInterfaceImpl::updateValue(CarSignalType type, QString value)
     QMutexLocker locker(&mutex);
 
     //
-    //  Store signal in the core data store
+    //  Store signal
     //
-    QString m_signalId = SignalLookup[type];
+    QString vssKey = m_signalLookup[type];
 
-    //qDebug()  << "Storing signal: " << m_signalId << " data: " << value;
+    m_values.insert(vssKey, value);
+
+    //qDebug()  << "Storing signal. All values: " << m_values;
 }
 
 void VSSSignalInterfaceImpl::loadJson(const QString &fileName)
@@ -86,18 +92,7 @@ QString VSSSignalInterfaceImpl::getSignalValue(const QString& path)
     QMutex mutex;
     QMutexLocker locker(&mutex);
 
-    QString result = "not implemented";
-
-    if(path == "Signal.Drivetrain.InternalCombustionEngine.RPM")
-    {
-        result = m_rpm;
-    }
-    else if (path == "Signal.Drivetrain.Transmission.Speed")
-    {
-        result = m_speed;
-    }
-
-    return result;
+    return m_values.value(path);
 }
 
 qint8 VSSSignalInterfaceImpl::setSignalValue(const QString& path, QVariant value)

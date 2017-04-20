@@ -11,6 +11,7 @@ class OpenDSHandler : public QObject
     Q_OBJECT
 public:
     explicit OpenDSHandler(QObject *parent = 0);
+    void setValue(VSSSignalInterfaceImpl::CarSignalType signal, QString value);
 
 signals:
     void valueChanged(VSSSignalInterfaceImpl::CarSignalType type, QString value);

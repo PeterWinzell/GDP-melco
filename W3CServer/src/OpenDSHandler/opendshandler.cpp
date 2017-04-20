@@ -54,7 +54,7 @@ void OpenDSHandler::delay(int delay)
 
 void OpenDSHandler::xmlParser(QString xmlData)
 {
-//    qDebug() << "All OpenDS data: " << xmlData;
+    qDebug() << "All OpenDS data: " << xmlData;
 
     //Get your xml into xmlText(you can use QString instead og QByteArray)
     QDomDocument doc;
@@ -110,6 +110,16 @@ void OpenDSHandler::xmlParser(QString xmlData)
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
     emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::HandBrake, handBrakeOn.at(0).toElement().text());
+
+
+    //DN DEBUG-----------------------------
+   setValue(VSSSignalInterfaceImpl::CarSignalType::HandBrake, "true");
+   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControl, "true");
+   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, "15");
+   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, "35");
+   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, "25");
+    //--------------------------------------
+
 }
 
 void OpenDSHandler::connected()
@@ -117,10 +127,6 @@ void OpenDSHandler::connected()
     qDebug() << "connected to OpenDS Server, sending subscribe message";
 
     QByteArray message = getSubscribeMessage();
-    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::HandBrake, "true");
-    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::CruiseControl, "true");
-    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, "15");
-    //QByteArray message = getSetMessage(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, "25");
 
     qDebug() << message;
 
@@ -156,6 +162,14 @@ void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
     }
 }
 
+void OpenDSHandler::setValue(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
+{
+    QByteArray message = getSetMessage(signal, value);
+
+    qDebug() << message;
+
+    m_Socket->write(message);
+}
 
 QByteArray OpenDSHandler::getSubscribeMessage()
 {
@@ -183,6 +197,40 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     return message.toLocal8Bit();
 }
 
+#if 1 //DN DEBUG
+QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
+{
+    QString entry = "";
+
+    QStringList keyList = QStringList() << "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated"
+                                        << "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn"
+                                        << "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
+                                        //<< "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
+
+    QStringList valueList = QStringList() << "true"
+                                          << "false"
+                                          << "1";
+                                          //<< "0";
+
+
+    // Constructing XML request to OpenDS
+    QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
+    message = message % "<Message>""\r";
+
+    for (int i = 0; i < keyList.size(); ++i)
+    {
+        QString key = "SetValue";
+
+        QString event = "<Event Name=\"" % key % "\" Value=\"" % valueList[i] % "\">" % keyList[i] % "</Event>\r";
+        message = message % event;
+    }
+
+    message = message % "</Message>\r";
+
+    return message.toLocal8Bit();
+}
+
+#else //#if 0 DN DEBUG
 QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
 {
     QString entry = "";
@@ -193,13 +241,13 @@ QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType si
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated";
             break;
 
-    case VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp:
-        entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
-        break;
+        case VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp:
+            entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
+            break;
 
-    case VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown:
-        entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
-        break;
+        case VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown:
+            entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
+            break;
 
         case VSSSignalInterfaceImpl::CarSignalType::HandBrake:
             entry = "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn";
@@ -222,3 +270,4 @@ QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType si
 
     return message.toLocal8Bit();
 }
+#endif

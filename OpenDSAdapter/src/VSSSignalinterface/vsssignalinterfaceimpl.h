@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QMutex>
 #include <QMap>
+#include <QHash>
 #include "vsssignalinterface.h"
 
 
@@ -75,7 +76,8 @@ private:
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;
 
-    QMap<CarSignalType, QString> SignalLookup;
+    QMap<CarSignalType, QString> m_signalLookup;
+    QHash<QString, QString> m_values;
 };
 
 #endif // VSSSIGNALINTERFACEIMPL_H
