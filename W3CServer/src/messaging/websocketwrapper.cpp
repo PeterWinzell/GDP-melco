@@ -34,7 +34,7 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
 //            m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
         //}
 
-        qDebug() << "Sending: byte sent " << bytesSent;
+        TRACE("Server", "Bytes sent: " + QString::number(bytesSent));
     }
     else
     {
