@@ -16,7 +16,7 @@ SOURCES += main.cpp \
     signalserver.cpp
 
 
-INCLUDEPATH += ../../W3CServer/src/OpenDSHandler
+INCLUDEPATH += $$PWD/../../W3CServer/src/OpenDSHandler
 
 HEADERS += \
     VSSSignalinterface/vsssignalinterface.h \
