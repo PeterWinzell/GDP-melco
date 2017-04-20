@@ -10,7 +10,6 @@
 
 #include <signal.h>
 
-#include <OpenDSHandler/opendshandler.h>
 #include <logger.h>
 
 void cleanExit(int sig)
