@@ -1,4 +1,5 @@
 #include "jsonrequestparser.h"
+#include "logger.h"
 
 JSONRequestParser::JSONRequestParser(bool debug, QObject *parent) : QObject(parent)
 {
@@ -11,7 +12,7 @@ QSharedPointer<VISSRequest> JSONRequestParser::parseJson(QString json)
 
     if(!isValidJson())
     {
-        if(m_debug) { qDebug() << "json invalid"; }
+        WARNING("Server", "Json invalid.");
         return request;
     }
     request->setJsonObject(request->getJsonDocument().object());
@@ -66,8 +67,6 @@ bool JSONRequestParser::validateGetRequest(VISSRequest* request)
     QJsonValue valuePath = request->getJsonObject()["path"];
 
     bool valid = (validateId(valueId) && validatePath(valuePath));
-
-    if(m_debug) { qDebug() << "validateGetRequest result" << (valid); }
 
     if(!valid) { return false; }
     else
@@ -307,7 +306,7 @@ bool JSONRequestParser::validateAction(VISSRequest* request)
 bool JSONRequestParser::validatePath(QJsonValue value)
 {
     QString path = value.toString();
-    if(path.isEmpty()) { return false; }
+    if(path.isEmpty()) { TRACE("Server", "validatePath path is empty"); return false; }
 
     QStringList splitPath = path.split('.');
 
@@ -316,22 +315,22 @@ bool JSONRequestParser::validatePath(QJsonValue value)
         // Check for empty string. Caused by ex. two dots.
         if(item.isEmpty())
         {
-            if(m_debug) { qDebug() << "validatePath string is empty"; }
+            TRACE("Server", "validatePath string is empty");
             return false;
         }
 
         // Check if string is single asterisk.
         if(item.length() == 1 && item[0] != '*')
         {
-            if(m_debug) { qDebug() << "validatePath string contains several asterisks"; }
+            TRACE("Server", "validatePath string contains several asterisks");
             return false;
         }
 
         // Check if string contains only text.
         QRegExp regex("^[a-zA-Z]+$");
-        if(!regex.exactMatch(item))
+        if(item.length() > 1 && !regex.exactMatch(item))
         {
-            if(m_debug) { qDebug() << "validatePath string is not just simple text"; }
+            TRACE("Server", "validatePath string is not just simple text");
             return false;
         }
     }

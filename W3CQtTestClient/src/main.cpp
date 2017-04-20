@@ -96,6 +96,14 @@ int main(int argc, char *argv[])
         {
             tests << TestCase::STATUS;
         }
+        else if (test == "getmany")
+        {
+            tests << TestCase::GET_MANY;
+        }
+        else if (test == "setmany")
+        {
+            tests << TestCase::SET_MANY;
+        }
         else
         {
             CRITICAL("Client Handler", "Unknown argument : " + test);
@@ -107,7 +115,9 @@ int main(int argc, char *argv[])
     {
         //tests << TestCase::AUTHORIZE_SUCCESS;
         //tests << TestCase::GET;
-        tests << TestCase::SET;
+        //tests << TestCase::GET_MANY;
+        //tests << TestCase::SET;
+        tests << TestCase::SET_MANY;
         //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
         //tests << TestCase::GET_VSS;
 

@@ -96,6 +96,13 @@ void W3cTestClient::runTest()
                     RunStatusTest();
                     break;
 
+                case TestCase::GET_MANY:
+                    RunGetManyTest();
+                    break;
+
+                case TestCase::SET_MANY:
+                    RunSetManyTest();
+                    break;
                 default:
                     break;
             }
@@ -148,6 +155,14 @@ QString W3cTestClient::getTestCaseAsString(TestCase testCase)
 
         case TestCase::STATUS:
             caseStr = "STATUS";
+            break;
+
+        case TestCase::GET_MANY:
+            caseStr = "GET_MANY";
+            break;
+
+        case TestCase::SET_MANY:
+            caseStr = "SET_MANY";
             break;
 
         default:
@@ -335,7 +350,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
         }
         else if (actionString == "get")
         {
-            if((m_currentTest != TestCase::GET) && (m_currentTest != TestCase::SET_GET))
+            if((m_currentTest != TestCase::GET) && (m_currentTest != TestCase::GET_MANY)  && (m_currentTest != TestCase::SET_GET))
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Get action when not requested.");
                 failTestRun();
@@ -366,7 +381,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
         }
         else if (actionString == "set")
         {
-            if((m_currentTest != TestCase::SET) && (m_currentTest != TestCase::SET_GET))
+            if((m_currentTest != TestCase::SET) && (m_currentTest != TestCase::SET_MANY) && (m_currentTest != TestCase::SET_GET))
             {
                 WARNING(QString("Client# %1").arg(m_clientId),"Received Set action when not requested.");
                 failTestRun();
@@ -385,7 +400,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
                 return;
             }
 
-            if(m_currentTest == TestCase::SET)
+            if(m_currentTest == TestCase::SET && (m_currentTest != TestCase::SET_MANY))
             {
                 INFO(QString("Client# %1").arg(m_clientId),"Successfully set value.");
                 passTestRun();
@@ -530,6 +545,21 @@ void W3cTestClient::RunStatusTest()
     m_webSocket->sendTextMessage(subMess);
 }
 
+void W3cTestClient::RunGetManyTest()
+{
+    INFO(QString("Client# %1").arg(m_clientId),"Running Get Many Test.");
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET_MANY);
+    m_webSocket->sendTextMessage(subMess);
+}
+
+void W3cTestClient::RunSetManyTest()
+{
+    INFO(QString("Client# %1").arg(m_clientId),"Running Set Many Test.");
+
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET_MANY);
+    m_webSocket->sendTextMessage(subMess);
+}
 
 void W3cTestClient::passTestRun()
 {

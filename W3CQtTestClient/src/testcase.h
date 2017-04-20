@@ -14,6 +14,8 @@ enum class TestCase
     SET,
     GET,
     STATUS,
+    GET_MANY,
+    SET_MANY,
     NR_OF_TESTCASES
 };
 

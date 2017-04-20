@@ -2,7 +2,7 @@
 #include "qjsonwebtoken.h"
 #include <QDateTime>
 #include <QJsonArray>
-
+#include <QDebug>
 int GetVissTestDataJson::m_requestId = 0;
 QString GetVissTestDataJson::m_setValue = "0";
 
@@ -43,8 +43,14 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId)
         case requesttype::STATUS:
             testJSON = getStatusJson();
             break;
+        case requesttype::GET_MANY:
+            testJSON = getGetManyJson();
+            break;
+        case requesttype::SET_MANY:
+            testJSON = getSetManyJson();
+            break;
     }
-
+    qDebug()<< testJSON;
     return testJSON;
 }
 
@@ -85,6 +91,17 @@ QString GetVissTestDataJson::getGetJson()
     return jsonDoc.toJson();
 }
 
+QString GetVissTestDataJson::getGetManyJson()
+{
+    QJsonObject jsonObject;
+    jsonObject.insert("action","get");
+    jsonObject.insert("path","Signal.Cabin.Door.*.IsLocked");
+    jsonObject.insert("requestId","1");
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
 QString GetVissTestDataJson::getGetVssJson()
 {
     QJsonObject jsonObject;
@@ -108,6 +125,33 @@ QString GetVissTestDataJson::getSetJson()
     jsonObject.insert("action","set");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
     jsonObject.insert("value", m_setValue);
+    jsonObject.insert("requestId","1");
+
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson();
+}
+
+QString GetVissTestDataJson::getSetManyJson()
+{
+    QJsonObject jsonObject;
+    m_setValue = "90";
+
+    jsonObject.insert("action","set");
+    jsonObject.insert("path","Signal.Cabin.Door.*.IsLocked");
+
+    QJsonArray values;
+
+    QJsonObject value1;
+    value1.insert("Row1.Right.IsLocked", m_setValue);
+    values.append(value1);
+
+    QJsonObject value2;
+    value2.insert("Row1.Left.IsLocked", m_setValue);
+    values.append(value2);
+
+    jsonObject.insert("value", values);
+
+
     jsonObject.insert("requestId","1");
 
     QJsonDocument jsonDoc(jsonObject);

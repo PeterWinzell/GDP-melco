@@ -22,8 +22,6 @@ QJsonArray WebSocketBroker::getSignalValue(const QString& path)
     QMutexLocker locker(&m_mutex);
     m_receivedMessage = QJsonObject();
 
-    Q_UNUSED(path);
-
     // Check if path is single leaf.
     // Check if path is single branch.
     // Check if path contains asterisk.
@@ -32,13 +30,13 @@ QJsonArray WebSocketBroker::getSignalValue(const QString& path)
 
     sendMessage(msg);
 
-    while(m_receivedMessage.isEmpty())
+    // TODO Need to implement some kind of timer here.
+    while(!m_messageReceivedFromBroker)
     {
         //DEBUG("TEST","Waiting for response...");
     }
 
     QJsonDocument jsonDoc(m_receivedMessage);
-    //WARNING("",jsonDoc2.toJson());
     return jsonDoc.object()["get"].toArray();
 }
 
@@ -51,7 +49,8 @@ QString WebSocketBroker::setSignalValue(const QString& path, QVariant value)
 
     sendMessage(msg);
 
-    while(m_receivedMessage.isEmpty())
+    // TODO Need to implement some kind of timer here.
+    while(!m_messageReceivedFromBroker)
     {
         //DEBUG("TEST","Waiting for response...");
     }
@@ -103,6 +102,7 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
 
 void WebSocketBroker::sendMessage(QString& message)
 {
+    m_messageReceivedFromBroker = false;
     m_webSocket.sendTextMessage(message);
     m_webSocket.flush();
 }
@@ -110,19 +110,20 @@ void WebSocketBroker::sendMessage(QString& message)
 void WebSocketBroker::onConnected()
 {
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketBroker::onTextMessageReceived);
-    m_webSocket.sendTextMessage(QStringLiteral("Hello, world!"));
 }
 
 void WebSocketBroker::onTextMessageReceived(QString message)
 {
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
-    if(!parseError.NoError)
+    if(parseError.error != QJsonParseError::NoError)
     {
         m_receivedMessage = doc.object(); // Change to error.
+        m_messageReceivedFromBroker = true;
         return;
     }
     m_receivedMessage = doc.object();
+    m_messageReceivedFromBroker = true;
 }
 
 
@@ -279,8 +280,20 @@ QString WebSocketBroker::parseSetPath(QString path, QJsonValue setValues)
     {
         foreach(QJsonValue val, setValues.toArray())
         {
-            // TODO Check different types of values and make this look nicer.
             QJsonObject value;
+            QString valuePath = sl.first() + "." + val.toObject().keys().first();
+
+            if(val.isDouble())
+               value.insert(valuePath, val.toDouble());
+            else if(val.isBool())
+                value.insert(valuePath, val.toBool());
+            else
+                value.insert(valuePath, val.toString());
+
+
+
+            // TODO Check different types of values and make this look nicer.
+
             value.insert(sl.first() + "." + val.toObject().keys().first(), val.toObject().keys().first().toDouble());
 
             values.append(value);

@@ -25,15 +25,17 @@ void GetHandler::processRequest()
 
     QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
 
-    response.remove("path");
-
-    if(value.count() > 1)
+    response.remove("path"); 
+    if(value.size() > 1)
     {
         response.insert("value", value);
     }
     else
     {
         QJsonObject obj = value.first().toObject();
+
+
+
         if(obj.keys().count() > 1)
         {
             response.insert("value", obj);

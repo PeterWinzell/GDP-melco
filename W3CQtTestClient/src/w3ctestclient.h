@@ -30,6 +30,8 @@ public:
     void RunSetTest();
     void RunAuthorizeTest();
     void RunStatusTest();
+    void RunGetManyTest();
+    void RunSetManyTest();
 
     void startClient();
     void runTest();

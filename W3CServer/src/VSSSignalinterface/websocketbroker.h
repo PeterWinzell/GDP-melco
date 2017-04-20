@@ -60,6 +60,7 @@ private:
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;
 
+    bool m_messageReceivedFromBroker = false;
     QJsonObject m_receivedMessage;
 
     QStringList m_tempSignalList;
