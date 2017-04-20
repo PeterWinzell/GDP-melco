@@ -88,8 +88,8 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
 
     const QString vssFile = "/etc/vss_rel_1.json";
     m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
-    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
+    //m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
+    //connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
 
 W3CServer::~W3CServer()
@@ -145,7 +145,7 @@ void W3CServer::socketDisconnected()
     //remove from client list and delete from heap
     if (zeClient)
     {
-        m_clients.remove(zeClient);
+        m_clients.remove(zeClient); //TODO: do we need to call delete in mutex object here ?
         zeClient->deleteLater();
         W3CServer::m_nrOfClients--;
     }
