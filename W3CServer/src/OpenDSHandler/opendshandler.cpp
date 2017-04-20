@@ -87,37 +87,37 @@ void OpenDSHandler::xmlParser(QString xmlData)
     QDomNodeList cruiseControlDecrease=doc.elementsByTagName("cruiseControlDecrease");
 
     //notify listners for valueChanged
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Speed, speed.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::RPM, rpm.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::GasPedal, pressedState.at(1).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::BrakePedal, pressedState.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::SteerAngle, steerAngle.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Headlights, headlights.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::EngineRunning, running.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CurrentFuelConsumption, currentConsumption.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::FuelTankMax, maxAmount.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::FuelTankActual, actualAmount.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionLatitude, latitude.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionLongitude, longitude.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::PositionAltitude, altitude.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Orientation, orientation.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rise, rise.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationLateral, accelerationLateral.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Rotation, rotation.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::AccelerationRotation, accelerationRotation.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::Acceleration, acceleration.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControl, cruiseControlActivated.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CarSignalType::HandBrake, handBrakeOn.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::Speed, speed.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::RPM, rpm.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::GasPedal, pressedState.at(1).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::BrakePedal, pressedState.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::SteerAngle, steerAngle.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::Headlights, headlights.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::EngineRunning, running.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CurrentFuelConsumption, currentConsumption.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::FuelTankMax, maxAmount.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::FuelTankActual, actualAmount.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::PositionLatitude, latitude.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::PositionLongitude, longitude.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::PositionAltitude, altitude.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::Orientation, orientation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::Rise, rise.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::AccelerationLateral, accelerationLateral.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::Rotation, rotation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::AccelerationRotation, accelerationRotation.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::Acceleration, acceleration.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CruiseControl, cruiseControlActivated.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
+    emit valueChanged(VSSSignalInterfaceImpl::HandBrake, handBrakeOn.at(0).toElement().text());
 
 
     //DN DEBUG-----------------------------
-   setValue(VSSSignalInterfaceImpl::CarSignalType::HandBrake, "true");
-   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControl, "true");
-   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, "15");
-   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp, "35");
-   // setValue(VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown, "25");
+   setValue(VSSSignalInterfaceImpl::HandBrake, "true");
+   // setValue(VSSSignalInterfaceImpl::CruiseControl, "true");
+   // setValue(VSSSignalInterfaceImpl::CruiseControlUp, "15");
+   // setValue(VSSSignalInterfaceImpl::CruiseControlUp, "35");
+   // setValue(VSSSignalInterfaceImpl::CruiseControlDown, "25");
     //--------------------------------------
 
 }
@@ -264,19 +264,19 @@ QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType si
 
     switch (signal)
     {
-        case VSSSignalInterfaceImpl::CarSignalType::CruiseControl:
+        case VSSSignalInterfaceImpl::CruiseControl:
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated";
             break;
 
-        case VSSSignalInterfaceImpl::CarSignalType::CruiseControlUp:
+        case VSSSignalInterfaceImpl::CruiseControlUp:
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
             break;
 
-        case VSSSignalInterfaceImpl::CarSignalType::CruiseControlDown:
+        case VSSSignalInterfaceImpl::CruiseControlDown:
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
             break;
 
-        case VSSSignalInterfaceImpl::CarSignalType::HandBrake:
+        case VSSSignalInterfaceImpl::HandBrake:
             entry = "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn";
             break;
 
