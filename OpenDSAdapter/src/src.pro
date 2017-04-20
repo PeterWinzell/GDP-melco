@@ -11,7 +11,6 @@ TEMPLATE = app
 TARGET = OpenDSAdapter
 
 SOURCES += main.cpp \
-    VSSSignalinterface/vsssignalinterfaceimpl.cpp \
     OpenDSHandler/opendshandler.cpp \
     signalserver.cpp
 
@@ -19,7 +18,6 @@ SOURCES += main.cpp \
 
 HEADERS += \
     VSSSignalinterface/vsssignalinterface.h \
-    VSSSignalinterface/vsssignalinterfaceimpl.h \
     OpenDSHandler/opendshandler.h \
     signalserver.h
 

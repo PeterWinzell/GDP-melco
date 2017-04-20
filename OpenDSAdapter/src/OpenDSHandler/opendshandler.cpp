@@ -1,15 +1,82 @@
+#include <iostream>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "opendshandler.h"
+
 #include <QPointer>
 #include <QSettings>
 #include <QDebug>
 #include <QStringBuilder>
 #include <QTcpSocket>
 #include <QTime>
+
 #include <QCoreApplication>
 #include <QDomDocument>
 
+#include <QString>
+#include <QMutexLocker>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
+#include <QFile>
+#include <QDir>
+
+
+
 OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
 {
+    m_rpm = "0";
+    m_speed = "0";
+
+    //Read settings to map to car signals
+    QPointer<QSettings> settings = new QSettings();
+
+    settings->beginGroup("SignalLookup");
+    int size = settings->beginReadArray("signal");
+    qDebug() << "size = " << size;
+    for (int i = 0; i < size; i++)
+    {
+        qDebug() << "OpenDSHandler searching for key " << i;
+
+        settings->setArrayIndex(i);
+
+        QString provid = "provid";
+        QString vssid = "vssid";
+        QString get = "get";
+        QString set = "set";
+
+        //qDebug() << "provid = " << settings->value(provid);
+        //qDebug() << "vssid = " << settings->value(vssid);
+        //qDebug() << "get = " << settings->value(get);
+        //qDebug() << "set = " << settings->value(set);
+
+        // Fill the "get" lookup table
+        if (settings->value(get).toBool())
+        {
+            QString vssPath = settings->value(vssid).toString();
+            QString providerPath = settings->value(provid).toString();
+            m_lookupGetProvider.insert(vssPath, providerPath);
+            qDebug() << "Inserted GET key: " << vssPath << ", value: " << m_lookupGetProvider[vssPath];
+
+            //Initialize values to empty strings
+            m_values.insert(providerPath, "");
+        }
+
+        // Fill the "get" lookup table
+        if (settings->value(set).toBool())
+        {
+            QString vssPath = settings->value(vssid).toString();
+            QString providerPath = settings->value(provid).toString();
+            m_lookupSetProvider.insert(vssPath, providerPath);
+            qDebug() << "Inserted SET key: " << vssPath << ", value: " << m_lookupGetProvider[vssPath];
+        }
+    }
+    settings->endArray();
+    settings->endGroup();
+
     qDebug() << "handler executing";
 
     //Initiate socket and connect to simulation server (note that IP needs to be changed to match your server IP)
@@ -21,13 +88,11 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
     connect(m_Socket, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error), this, &OpenDSHandler::socketError);
 
     // Reading server settings from settings file
-    QPointer<QSettings> settings = new QSettings();
     settings->beginGroup("OpenDSHandler");
     settings->beginGroup("servers");
     m_server_ip = settings->value("server_ip").toString();
     m_server_port = settings->value("server_port").toInt();
     m_delay_sec = settings->value("delay_sec").toInt();
-
 
     qDebug() << "server ip: " << m_server_ip;
     qDebug() << "server port: " << m_server_port;
@@ -87,37 +152,38 @@ void OpenDSHandler::xmlParser(QString xmlData)
     QDomNodeList cruiseControlDecrease=doc.elementsByTagName("cruiseControlDecrease");
 
     //notify listners for valueChanged
-    emit valueChanged(VSSSignalInterfaceImpl::Speed, speed.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::RPM, rpm.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::GasPedal, pressedState.at(1).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::BrakePedal, pressedState.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::SteerAngle, steerAngle.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::Headlights, headlights.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::EngineRunning, running.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CurrentFuelConsumption, currentConsumption.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::FuelTankMax, maxAmount.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::FuelTankActual, actualAmount.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::PositionLatitude, latitude.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::PositionLongitude, longitude.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::PositionAltitude, altitude.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::Orientation, orientation.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::Rise, rise.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::AccelerationLateral, accelerationLateral.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::Rotation, rotation.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::AccelerationRotation, accelerationRotation.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::Acceleration, acceleration.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CruiseControl, cruiseControlActivated.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
-    emit valueChanged(VSSSignalInterfaceImpl::HandBrake, handBrakeOn.at(0).toElement().text());
-
+/*
+    emit valueChanged(OpenDSHandler::Speed, speed.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::RPM, rpm.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::GasPedal, pressedState.at(1).toElement().text());
+    emit valueChanged(OpenDSHandler::BrakePedal, pressedState.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::SteerAngle, steerAngle.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::Headlights, headlights.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::EngineRunning, running.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::CurrentFuelConsumption, currentConsumption.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::FuelTankMax, maxAmount.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::FuelTankActual, actualAmount.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::PositionLatitude, latitude.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::PositionLongitude, longitude.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::PositionAltitude, altitude.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::Orientation, orientation.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::Rise, rise.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::AccelerationLateral, accelerationLateral.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::Rotation, rotation.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::AccelerationRotation, accelerationRotation.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::Acceleration, acceleration.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::CruiseControl, cruiseControlActivated.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
+    emit valueChanged(OpenDSHandler::HandBrake, handBrakeOn.at(0).toElement().text());
+*/
 
     //DN DEBUG-----------------------------
-   setValue(VSSSignalInterfaceImpl::HandBrake, "true");
-   // setValue(VSSSignalInterfaceImpl::CruiseControl, "true");
-   // setValue(VSSSignalInterfaceImpl::CruiseControlUp, "15");
-   // setValue(VSSSignalInterfaceImpl::CruiseControlUp, "35");
-   // setValue(VSSSignalInterfaceImpl::CruiseControlDown, "25");
+   //setValue(OpenDSHandler::HandBrake, "true");
+   // setValue(OpenDSHandler::CruiseControl, "true");
+   // setValue(OpenDSHandler::CruiseControlUp, "15");
+   // setValue(OpenDSHandler::CruiseControlUp, "35");
+   // setValue(OpenDSHandler::CruiseControlDown, "25");
     //--------------------------------------
 
 }
@@ -162,7 +228,7 @@ void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
     }
 }
 
-void OpenDSHandler::setValue(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
+void OpenDSHandler::setValue(QString signal, QString value)
 {
     QByteArray message = getSetMessage(signal, value);
 
@@ -176,18 +242,19 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     // Reading the SubscribeMessage from settings file
     QPointer<QSettings> settings = new QSettings();
 
-    settings->beginGroup("SignalServer");
-
+    settings->beginGroup("OpenDSHandler");
     settings->beginGroup("subscribe");
     QString unsubscribe = settings->value("unsubscribe").toString();
     QString setupdateinterval = settings->value("setupdateinterval").toString();
     QString establishconnection = settings->value("establishconnection").toString();
+    settings->endGroup();
     settings->endGroup();
 
     qDebug() << "unsubscribe: " << unsubscribe;
     qDebug() << "setupdateinterval: " << setupdateinterval;
     qDebug() << "establishconnection: " << establishconnection;
 
+    settings->beginGroup("SignalLookup");
     int size = settings->beginReadArray("signal");
 
     //
@@ -225,7 +292,7 @@ QByteArray OpenDSHandler::getSubscribeMessage()
 }
 
 #if 1 //DN DEBUG
-QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
+QByteArray OpenDSHandler::getSetMessage(QString signal, QString value)
 {
     QString entry = "";
 
@@ -258,25 +325,25 @@ QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType si
 }
 
 #else //#if 0 DN DEBUG
-QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value)
+QByteArray OpenDSHandler::getSetMessage(OpenDSHandler::CarSignalType signal, QString value)
 {
     QString entry = "";
 
     switch (signal)
     {
-        case VSSSignalInterfaceImpl::CruiseControl:
+        case OpenDSHandler::CruiseControl:
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated";
             break;
 
-        case VSSSignalInterfaceImpl::CruiseControlUp:
+        case OpenDSHandler::CruiseControlUp:
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
             break;
 
-        case VSSSignalInterfaceImpl::CruiseControlDown:
+        case OpenDSHandler::CruiseControlDown:
             entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
             break;
 
-        case VSSSignalInterfaceImpl::HandBrake:
+        case OpenDSHandler::HandBrake:
             entry = "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn";
             break;
 
@@ -298,3 +365,55 @@ QByteArray OpenDSHandler::getSetMessage(VSSSignalInterfaceImpl::CarSignalType si
     return message.toLocal8Bit();
 }
 #endif
+
+
+
+
+void OpenDSHandler::updateValue(QString signal, QString value)
+{
+//    qDebug()  << "OpenDSHandler::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    //
+    //  Store signal
+    //
+    QString providerPath = "DUMMY";
+
+    m_values.insert(providerPath, value);
+
+    //qDebug()  << "Storing signal. All values: " << m_values;
+}
+
+QString OpenDSHandler::getSignalValue(const QString& path)
+{
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    return m_values.value(path);
+}
+
+qint8 OpenDSHandler::setSignalValue(const QString& path, QVariant value)
+{
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    qint8 result = 0;
+
+    qDebug() << "setSignalValue: path = " << path;
+
+    if(path == "Signal.Drivetrain.InternalCombustionEngine.RPM")
+    {
+        m_rpm = value.toString();
+
+        qDebug() << "m_rpm = " << m_rpm;
+    }
+    else if (path == "Signal.Drivetrain.Transmission.Speed")
+    {
+        m_speed = value.toString();
+
+        qDebug() << "m_speed = " << m_speed;
+    }
+
+    return result;
+}

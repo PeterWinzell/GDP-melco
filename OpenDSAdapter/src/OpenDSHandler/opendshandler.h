@@ -1,9 +1,12 @@
 #ifndef OPENDSHANDLER_H
 #define OPENDSHANDLER_H
 
-#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
 #include <QObject>
 #include <QTcpSocket>
+#include <QObject>
+#include <QMutex>
+#include <QMap>
+#include <QHash>
 
 
 class OpenDSHandler : public QObject
@@ -11,10 +14,13 @@ class OpenDSHandler : public QObject
     Q_OBJECT
 public:
     explicit OpenDSHandler(QObject *parent = 0);
-    void setValue(VSSSignalInterfaceImpl::CarSignalType signal, QString value);
+    ~OpenDSHandler();
+    void setValue(QString signal, QString value);
+    QString getSignalValue(const QString& path);
+    qint8   setSignalValue(const QString& path, QVariant value);
 
 signals:
-    void valueChanged(VSSSignalInterfaceImpl::CarSignalType type, QString value);
+    void valueChanged(QString type, QString value);
 
 public slots:
     void connected();
@@ -22,11 +28,20 @@ public slots:
     void bytesWritten(qint64 bytes);
     void readyRead();
     void socketError(QAbstractSocket::SocketError error);
+    void updateValue(QString signal, QString value);
 
 private:
+    QString m_rpm;
+    QString m_speed;
+    QMutex m_mutex;
+
+    QHash<QString, QString> m_lookupGetProvider;  // (VSS path, OpenDS path)
+    QHash<QString, QString> m_lookupSetProvider;  // (VSS path, OpenDS path)
+    QHash<QString, QString> m_values;             // (OpenDS path, value)
+
     void connectToOpenDS();
     QByteArray getSubscribeMessage();
-    QByteArray getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value);
+    QByteArray getSetMessage(QString signal, QString value);
     void reconnect();
     void delay(int delay);
     void xmlParser(QString xmlData);
