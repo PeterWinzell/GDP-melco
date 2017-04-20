@@ -12,16 +12,13 @@ TARGET = OpenDSAdapter
 
 SOURCES += main.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    ../../W3CServer/src/OpenDSHandler/opendshandler.cpp \
-    signalserver.cpp
-
-
-INCLUDEPATH += $$PWD/../../W3CServer/src/OpenDSHandler
+    signalserver.cpp \
+    OpenDS/opendshandler.cpp
 
 HEADERS += \
     VSSSignalinterface/vsssignalinterface.h \
     VSSSignalinterface/vsssignalinterfaceimpl.h \
-    ../../W3CServer/src/OpenDSHandler/opendshandler.h \
-    signalserver.h
+    signalserver.h \
+    OpenDS/opendshandler.h
 
 
