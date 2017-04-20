@@ -43,7 +43,12 @@ public:
         AccelerationLateral,
         Rotation,
         AccelerationRotation,
-        Acceleration
+        Acceleration,
+        CruiseControl,
+        CruiseControlUp,
+        CruiseControlDown,
+        HandBrake,
+        CarSignalType_NO_OF_ITEMS
     };
     Q_ENUM(CarSignalType)
 
