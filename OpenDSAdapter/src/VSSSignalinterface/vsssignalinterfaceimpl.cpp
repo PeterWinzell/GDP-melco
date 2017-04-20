@@ -27,16 +27,24 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
     m_speed = "0";
 
     loadJson(vssFile);
-
+#if 0
     //Read settings to map to car signals
     QPointer<QSettings> settings = new QSettings();
     settings->beginGroup("SignalServer");
-    for (int i = 0; i < CarSignalType_NO_OF_ITEMS; i++)
+    int size = settings->beginReadArray("signal");
+    for (int i = 0; i < size; i++)
     {
         qDebug() << "VSSSignalInterfaceImpl searching for key " << i;
-
+/*
+        signal\1\name=/root/thisVehicle/exterior/engineCompartment/engine/Properties/actualRpm
+        ;CarSignalType::RPM 45
+        signal\1\provid=0
+        signal\1\vssid=Signal.Drivetrain.InternalCombustionEngine.RPM
+        signal\1\get=true
+        signal\1\set=false
+*/
         QString key = QString::number(i);
-        if (settings->contains(key))
+//        if (settings->contains(key))
         {
             QString vssKey = settings->value(key).toString();
             m_signalLookup[(CarSignalType)i] = vssKey;
@@ -46,7 +54,9 @@ VSSSignalInterfaceImpl::VSSSignalInterfaceImpl(const QString& vssFile)
             m_values.insert(vssKey, "");
         }
     }
+    settings->endArray();
     settings->endGroup();
+#endif
 }
 
 VSSSignalInterfaceImpl::~VSSSignalInterfaceImpl()

@@ -6,7 +6,7 @@
 #include <QByteArray>
 #include <QSslError>
 #include <QMutex>
-#include "opendshandler.h"
+#include "OpenDSHandler/opendshandler.h"
 
 class WebSocketWrapper;
 class VSSSignalInterface;

@@ -1,5 +1,5 @@
 #include <VSSSignalinterface/vsssignalinterfaceimpl.h>
-#include "opendshandler.h"
+#include "OpenDSHandler/opendshandler.h"
 #include "signalserver.h"
 
 #include <QCoreApplication>

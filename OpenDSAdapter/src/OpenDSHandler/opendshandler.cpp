@@ -176,7 +176,7 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     // Reading the SubscribeMessage from settings file
     QPointer<QSettings> settings = new QSettings();
 
-    settings->beginGroup("OpenDSHandler");
+    settings->beginGroup("SignalServer");
 
     settings->beginGroup("subscribe");
     QString unsubscribe = settings->value("unsubscribe").toString();
@@ -200,7 +200,7 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     message = message % event;
 
     // Then add all new signals to subscribe to
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; i++)
     {
         settings->setArrayIndex(i);
         QString value = settings->value("name").toString();
