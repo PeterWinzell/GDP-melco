@@ -1,15 +1,17 @@
 #ifndef OPENDSHANDLER_H
 #define OPENDSHANDLER_H
 
+#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
 #include <QObject>
 #include <QTcpSocket>
-#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+
 
 class OpenDSHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit OpenDSHandler(QObject *parent = 0);
+    void setValue(VSSSignalInterfaceImpl::CarSignalType signal, QString value);
 
 signals:
     void valueChanged(VSSSignalInterfaceImpl::CarSignalType type, QString value);
@@ -24,6 +26,7 @@ public slots:
 private:
     void connectToOpenDS();
     QByteArray getSubscribeMessage();
+    QByteArray getSetMessage(VSSSignalInterfaceImpl::CarSignalType signal, QString value);
     void reconnect();
     void delay(int delay);
     void xmlParser(QString xmlData);
