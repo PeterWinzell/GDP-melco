@@ -15,11 +15,9 @@
 #include "request-handler/processrequesttask.h"
 #include "qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
-#include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
 #include "VSSSignalinterface/websocketbroker.h"
 #include "messaging/websocketwrapper.h"
-#include "OpenDSHandler/opendshandler.h"
 
 #include "logger.h"
 

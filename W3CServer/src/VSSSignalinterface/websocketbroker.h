@@ -19,7 +19,7 @@ public:
         bool isBranch;
     };
 
-    QString getSignalValue(const QString& path);
+    QJsonArray getSignalValue(const QString& path);
     QString setSignalValue(const QString& path, QVariant value);
     QJsonObject getVSSNode(const QString& path);
     QJsonObject getVSSTree(const QString& path);
@@ -42,11 +42,14 @@ private:
     void sendMessage(QString& message);
 
     void loadTempSignalList();
-    QString parsePath(QString path);
-    QStringList getPath(QString startsWith);
-    QStringList getPath(QString startsWith, QString endsWith);
+
+    QString parseGetPath(QString path);
+    QString parseSetPath(QString path, QJsonValue values);
+
     QStringList splitPath(QString path);
 
+    QStringList getPath(QString startsWith);
+    QStringList getPath(QString startsWith, QString endsWith);
 
 
 

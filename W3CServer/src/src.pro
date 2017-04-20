@@ -60,18 +60,14 @@ INCLUDEPATH += $$PWD/../../lib/QJsonWebToken \
                 $$PWD/../../lib/Logger
 
 win32:CONFIG(release, debug|release){
-message('W Release')
     LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken \
              -L$$OUT_PWD/../../lib/Logger/release/ -llogger
-
 }
 win32:CONFIG(debug, debug|release){
-message('W Debug')
     LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken \
              -L$$OUT_PWD/../../lib/Logger/debug/ -llogger
 }
 unix{
-message('Unix')
     LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken \
             -L$$OUT_PWD/../../lib/Logger/ -llogger
 }

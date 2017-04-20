@@ -7,8 +7,6 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-
-#include <OpenDSHandler/opendshandler.h>
 #include <logger.h>
 
 int main(int argc, char *argv[])
