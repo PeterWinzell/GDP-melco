@@ -18,7 +18,6 @@
 #include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
 #include "messaging/websocketwrapper.h"
-#include "OpenDSHandler/opendshandler.h"
 
 #include "logger.h"
 
@@ -84,17 +83,12 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
                 this, &W3CServer::onSslErrors);
     }
 
-    // TODO: select implementation based on application configuration
-
     const QString vssFile = "/etc/vss_rel_1.json";
     m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
-    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 }
 
 W3CServer::~W3CServer()
 {
-    //printf("server killed!!!!!!!!!!!!!!!!!!!!!!\n");
     closingDown();
 }
 
@@ -102,7 +96,7 @@ void W3CServer::closingDown()
 {
     DEBUG("Server", "closing down.");
     disconnect(m_pWebSocketServer);
-    disconnect(m_openDSHandler.data());
+    //disconnect(m_openDSHandler.data());
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
