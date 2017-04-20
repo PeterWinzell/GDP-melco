@@ -26,7 +26,6 @@ SOURCES += main.cpp \
     request-handler/subscriptions.cpp \
     messaging/websocketwrapper.cpp \
     VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp
 
@@ -47,7 +46,6 @@ HEADERS += \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
     VSSSignalinterface/vsssignalinterfaceimpl.h \
-    OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
     request-handler/statushandler.h
