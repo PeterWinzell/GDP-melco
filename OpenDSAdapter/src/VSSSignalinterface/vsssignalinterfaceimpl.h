@@ -36,6 +36,7 @@ public:
         BrakePedal,
         SteerAngle,
         Headlights,
+        CurrentGear,
         EngineRunning,
         CurrentFuelConsumption,
         FuelTankMax,

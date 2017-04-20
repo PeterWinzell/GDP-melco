@@ -54,7 +54,7 @@ void OpenDSHandler::delay(int delay)
 
 void OpenDSHandler::xmlParser(QString xmlData)
 {
-    qDebug() << "All OpenDS data: " << xmlData;
+//    qDebug() << "All OpenDS data: " << xmlData;
 
     //Get your xml into xmlText(you can use QString instead og QByteArray)
     QDomDocument doc;
@@ -166,7 +166,7 @@ void OpenDSHandler::setValue(VSSSignalInterfaceImpl::CarSignalType signal, QStri
 {
     QByteArray message = getSetMessage(signal, value);
 
-    qDebug() << message;
+    //qDebug() << message;
 
     m_Socket->write(message);
 }
@@ -175,20 +175,47 @@ QByteArray OpenDSHandler::getSubscribeMessage()
 {
     // Reading the SubscribeMessage from settings file
     QPointer<QSettings> settings = new QSettings();
-    settings->beginGroup("OpenDSHandler");
-    int size = settings->beginReadArray("SubscribeMessage");
 
+    settings->beginGroup("OpenDSHandler");
+
+    settings->beginGroup("subscribe");
+    QString unsubscribe = settings->value("unsubscribe").toString();
+    QString setupdateinterval = settings->value("setupdateinterval").toString();
+    QString establishconnection = settings->value("establishconnection").toString();
+    settings->endGroup();
+
+    qDebug() << "unsubscribe: " << unsubscribe;
+    qDebug() << "setupdateinterval: " << setupdateinterval;
+    qDebug() << "establishconnection: " << establishconnection;
+
+    int size = settings->beginReadArray("signal");
+
+    //
     // Constructing readSubscribeMessage from settings file
+    //
     QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
     message = message % "<Message>""\r";
+    // First unsubscribe previous
+    QString event = "<Event Name=\"Unsubscribe\">" % unsubscribe % "</Event>\r";
+    message = message % event;
+
+    // Then add all new signals to subscribe to
     for (int i = 0; i < size; ++i)
     {
         settings->setArrayIndex(i);
-        QString key = settings->allKeys().first();
-        QString value = settings->value(key).toString();
-        QString event = "<Event Name=\"" % key % "\">" % value % "</Event>\r";
+        QString value = settings->value("name").toString();
+        event = "<Event Name=\"Subscribe\">" % value % "</Event>\r";
         message = message % event;
+
+        qDebug() << "getSubscribeMessage : size: " << size << " value: " << value;
     }
+
+    // Finally add update interval
+    event = "<Event Name=\"SetUpdateInterval\">" % setupdateinterval % "</Event>\r";
+    message = message % event;
+    event = "<Event Name=\"EstablishConnection\">" % establishconnection % "</Event>\r";
+    message = message % event;
+
     message = message % "</Message>\r";
 
     settings->endArray();
