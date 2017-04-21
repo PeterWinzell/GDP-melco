@@ -1,11 +1,12 @@
-#ifndef W3CSERVER_H
-#define W3CSERVER_H
+#ifndef SignalServer_H
+#define SignalServer_H
 
 #include <QObject>
 #include <QList>
 #include <QByteArray>
 #include <QSslError>
 #include <QMutex>
+#include "OpenDSHandler/opendshandler.h"
 
 class WebSocketWrapper;
 class VSSSignalInterface;
@@ -15,14 +16,13 @@ class VSSSignalInterface;
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
-class W3CServer : public QObject
+class SignalServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit W3CServer(quint16 port,bool usesecureprotocol = false, QObject *parent = Q_NULLPTR);
-    ~W3CServer();
+    explicit SignalServer(quint16 port, QObject *parent = Q_NULLPTR);
+    ~SignalServer();
 
-    //static int getNumberOfClients() {return m_nrOfClients; }
     static int m_nrOfClients;
 Q_SIGNALS:
     void closed();
@@ -32,7 +32,6 @@ private  Q_SLOTS:
     void processTextMessage(const QString& message);
     void socketDisconnected();
     void onSslErrors(const QList<QSslError> &errors);
-    void closingDown();
 
 private:
     void startRequestProcess(WebSocketWrapper* sw, const QString& message);
@@ -43,4 +42,4 @@ private:
 
 };
 
-#endif // W3CSERVER_H
+#endif // SignalServer_H

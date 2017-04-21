@@ -13,12 +13,12 @@ The ability to access vehicle data signals with a standardized API opens up for 
 
 The goal with this implementation is to provide the W3C VIS specification with a reference. This means that we are prioritizing specification feature implementation and will not enforce any performance optimizing on this design. Furthermore , we are not imposing nor are we suggesting any other security layers other than those specified.  For production both performance optimization and layered security would have to be added.
 
-The Qt framework is one of the preferred development tool for infotainment application development and since v5.4 it supports web sockets. It is a natural choice for a server implementation. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool. Keeping the server implementation within Qt facilitates portability to other base platforms and systems. We have also explored using a standard C++ solution based on xxx and java based solution. These options would also be valid implementation choices.
+The Qt framework is one of the preferred development tools for infotainment application development and since v5.4 it supports web sockets. It is a natural choice for a server implementation. Furthermore, Qt allows for rapid testing and development outside the actual target platform - it is a cross-platform development tool. Keeping the server implementation within Qt facilitates portability to other base platforms and systems. We have also explored using a standard C++ solution based on boost:asio and pure a java-se based solution. These options would also be valid implementation choices.
 
 Figure 1 shows the basic architectural design with applications on top and the signal sources at the bottom, or if you prefer applications in the north and signals sources south.
 
 ![Server Arch](W3CServerArch.png)<br>
-*Fig 1. W3C ref implementation architecture, (VSIAdapter might be included in actual server process)*
+*Fig 1. W3C ref implementation architecture, (SignalBroker might be included in actual server process)*
 
 One key benefit to the W3C VIS specification and its use of web sockets is that any application framework that supports web sockets is available for developers - they are not limited to the web browser and javascript/HTML5. Most application frameworks have support for web sockets today and we will illustrate this with a number of different applications running  across different devices. The application - if it is allowed to interact with the exposed network upon which the w3c server is running - can reside anywhere. The normal case would be to have the server execute in the same environment as the main infotainment system. However, the server could potentially be executed in many instances on various ECUS and/or virtual images. The various instances would then possibly also expose different signals. It is also even true that in theory the w3c server could also reside outside the vehicle and just interface the signal sources through an ip based communication channel. This independency opens up many other use cases - the vehicle is not longer just a connected vehicle, it is actually part of the cloud infrastructure itself. For this implementation we are mainly considering a traditional approach where the w3c server is running inside the main infotainment unit. 
 
@@ -51,9 +51,9 @@ client -> {
 
 The above example shows how a client would request to read the RPM signal and how that would be returned to the client. The basic server design is to spawn an independent thread through a thread pool mechanism for each client request. The following request actions are as mentioned above GET,SET,GETVSS,SUBSCRIBE, UNSUBSCRIBE, UNSUBSCRIBEALL, AUTHORIZE. The thread design will allow a request to run independently of any other client requests. Communication between threads is handled using the Qt signal and slot mechanism[[5]](http://doc.qt.io/qt-4.8/signalsandslots.html): for example when we have an unsubscribe request that needs to inform the corresponding subscription that it should stop sending data back to the client and terminate the subscription thread.
 
-Figure 2 shows the flow through the components when subscribing to a signal which is interfacing openDS[[5]](https://www.opends.eu).
+Figure 2 shows the flow through the components when subscribing to a signal using the get,set Signal protocol which in our case is interfacing openDS[[5]](https://www.opends.eu).
 
-![Signal flow](signalFlow-3.png)<br>
+![Signal flow](signalFlow.png)<br>
 *Fig 2. Basic signal flow through W3C web socket server for a subscription request*
 
 So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
@@ -96,24 +96,22 @@ void ProcessRequestTask::run()
 ```
 *Example 3, process requests*<br>
 
-This is the basic and simple principle behind the server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. 
+This is the basic and simple principle behind the client-server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. For the southbound interface we have chosen to implement a getSignal, setSignal protocol based on tcp-sockets. The socket implementation could be replaced by any other inter-process data commincation channel such as VSI[[6]](https://github.com/GENIVI/vehicle_signal_interface/blob/master/README.md) shared memory b-tree , CommonAPI[[7]](http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf) or any valid ipc. The actual signal retrieval is done by a SignalBroker which is executed in its own process. We have chosen this design for mainly one reason to keep the server independent of signal provider. The get,set protocol can be directly mapped to a signal provider within the server if needed. 
 
-Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[6]](https://jwt.io) - the VIS does not specify which type of authorization token. 
+Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[8]](https://jwt.io) - the VIS does not specify which type of authorization token. 
 
 ```json
 { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }
 ```
 *Example 4, authorization*<br>
 
-The implementation currently contains two separate authorization tokens: a (GET,SUBSCRIBE) token and a (SET) token.  
-
-Matching "real" vehicle signals is done by a module which we have named VSIAdapter. The VSS tree signals is here matched against vehicle signals and the value is then fetched and delivered by the server to the client requesting this signal(s). More T.B.A module currently under development...
+The implementation currently contains two separate authorization tokens: a (GET,SUBSCRIBE) token and a (SET) token.   
 
 # Usability According to Spec
 T.B.A
 # Demo applications
 
-The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[7]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
+The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[9]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
 w3C specification. This is something that needs to be adressed by each OEM or implementor. 
 
 Demo examples : T.B.A (iPhone client, JAva application , Qt applicaton, Javascript/HTML application)
@@ -141,8 +139,12 @@ T.B.A
 
 [5] http://doc.qt.io/qt-4.8/signalsandslots.html
 
-[6] https://jwt.io
+[6] https://github.com/GENIVI/vehicle_signal_interface/blob/master/README.md
 
-[7] https://tools.ietf.org/html/rfc6455
+[7] http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf
+
+[8] https://jwt.io
+
+[9] https://tools.ietf.org/html/rfc6455
 
 

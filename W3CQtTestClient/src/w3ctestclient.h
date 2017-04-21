@@ -8,6 +8,7 @@
 #include <QtCore/QQueue>
 #include <QtCore/QString>
 #include <QtCore/QUrl>
+#include <QTimer>
 
 #include "testresult.h"
 #include "clientreport.h"
@@ -50,10 +51,11 @@ private Q_SLOTS:
     void unsubscribe();
     void unsubscribeAll();
     void pendingTestTimeout();
+    void testTimeout();
 
 private:
-    void passTestRun();
-    void failTestRun();
+    void passTestRun(bool success);
+
     QString getTestCaseAsString(TestCase testCase);
 
     bool m_clientStarted = false;
@@ -68,7 +70,10 @@ private:
     QQueue<TestCase> m_tests;
     TestCase m_currentTest;
     QDateTime m_testStartTime;
+    const int m_testTimeoutSec;
     bool m_pendingTest;
+
+    QTimer* m_runningTestTimer;
 
 };
 

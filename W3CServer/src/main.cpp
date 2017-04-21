@@ -7,11 +7,21 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
+
+#include <signal.h>
+
 #include <logger.h>
+
+void cleanExit(int sig)
+{
+    DEBUG("Server", QString("Got signal: %1").arg(sig));
+    QCoreApplication::quit();
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
     // TODO Add as arguments
     //Logger::getInstance()->logEnabled = false;
     //Logger::getInstance()->logLevel = 0;
@@ -57,7 +67,26 @@ int main(int argc, char *argv[])
     Logger::getInstance()->logEnabled = serverDebug ? true : false;
 
     W3CServer *server = new W3CServer(serverPort,serverWSS);
-    QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
+
+    //QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
+    QObject::connect(&a, SIGNAL(aboutToQuit()), server, SLOT(closingDown()));
+
+    // Do a clean exit on signals
+
+    // general
+    signal(SIGINT, cleanExit);
+    signal(SIGTERM, cleanExit);
+
+#ifdef WIN32
+    // windows
+    signal(SIGBREAK, cleanExit);
+#else
+    // unix
+    signal(SIGQUIT, cleanExit);
+    signal(SIGHUP, cleanExit);
+    signal(SIGKILL, cleanExit);
+
+#endif
 
     return a.exec(); // start exec loop
 }

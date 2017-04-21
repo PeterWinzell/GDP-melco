@@ -65,7 +65,7 @@ void W3cTestClientHandler::handleTestClientCompletion(ClientReport* report)
             htmlFile = m_reportDir + "/w3c-tests.html";
             file = m_reportDir + "/w3c-tests.xml";
         }
-        DEBUG("Client Handler","Generating reports ...");
+        INFO("Client Handler","Generating reports ...");
         writeXMLReport(file);
         bool allPassed = writeHTMLReport(htmlFile);
 

@@ -83,14 +83,20 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
                 this, &W3CServer::onSslErrors);
     }
 
-    // TODO: select implementation based on application configuration
-
     const QString vssFile = "./vss_rel_1.json";
     m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssFile));
 }
 
 W3CServer::~W3CServer()
 {
+    closingDown();
+}
+
+void W3CServer::closingDown()
+{
+    DEBUG("Server", "closing down.");
+    disconnect(m_pWebSocketServer);
+    //disconnect(m_openDSHandler.data());
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
