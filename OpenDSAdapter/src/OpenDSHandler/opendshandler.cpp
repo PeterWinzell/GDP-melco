@@ -51,7 +51,7 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
             qDebug() << "Inserted GET key: " << vssPath << ", value: " << m_lookupGetProvider[vssPath];
 
             //Initialize values to empty strings
-            m_values.insert(providerPath, "");
+            m_getValues.insert(providerPath, "");
         }
 
         // Fill the "get" lookup table
@@ -61,6 +61,9 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
             QString providerPath = settings->value(provid).toString();
             m_lookupSetProvider.insert(vssPath, providerPath);
             qDebug() << "Inserted SET key: " << vssPath << ", value: " << m_lookupGetProvider[vssPath];
+
+            //Initialize set values to empty list
+            m_setValues.clear();
         }
     }
     settings->endArray();
@@ -108,73 +111,37 @@ void OpenDSHandler::delay(int delay)
 
 void OpenDSHandler::xmlParser(QString xmlData)
 {
-//    qDebug() << "All OpenDS data: " << xmlData;
+    qDebug() << "All OpenDS data: " << xmlData;
 
     //Get your xml into xmlText(you can use QString instead og QByteArray)
     QDomDocument doc;
     doc.setContent(xmlData);
 
     //Parse data
-    QDomNodeList speed=doc.elementsByTagName("speed");
-    QDomNodeList rpm=doc.elementsByTagName("actualRpm");
-    QDomNodeList pressedState=doc.elementsByTagName("pressedState"); // GASPEDAL + BRAKEPEDAL
-    QDomNodeList steerAngle=doc.elementsByTagName("steerAngle");
-    QDomNodeList headlights=doc.elementsByTagName("headlights");
-    QDomNodeList currentGear=doc.elementsByTagName("currentGear");
-    QDomNodeList running=doc.elementsByTagName("running");
-    QDomNodeList actualRpm=doc.elementsByTagName("actualRpm");
-    QDomNodeList currentConsumption=doc.elementsByTagName("currentConsumption");
-    QDomNodeList maxAmount=doc.elementsByTagName("maxAmount");
-    QDomNodeList actualAmount=doc.elementsByTagName("actualAmount");
-    QDomNodeList latitude=doc.elementsByTagName("latitude");
-    QDomNodeList longitude=doc.elementsByTagName("longitude");
-    QDomNodeList altitude=doc.elementsByTagName("altitude");
-    QDomNodeList orientation=doc.elementsByTagName("orientation");
-    QDomNodeList rise=doc.elementsByTagName("rise");
-    QDomNodeList accelerationLateral=doc.elementsByTagName("accelerationLateral");
-    QDomNodeList rotation=doc.elementsByTagName("rotation");
-    QDomNodeList accelerationRotation=doc.elementsByTagName("accelerationRotation");
-    QDomNodeList acceleration=doc.elementsByTagName("acceleration");
-    QDomNodeList handBrakeOn=doc.elementsByTagName("handBrakeOn");
-    QDomNodeList cruiseControlActivated=doc.elementsByTagName("cruiseControlActivated");
-    QDomNodeList cruiseControlIncrease=doc.elementsByTagName("cruiseControlIncrease");
-    QDomNodeList cruiseControlDecrease=doc.elementsByTagName("cruiseControlDecrease");
+    foreach (QString providerPath, m_lookupGetProvider)
+    {
+        // Get only the element name i.e. the last part of the path.
+        // For example:
+        // full path: /root/thisVehicle/exterior/engineCompartment/engine/Properties/actualRpm
+        // element name: actualRpm
+        //
+        QString elementName = providerPath.mid(providerPath.lastIndexOf("/") + 1);
 
-    //notify listners for valueChanged
-/*
-    emit valueChanged(OpenDSHandler::Speed, speed.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::RPM, rpm.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::GasPedal, pressedState.at(1).toElement().text());
-    emit valueChanged(OpenDSHandler::BrakePedal, pressedState.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::SteerAngle, steerAngle.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::Headlights, headlights.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::EngineRunning, running.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::CurrentFuelConsumption, currentConsumption.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::FuelTankMax, maxAmount.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::FuelTankActual, actualAmount.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::PositionLatitude, latitude.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::PositionLongitude, longitude.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::PositionAltitude, altitude.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::Orientation, orientation.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::Rise, rise.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::AccelerationLateral, accelerationLateral.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::Rotation, rotation.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::AccelerationRotation, accelerationRotation.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::Acceleration, acceleration.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::CruiseControl, cruiseControlActivated.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::CruiseControlUp, cruiseControlIncrease.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::CruiseControlDown, cruiseControlDecrease.at(0).toElement().text());
-    emit valueChanged(OpenDSHandler::HandBrake, handBrakeOn.at(0).toElement().text());
-*/
+        QDomNodeList xmlValue=doc.elementsByTagName(elementName);
+        QString value = xmlValue.at(0).toElement().text();
+
+        qDebug() << elementName << " = " << value;
+
+        emit valueChanged(providerPath, value);
+    }
 
     //DN DEBUG-----------------------------
-   //setValue(OpenDSHandler::HandBrake, "true");
-   // setValue(OpenDSHandler::CruiseControl, "true");
-   // setValue(OpenDSHandler::CruiseControlUp, "15");
-   // setValue(OpenDSHandler::CruiseControlUp, "35");
-   // setValue(OpenDSHandler::CruiseControlDown, "25");
+    //setSignalValue(OpenDSHandler::HandBrake, "true");
+    // setSignalValue(OpenDSHandler::CruiseControl, "true");
+    // setSignalValue(OpenDSHandler::CruiseControlUp, "15");
+    // setSignalValue(OpenDSHandler::CruiseControlUp, "35");
+    // setSignalValue(OpenDSHandler::CruiseControlDown, "25");
     //--------------------------------------
-
 }
 
 void OpenDSHandler::connected()
@@ -217,14 +184,6 @@ void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
     }
 }
 
-void OpenDSHandler::setValue(QString signal, QString value)
-{
-    QByteArray message = getSetMessage(signal, value);
-
-    //qDebug() << message;
-
-    m_Socket->write(message);
-}
 
 QByteArray OpenDSHandler::getSubscribeMessage()
 {
@@ -243,11 +202,8 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     qDebug() << "setupdateinterval: " << setupdateinterval;
     qDebug() << "establishconnection: " << establishconnection;
 
-    settings->beginGroup("SignalLookup");
-    int size = settings->beginReadArray("signal");
-
     //
-    // Constructing readSubscribeMessage from settings file
+    // Constructing readSubscribeMessage from "GET" path lookup table
     //
     QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
     message = message % "<Message>""\r";
@@ -256,14 +212,12 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     message = message % event;
 
     // Then add all new signals to subscribe to
-    for (int i = 0; i < size; i++)
+    foreach (QString providerPath, m_lookupGetProvider)
     {
-        settings->setArrayIndex(i);
-        QString value = settings->value("name").toString();
-        event = "<Event Name=\"Subscribe\">" % value % "</Event>\r";
+        event = "<Event Name=\"Subscribe\">" % providerPath % "</Event>\r";
         message = message % event;
 
-        qDebug() << "getSubscribeMessage : size: " << size << " value: " << value;
+        qDebug() << "getSubscribeMessage : value: " << providerPath;
     }
 
     // Finally add update interval
@@ -274,18 +228,12 @@ QByteArray OpenDSHandler::getSubscribeMessage()
 
     message = message % "</Message>\r";
 
-    settings->endArray();
-    settings->endGroup();
-
     return message.toLocal8Bit();
 }
 
-QByteArray OpenDSHandler::getSetMessage(QString signal, QString value)
+QByteArray OpenDSHandler::getSetMessage()
 {
     QString entry = "";
-    (void) value;
-    (void) signal;
-
 
     QStringList keyList = QStringList() << "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated"
                                         << "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn"
@@ -324,11 +272,11 @@ void OpenDSHandler::updateValue(QString signal, QString value)
     //
     //  Store signal
     //
-    QString providerPath = signal; //"DUMMY";
+    QString providerPath = signal;
 
-    m_values.insert(providerPath, value);
+    m_getValues.insert(providerPath, value);
 
-    //qDebug()  << "Storing signal. All values: " << m_values;
+    //qDebug()  << "Storing signal. All values: " << m_getValues;
 }
 
 QString OpenDSHandler::getSignalValue(const QString& path)
@@ -336,30 +284,42 @@ QString OpenDSHandler::getSignalValue(const QString& path)
     QMutex mutex;
     QMutexLocker locker(&mutex);
 
-    return m_values.value(path);
+    QString providerPath = m_lookupGetProvider[path];
+
+    qDebug()  << "getSignalValue: providerPath = " << providerPath;
+
+    return m_getValues.value(providerPath);
 }
 
-qint8 OpenDSHandler::setSignalValue(const QString& path, QVariant value)
+qint8 OpenDSHandler::setSignalValue(const QString& path, QString value)
 {
     QMutex mutex;
     QMutexLocker locker(&mutex);
 
     qint8 result = 0;
 
-    qDebug() << "setSignalValue: path = " << path;
+    QString providerPath = m_lookupGetProvider[path];
 
-    if(path == "Signal.Drivetrain.InternalCombustionEngine.RPM")
-    {
-        m_rpm = value.toString();
+    qDebug()  << "setSignalValue: providerPath = " << providerPath;
 
-        qDebug() << "m_rpm = " << m_rpm;
-    }
-    else if (path == "Signal.Drivetrain.Transmission.Speed")
-    {
-        m_speed = value.toString();
-
-        qDebug() << "m_speed = " << m_speed;
-    }
+    m_setValues.insert(providerPath, value);
 
     return result;
 }
+
+void OpenDSHandler::updateSetSignalValues()
+{
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    // Build OpenDS SET message with all set values
+    QByteArray message = getSetMessage();
+    qDebug() << "updateSetSignalValues : " << message;
+
+    // Clear the set values
+    m_setValues.clear();
+
+    m_Socket->write(message);
+}
+
+
