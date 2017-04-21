@@ -1,29 +1,18 @@
-#include <iostream>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "opendshandler.h"
-
 #include <QPointer>
 #include <QSettings>
 #include <QDebug>
 #include <QStringBuilder>
 #include <QTcpSocket>
 #include <QTime>
-
 #include <QCoreApplication>
 #include <QDomDocument>
-
 #include <QString>
 #include <QMutexLocker>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <QFile>
-#include <QDir>
-
+#include "opendshandler.h"
 
 
 OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
@@ -218,7 +207,7 @@ void OpenDSHandler::readyRead()
 
 void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
 {
-//    qDebug() << "OpenDSHandler socketError: something went wrong...." << error;
+    qDebug() << "OpenDSHandler socketError: something went wrong...." << error;
 
     // check if socket is still connected or if we need to reconnect!
     if(!(m_Socket->state() == QTcpSocket::ConnectedState))
@@ -291,10 +280,12 @@ QByteArray OpenDSHandler::getSubscribeMessage()
     return message.toLocal8Bit();
 }
 
-#if 1 //DN DEBUG
 QByteArray OpenDSHandler::getSetMessage(QString signal, QString value)
 {
     QString entry = "";
+    (void) value;
+    (void) signal;
+
 
     QStringList keyList = QStringList() << "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated"
                                         << "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn"
@@ -324,51 +315,6 @@ QByteArray OpenDSHandler::getSetMessage(QString signal, QString value)
     return message.toLocal8Bit();
 }
 
-#else //#if 0 DN DEBUG
-QByteArray OpenDSHandler::getSetMessage(OpenDSHandler::CarSignalType signal, QString value)
-{
-    QString entry = "";
-
-    switch (signal)
-    {
-        case OpenDSHandler::CruiseControl:
-            entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated";
-            break;
-
-        case OpenDSHandler::CruiseControlUp:
-            entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
-            break;
-
-        case OpenDSHandler::CruiseControlDown:
-            entry = "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
-            break;
-
-        case OpenDSHandler::HandBrake:
-            entry = "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn";
-            break;
-
-        default:
-            break;
-    }
-
-    // Constructing XML request to OpenDS
-    QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
-    message = message % "<Message>""\r";
-
-    QString key = "SetValue";
-
-    QString event = "<Event Name=\"" % key % "\" Value=\"" % value % "\">" % entry % "</Event>\r";
-    message = message % event;
-
-    message = message % "</Message>\r";
-
-    return message.toLocal8Bit();
-}
-#endif
-
-
-
-
 void OpenDSHandler::updateValue(QString signal, QString value)
 {
 //    qDebug()  << "OpenDSHandler::updateValue: " << "\n\ttype: " << type << "\n\tvalue: " << value;
@@ -378,7 +324,7 @@ void OpenDSHandler::updateValue(QString signal, QString value)
     //
     //  Store signal
     //
-    QString providerPath = "DUMMY";
+    QString providerPath = signal; //"DUMMY";
 
     m_values.insert(providerPath, value);
 

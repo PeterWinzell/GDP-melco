@@ -8,10 +8,6 @@
 #include <QMutex>
 #include "OpenDSHandler/opendshandler.h"
 
-class WebSocketWrapper;
-class VSSSignalInterface;
-
-//TODO add license header: Peter Winzell
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -34,10 +30,8 @@ private  Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
-    void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
-    QSharedPointer<VSSSignalInterface> m_vsssInterface;
     bool m_secure;
 
 };

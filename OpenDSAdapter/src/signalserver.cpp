@@ -11,7 +11,6 @@
 #include <QPointer>
 
 #include "signalserver.h"
-#include "OpenDSHandler/opendshandler.h"
 
 
 QT_USE_NAMESPACE
@@ -49,7 +48,6 @@ SignalServer::~SignalServer()
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
-    m_vsssInterface.clear();
 }
 
 void SignalServer::onNewConnection()
@@ -58,7 +56,7 @@ void SignalServer::onNewConnection()
 
     pSocket ->ignoreSslErrors();
 
-    qDebug() << "Server","Attemping to connect";
+    qDebug() << "Server: Attemping to connect";
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &SignalServer::processTextMessage);
@@ -109,31 +107,6 @@ void SignalServer::processTextMessage(const QString& message)
 
 
     }
-
-
-
-/*
-    QString val = valueAction.toString();
-
-    if (val == "get")
-    {
-        request->setAction(GET);
-
-
-
-    QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
-    if (m_clients.contains(zeClient))
-    {
-        // we need a mutex per client .
-        QMutex* mutex = m_clients.find(zeClient).value();
-        QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
-        startRequestProcess(socketWrapper, message);
-    }
-    else
-    {
-        WARNING("Server","Fatal connection error, Websocket client not found.");
-    }
-    */
 }
 
 void SignalServer::socketDisconnected()
@@ -153,9 +126,6 @@ void SignalServer::socketDisconnected()
 
 void SignalServer::onSslErrors(const QList<QSslError> &l)
 {
-    qDebug() << "Server SSL Error occurred.";
+    qDebug() << "Server SSL Error occurred: " << l;
 }
 
-void SignalServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
-{
-}

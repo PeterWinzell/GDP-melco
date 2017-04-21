@@ -9,12 +9,13 @@
 #include <QHash>
 
 
+
 class OpenDSHandler : public QObject
 {
     Q_OBJECT
 public:
     explicit OpenDSHandler(QObject *parent = 0);
-    ~OpenDSHandler();
+    //~OpenDSHandler();
     void setValue(QString signal, QString value);
     QString getSignalValue(const QString& path);
     qint8   setSignalValue(const QString& path, QVariant value);
@@ -39,9 +40,10 @@ private:
     QHash<QString, QString> m_lookupSetProvider;  // (VSS path, OpenDS path)
     QHash<QString, QString> m_values;             // (OpenDS path, value)
 
-    void connectToOpenDS();
+    //void connectToOpenDS();
     QByteArray getSubscribeMessage();
     QByteArray getSetMessage(QString signal, QString value);
+
     void reconnect();
     void delay(int delay);
     void xmlParser(QString xmlData);
