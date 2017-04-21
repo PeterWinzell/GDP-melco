@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     // TODO Add as arguments
     //Logger::getInstance()->logEnabled = false;
     //Logger::getInstance()->logLevel = 0;
-    //Logger::getInstance()->logToFile = false;
-    Logger::getInstance()->logFilename = "w3c-server-log.log";
+    Logger::getInstance()->logToFile = false;
+    //Logger::getInstance()->logFilename = "w3c-server-log.log";
 
     //initiating QSettings
     QCoreApplication::setApplicationName("W3CServer");

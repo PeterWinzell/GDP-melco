@@ -263,7 +263,12 @@ void WebSocketBroker::loadTempSignalList()
 
     QFile file(QCoreApplication::applicationDirPath() + "/vss_rel_1.vsi");
     file.open(QFile::ReadOnly);
-
+    if(!file.exists())
+    {
+        WARNING("Server", "The flattened vsi signal file could not be found for the Signal Broker!");
+        file.close();
+        return;
+    }
     while(!file.atEnd())
     {
         QRegularExpressionMatch match = regex.match(file.readLine());
