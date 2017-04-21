@@ -2,20 +2,20 @@
 # Linux service controller script
 
 service=OpenDSAdapter
-params=
+params=""
 
 cd "/usr/bin"
 
 case "$1" in
     start)
-        ./$service params
+        ./$service $params
         ;;
     stop)
         killall $service
         ;;
     restart)
         killall $service
-        ./$service params
+        ./$service $params
         ;;
     *)
         echo "Usage: $0 {start|stop|restart}"
