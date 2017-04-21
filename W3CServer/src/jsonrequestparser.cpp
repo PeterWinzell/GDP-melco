@@ -100,7 +100,7 @@ bool JSONRequestParser::validateSetRequest(VISSRequest* request)
     {
         request->setRequestId(valueId.toString());
         request->setSignalPath(valuePath.toString());
-        request->setValue(valueValue.toVariant());
+        request->setValue(QVariant(valueValue));
         return true;
     }
 }

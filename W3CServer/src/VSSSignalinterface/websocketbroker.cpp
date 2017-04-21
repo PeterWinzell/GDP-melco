@@ -19,16 +19,26 @@ WebSocketBroker::WebSocketBroker(const QString& vssFile)
 
 bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 {
-    QMutexLocker locker(&m_mutex);
-    m_receivedMessage = QJsonObject();
-
     // Check if path is single leaf.
     // Check if path is single branch.
     // Check if path contains asterisk.
     // Check if path contains asterisk and leaf.  
-    QString msg = parseGetPath(path);
+    QJsonArray paths = parseGetPath(path);
 
-    sendMessage(msg);
+    // Check if signal exists.
+    foreach (QJsonValue const &value, paths) {
+        if(getVSSNode(value.toString()).isEmpty())
+            return false;
+    }
+
+    // Create message to send
+    QJsonObject message;
+    message.insert("get", paths);
+    QJsonDocument jsonDoc(message);
+
+    // Lock and send message.
+    QMutexLocker locker(&m_mutex);
+    sendMessage(jsonDoc.toJson());
 
     // TODO Need to implement some kind of timer here.
     while(!m_messageReceivedFromBroker)
@@ -36,29 +46,36 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
         //DEBUG("TEST","Waiting for response...");
     }
 
-    QJsonDocument jsonDoc(m_receivedMessage);
+    jsonDoc = QJsonDocument(m_receivedMessage);
 
     // TODO Add check of Success in response.
-
+    // Could just return false, instead of array, if error?
     if(jsonDoc.object()["get"].isArray())
     {
-        values = jsonDoc.object()["get"].toArray(); // Test this
-        //foreach (QJsonValue value, jsonDoc.object()["get"].toArray()) {
-        //    values.append(value);
-        //}
+        values = jsonDoc.object()["get"].toArray();
         return true;
     }
     return false;
 }
 
-bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& value)
+bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
 {
+    QJsonArray paths = parseSetPath(path, values.toJsonValue());
+
+    // Check if signal exists.
+    foreach (QJsonValue const &value, paths) {
+        if(getVSSNode(value.toString()).isEmpty())
+            return false;
+    }
+
+    // Create message to send
+    QJsonObject message;
+    message.insert("set", paths);
+    QJsonDocument jsonDoc(message);
+
+    // Lock and send message.
     QMutexLocker locker(&m_mutex);
-    m_receivedMessage = QJsonObject();
-
-    QString msg = parseSetPath(path, value.toJsonValue());
-
-    sendMessage(msg);
+    sendMessage(jsonDoc.toJson());
 
     // TODO Need to implement some kind of timer here.
     while(!m_messageReceivedFromBroker)
@@ -66,7 +83,7 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& value)
         //DEBUG("TEST","Waiting for response...");
     }
 
-    QJsonDocument jsonDoc(m_receivedMessage);
+    jsonDoc = QJsonDocument(m_receivedMessage);
 
     // Should return false, or 0 if not bool. So should work without checking if bool
     return jsonDoc.object()["set"].toBool();
@@ -113,7 +130,7 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
 }
 
 
-void WebSocketBroker::sendMessage(QString& message)
+void WebSocketBroker::sendMessage(const QString& message)
 {
     m_messageReceivedFromBroker = false;
     m_webSocket.sendTextMessage(message);
@@ -254,76 +271,69 @@ void WebSocketBroker::loadTempSignalList()
     }
 }
 
-QString WebSocketBroker::parseGetPath(QString path)
+QJsonArray WebSocketBroker::parseGetPath(const QString& path)
 {
     QStringList sl = splitPath(path);
-
-    QJsonObject msg;
     QJsonArray values;
 
-
     if(sl.length() == 1)
-        foreach(auto item, getPath(sl.first()))
+        foreach(auto const item, getPath(sl.first()))
     {
         QJsonObject value;
         value.insert(item,"");
         values.append(value);
     }
     else
-        foreach(auto item, getPath(sl.first(), sl.last()))
+        foreach(auto const item, getPath(sl.first(), sl.last()))
     {
         QJsonObject value;
         value.insert(item,"");
         values.append(value);
     }
-    msg.insert("get", values);
 
-    QJsonDocument jsonDoc(msg);
-    return jsonDoc.toJson();
+    return values;
 }
 
-QString WebSocketBroker::parseSetPath(QString path, QJsonValue setValues)
+QJsonArray WebSocketBroker::parseSetPath(const QString& path, const QJsonValue &setValues)
 {
     QStringList sl = splitPath(path);
-
-    QJsonObject msg;
     QJsonArray values;
 
     if(setValues.isArray())
     {
-        foreach(QJsonValue val, setValues.toArray())
+        foreach(QJsonValue const val, setValues.toArray())
         {
             QJsonObject value;
-            QString valuePath = sl.first() + "." + val.toObject().keys().first();
+            QJsonObject obj = val.toObject();
 
-            if(val.isDouble())
-               value.insert(valuePath, val.toDouble());
-            else if(val.isBool())
-                value.insert(valuePath, val.toBool());
+            QString valuePath = sl.first() + "." + obj.keys().first();
+            QJsonValue tmp = obj.value(obj.keys().first());
+
+            if(tmp.isDouble())
+               value.insert(valuePath, tmp.toDouble());
+            else if(tmp.isBool())
+               value.insert(valuePath, tmp.toBool());
             else
-                value.insert(valuePath, val.toString());
-
-
-
-            // TODO Check different types of values and make this look nicer.
-
-            value.insert(sl.first() + "." + val.toObject().keys().first(), val.toObject().keys().first().toDouble());
+               value.insert(valuePath, tmp.toString());
 
             values.append(value);
         }
     }
     else
     {
-        // TODO ... same here.
         QJsonObject value;
-        value.insert(sl.first(), setValues.toDouble());
+
+        if(setValues.isDouble())
+           value.insert(path, setValues.toDouble());
+        else if(setValues.isBool())
+           value.insert(path, setValues.toBool());
+        else
+           value.insert(path, setValues.toString());
+
         values .append(value);
     }
 
-    msg.insert("set", values);
-
-    QJsonDocument jsonDoc(msg);
-    return jsonDoc.toJson();
+    return values;
 }
 
 QStringList WebSocketBroker::getPath(QString startsWith)

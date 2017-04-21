@@ -71,8 +71,9 @@ void SubscribeHandler::processRequest()
                 //Format response on JSON format
                 QString message = getSubscriptionNotificationJson(value);
 
-                //Send message to client
-                m_pClient->sendTextMessage(message);
+                //Send message to client. Make sure that the subscription is still active!
+                if(m_dosubscription)
+                    m_pClient->sendTextMessage(message);
             }
         }
         else

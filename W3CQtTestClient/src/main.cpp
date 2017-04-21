@@ -116,9 +116,9 @@ int main(int argc, char *argv[])
         //tests << TestCase::AUTHORIZE_SUCCESS;
         //tests << TestCase::GET;
         //tests << TestCase::GET_MANY;
-        //tests << TestCase::SET;
+        tests << TestCase::SET;
         //tests << TestCase::SET_MANY;
-        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
         //tests << TestCase::GET_VSS;
 
 //        tests << TestCase::STATUS;

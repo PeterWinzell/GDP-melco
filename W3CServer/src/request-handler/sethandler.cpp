@@ -29,7 +29,9 @@ SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signa
 void SetHandler::processRequest()
 {
     DEBUG("Server","Processing < Set > request.");
-    QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
+    QJsonObject response;
+    response.insert("requestId", m_pVissrequest->getRequestId());
+    response.insert("action", "set");
 
     if(!m_pSignalInterface->setSignalValue(m_pVissrequest->getSignalPath(), m_pVissrequest->getValue()))
     {
@@ -41,14 +43,10 @@ void SetHandler::processRequest()
         response.insert("error", error);
     }
 
-    response.remove("path");
-    response.remove("value");
-
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
     response.insert("timestamp", time);
 
-    QJsonDocument jsonDoc(response);
-    QString message = jsonDoc.toJson();
 
-    m_pClient->sendTextMessage(message);
+    QJsonDocument jsonDoc(response);
+    m_pClient->sendTextMessage(jsonDoc.toJson());
 }
