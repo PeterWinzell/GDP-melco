@@ -42,14 +42,20 @@ void GetHandler::processRequest()
             // ... with a single leave, get the value and insert it directly to the value.
             else
             {
-                 QJsonValue val = obj.value(obj.keys().first());
+                QJsonValue val = obj.value(obj.keys().first());
 
-                 if(val.isDouble())
+                if(val.isDouble())
+                {
                     response.insert("value", val.toDouble());
-                 else if(val.isBool())
+                }
+                else if(val.isBool())
+                {
                     response.insert("value", val.toBool());
-                 else
+                }
+                else
+                {
                     response.insert("value", val.toString());
+                }
             }
         }
     }

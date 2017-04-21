@@ -22,13 +22,16 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     // Check if path is single leaf.
     // Check if path is single branch.
     // Check if path contains asterisk.
-    // Check if path contains asterisk and leaf.  
+    // Check if path contains asterisk and leaf.
     QJsonArray paths = parseGetPath(path);
 
     // Check if signal exists.
-    foreach (QJsonValue const &value, paths) {
+    foreach (QJsonValue const &value, paths)
+    {
         if(getVSSNode(value.toString()).isEmpty())
+        {
             return false;
+        }
     }
 
     // Create message to send
@@ -63,9 +66,12 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     // Check if signal exists.
-    foreach (QJsonValue const &value, paths) {
+    foreach (QJsonValue const &value, paths)
+    {
         if(getVSSNode(value.toString()).isEmpty())
+        {
             return false;
+        }
     }
 
     // Create message to send
@@ -315,11 +321,17 @@ QJsonArray WebSocketBroker::parseSetPath(const QString& path, const QJsonValue &
             QJsonValue tmp = obj.value(obj.keys().first());
 
             if(tmp.isDouble())
-               value.insert(valuePath, tmp.toDouble());
+            {
+                value.insert(valuePath, tmp.toDouble());
+            }
             else if(tmp.isBool())
-               value.insert(valuePath, tmp.toBool());
+            {
+                value.insert(valuePath, tmp.toBool());
+            }
             else
-               value.insert(valuePath, tmp.toString());
+            {
+                value.insert(valuePath, tmp.toString());
+            }
 
             values.append(value);
         }
@@ -329,11 +341,17 @@ QJsonArray WebSocketBroker::parseSetPath(const QString& path, const QJsonValue &
         QJsonObject value;
 
         if(setValues.isDouble())
-           value.insert(path, setValues.toDouble());
+        {
+            value.insert(path, setValues.toDouble());
+        }
         else if(setValues.isBool())
-           value.insert(path, setValues.toBool());
+        {
+            value.insert(path, setValues.toBool());
+        }
         else
-           value.insert(path, setValues.toString());
+        {
+            value.insert(path, setValues.toString());
+        }
 
         values .append(value);
     }
