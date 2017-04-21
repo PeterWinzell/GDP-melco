@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
-        tests << TestCase::AUTHORIZE_SUCCESS;
+        //tests << TestCase::AUTHORIZE_SUCCESS;
         //tests << TestCase::GET;
         //tests << TestCase::GET_MANY;
         //tests << TestCase::SET;

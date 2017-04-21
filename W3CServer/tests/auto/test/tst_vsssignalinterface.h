@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
+#include <VSSSignalinterface/websocketbroker.h>
 #include <QDir>
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -9,7 +9,7 @@ using namespace testing;
 
 TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 {
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
+    WebSocketBroker* signalInterface = new WebSocketBroker("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("Signal.Drivetrain.InternalCombustionEngine.RPM");
 
     QJsonValue val1 = obj.value("Signal");
@@ -40,7 +40,7 @@ TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 
 TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 {
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
+    WebSocketBroker* signalInterface = new WebSocketBroker("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("");
 
     QJsonValue val1 = obj.value("Attribute");
@@ -56,7 +56,7 @@ TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 
 TEST(VSSSignalinterfaceImpl, getVssNode_branch)
 {
-    VSSSignalInterface* signalInterface = new VSSSignalInterfaceImpl("vss_rel_1.json");
+    WebSocketBroker* signalInterface = new WebSocketBroker("vss_rel_1.json");
     QJsonObject obj = signalInterface->getVSSNode("Signal.Drivetrain");
 
     // check that we get any signal from Signal.Drivetrain
