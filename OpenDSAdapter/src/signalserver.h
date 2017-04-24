@@ -33,6 +33,7 @@ private:
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
     bool m_secure;
+    QSharedPointer<OpenDSHandler>m_openDSHandler;
 
 };
 

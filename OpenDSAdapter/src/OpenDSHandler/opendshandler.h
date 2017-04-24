@@ -53,6 +53,7 @@ private:
     QString m_server_ip;
     int m_server_port;
     int m_delay_sec;
+
 };
 
 #endif // OPENDSHANDLER_H

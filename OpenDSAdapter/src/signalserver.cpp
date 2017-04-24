@@ -21,6 +21,10 @@ SignalServer::SignalServer(quint16 port, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients()
 {
+    // Set up connection to Open DS
+    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
+    QObject::connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, m_openDSHandler.data(), &OpenDSHandler::updateValue);
+
     QThreadPool::globalInstance()->setMaxThreadCount(100);
 
     m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SignalServer Test"),QWebSocketServer::NonSecureMode,this);
@@ -70,42 +74,70 @@ void SignalServer::onNewConnection()
 
 void SignalServer::processTextMessage(const QString& message)
 {
-    qDebug() << "Server Message received" << message;
+    qDebug() << "Server Message received";
 
-    //Parse the received message. Example Get message:
-    //
-    //    "get": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
-    //             {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
-    //             {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
-    //             {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
-    QJsonParseError parseError;
-    QJsonDocument jsonRequest = QJsonDocument::fromJson(message.toUtf8(), &parseError);
-    QJsonObject jsonMsg = jsonRequest.object();
+    QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
 
-    //First check whether Get or Set
-    QJsonArray valueList;
-
-    if (jsonMsg["get"].isArray())
+    if (m_clients.contains(zeClient))
     {
-        valueList = jsonMsg["get"].toArray();
-    }
-    else if (jsonMsg["set"].isArray())
-    {
-        valueList = jsonMsg["set"].toArray();
-    }
-    else
-    {
-        qDebug() << "Json parse error: no set or get found";
-    }
+        //Parse the received message. Example Get message:
+        //
+        //    "get": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+        //             {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
+        //             {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+        //             {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
+        QJsonParseError parseError;
+        QJsonDocument jsonRequest = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+        QJsonObject jsonMsg = jsonRequest.object();
+        QJsonArray valueList;
 
-    if (valueList.isEmpty())
-    {
-        qDebug() << "Json parse error: list is empty";
-    }
-    else
-    {
+         //First check whether Get or Set
+        if (jsonMsg["get"].isArray())
+        {
+            QJsonObject responseMsg;
+            QJsonArray responseValueList;
 
+            valueList = jsonMsg["get"].toArray();
 
+            // For each signal in list, get value from OpenDS
+            foreach (QJsonValue entry, valueList)
+            {
+                QString signal = entry.toObject().keys().first();
+                QString value = m_openDSHandler->getSignalValue(signal);
+
+                qDebug() << "signal :" << signal << "value :" << value;
+
+                // Store value in response Json
+                QJsonObject responseValue;
+                responseValue.insert(signal, value);
+                responseValueList.append(responseValue);
+
+                qDebug() << "responseValueList:" << responseValueList;
+            }
+            responseMsg.insert("get", responseValueList);
+
+            QJsonDocument jsonDoc(responseMsg);
+            QString responseMessage = jsonDoc.toJson();
+            zeClient->sendTextMessage(responseMessage);
+        }
+        else if (jsonMsg["set"].isArray())
+        {
+            valueList = jsonMsg["set"].toArray();
+        }
+        else
+        {
+            qDebug() << "Json parse error: no set or get found";
+        }
+
+        if (valueList.isEmpty())
+        {
+            qDebug() << "Json parse error: list is empty";
+        }
+        else
+        {
+            // For each
+
+        }
     }
 }
 

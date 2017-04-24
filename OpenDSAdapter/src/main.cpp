@@ -1,4 +1,3 @@
-#include "OpenDSHandler/opendshandler.h"
 #include "signalserver.h"
 
 #include <QCoreApplication>
@@ -7,8 +6,6 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-
-
 
 int main(int argc, char *argv[])
 {
@@ -45,10 +42,6 @@ int main(int argc, char *argv[])
             }
         }
     }
-
-    // Set up connection to Open DS
-    QSharedPointer<OpenDSHandler>m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    QObject::connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, m_openDSHandler.data(), &OpenDSHandler::updateValue);
 
     // reads SignalServer settings values
     settings->beginGroup("SignalServer");
