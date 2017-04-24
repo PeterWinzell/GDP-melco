@@ -11,9 +11,7 @@
 #include <QPointer>
 
 #include "signalserver.h"
-#include "VSSSignalinterface/vsssignalinterfaceimpl.h"
-#include "VSSSignalinterface/vsssignalinterface.h"
-//#include "opendshandler.h"
+
 
 QT_USE_NAMESPACE
 
@@ -23,6 +21,10 @@ SignalServer::SignalServer(quint16 port, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients()
 {
+    // Set up connection to Open DS
+    m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
+    QObject::connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, m_openDSHandler.data(), &OpenDSHandler::updateValue);
+
     QThreadPool::globalInstance()->setMaxThreadCount(100);
 
     m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SignalServer Test"),QWebSocketServer::NonSecureMode,this);
@@ -50,7 +52,6 @@ SignalServer::~SignalServer()
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
-    m_vsssInterface.clear();
 }
 
 void SignalServer::onNewConnection()
@@ -59,7 +60,7 @@ void SignalServer::onNewConnection()
 
     pSocket ->ignoreSslErrors();
 
-    qDebug() << "Server","Attemping to connect";
+    qDebug() << "Server: Attemping to connect";
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &SignalServer::processTextMessage);
@@ -73,68 +74,71 @@ void SignalServer::onNewConnection()
 
 void SignalServer::processTextMessage(const QString& message)
 {
-    qDebug() << "Server Message received" << message;
-
-    //Parse the received message. Example Get message:
-    //
-    //    "get": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
-    //             {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
-    //             {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
-    //             {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
-    QJsonParseError parseError;
-    QJsonDocument jsonRequest = QJsonDocument::fromJson(message.toUtf8(), &parseError);
-    QJsonObject jsonMsg = jsonRequest.object();
-
-    //First check whether Get or Set
-    QJsonArray valueList;
-
-    if (jsonMsg["get"].isArray())
-    {
-        valueList = jsonMsg["get"].toArray();
-    }
-    else if (jsonMsg["set"].isArray())
-    {
-        valueList = jsonMsg["set"].toArray();
-    }
-    else
-    {
-        qDebug() << "Json parse error: no set or get found";
-    }
-
-    if (valueList.isEmpty())
-    {
-        qDebug() << "Json parse error: list is empty";
-    }
-    else
-    {
-
-
-    }
-
-
-
-/*
-    QString val = valueAction.toString();
-
-    if (val == "get")
-    {
-        request->setAction(GET);
-
-
+    qDebug() << "Server Message received";
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
+
     if (m_clients.contains(zeClient))
     {
-        // we need a mutex per client .
-        QMutex* mutex = m_clients.find(zeClient).value();
-        QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
-        startRequestProcess(socketWrapper, message);
+        //Parse the received message. Example Get message:
+        //
+        //    "get": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+        //             {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
+        //             {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+        //             {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
+        QJsonParseError parseError;
+        QJsonDocument jsonRequest = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+        QJsonObject jsonMsg = jsonRequest.object();
+        QJsonArray valueList;
+
+         //First check whether Get or Set
+        if (jsonMsg["get"].isArray())
+        {
+            QJsonObject responseMsg;
+            QJsonArray responseValueList;
+
+            valueList = jsonMsg["get"].toArray();
+
+            // For each signal in list, get value from OpenDS
+            foreach (QJsonValue entry, valueList)
+            {
+                QString signal = entry.toObject().keys().first();
+                QString value = m_openDSHandler->getSignalValue(signal);
+
+                qDebug() << "signal :" << signal << "value :" << value;
+
+                // Store value in response Json
+                QJsonObject responseValue;
+                responseValue.insert(signal, value);
+                responseValueList.append(responseValue);
+
+                qDebug() << "responseValueList:" << responseValueList;
+            }
+            responseMsg.insert("get", responseValueList);
+
+            QJsonDocument jsonDoc(responseMsg);
+            QString responseMessage = jsonDoc.toJson();
+            zeClient->sendTextMessage(responseMessage);
+        }
+        else if (jsonMsg["set"].isArray())
+        {
+            valueList = jsonMsg["set"].toArray();
+        }
+        else
+        {
+            qDebug() << "Json parse error: no set or get found";
+        }
+
+        if (valueList.isEmpty())
+        {
+            qDebug() << "Json parse error: list is empty";
+        }
+        else
+        {
+            // For each
+
+        }
     }
-    else
-    {
-        WARNING("Server","Fatal connection error, Websocket client not found.");
-    }
-    */
 }
 
 void SignalServer::socketDisconnected()
@@ -154,9 +158,6 @@ void SignalServer::socketDisconnected()
 
 void SignalServer::onSslErrors(const QList<QSslError> &l)
 {
-    qDebug() << "Server SSL Error occurred.";
+    qDebug() << "Server SSL Error occurred: " << l;
 }
 
-void SignalServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
-{
-}

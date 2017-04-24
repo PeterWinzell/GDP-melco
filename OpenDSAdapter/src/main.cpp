@@ -1,5 +1,3 @@
-#include <VSSSignalinterface/vsssignalinterfaceimpl.h>
-#include "OpenDSHandler/opendshandler.h"
 #include "signalserver.h"
 
 #include <QCoreApplication>
@@ -9,10 +7,9 @@
 #include <QFile>
 #include <QDir>
 
-
-
 int main(int argc, char *argv[])
 {
+
     QCoreApplication a(argc, argv);
 
     //initiating QSettings
@@ -45,12 +42,6 @@ int main(int argc, char *argv[])
             }
         }
     }
-
-    // Set up connection to Open DS
-    const QString vssFile = "/etc/vss_rel_1.json";
-    QSharedPointer<VSSSignalInterface> m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
-    QSharedPointer<OpenDSHandler>m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    QObject::connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
 
     // reads SignalServer settings values
     settings->beginGroup("SignalServer");
