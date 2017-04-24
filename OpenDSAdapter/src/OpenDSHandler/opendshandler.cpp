@@ -136,11 +136,12 @@ void OpenDSHandler::xmlParser(QString xmlData)
     }
 
     //DN DEBUG-----------------------------
-    //setSignalValue(OpenDSHandler::HandBrake, "true");
-    // setSignalValue(OpenDSHandler::CruiseControl, "true");
-    // setSignalValue(OpenDSHandler::CruiseControlUp, "15");
-    // setSignalValue(OpenDSHandler::CruiseControlUp, "35");
-    // setSignalValue(OpenDSHandler::CruiseControlDown, "25");
+    setSignalValue("Signal.Chassis.ParkingBrake.IsEngaged", "true");
+    setSignalValue("Signal.ADAS.CruiseControl.IsActive", "true");
+    //setSignalValue("Signal.ADAS.CruiseControl.SpeedUp", "15");
+    //setSignalValue("Signal.ADAS.CruiseControl.SpeedUp", "35");
+    //setSignalValue("Signal.ADAS.CruiseControl.SpeedDown", "25");
+    updateSetSignalValues();
     //--------------------------------------
 }
 
@@ -233,28 +234,17 @@ QByteArray OpenDSHandler::getSubscribeMessage()
 
 QByteArray OpenDSHandler::getSetMessage()
 {
-    QString entry = "";
-
-    QStringList keyList = QStringList() << "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlActivated"
-                                        << "/root/thisVehicle/interior/cockpit/handBrake/Properties/handBrakeOn"
-                                        << "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlIncrease";
-                                        //<< "/root/thisVehicle/interior/cockpit/cruiseControl/Properties/cruiseControlDecrease";
-
-    QStringList valueList = QStringList() << "true"
-                                          << "false"
-                                          << "1";
-                                          //<< "0";
-
-
     // Constructing XML request to OpenDS
     QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
     message = message % "<Message>""\r";
 
-    for (int i = 0; i < keyList.size(); ++i)
+    foreach (QString value, m_setValues)
     {
-        QString key = "SetValue";
+        QString providerPath = m_setValues.key(value);
 
-        QString event = "<Event Name=\"" % key % "\" Value=\"" % valueList[i] % "\">" % keyList[i] % "</Event>\r";
+        qDebug()  << "getSetMessage:  providerPath: " << providerPath << "value: " << value;
+
+        QString event = "<Event Name=\"SetValue\" Value=\"" % value % "\">" % providerPath % "</Event>\r";
         message = message % event;
     }
 
@@ -298,11 +288,13 @@ qint8 OpenDSHandler::setSignalValue(const QString& path, QString value)
 
     qint8 result = 0;
 
-    QString providerPath = m_lookupGetProvider[path];
+    QString providerPath = m_lookupSetProvider[path];
 
-    qDebug()  << "setSignalValue: providerPath = " << providerPath;
+    //qDebug()  << "setSignalValue: providerPath = " << providerPath;
 
     m_setValues.insert(providerPath, value);
+
+    //qDebug()  << "setSignalValue: m_setValues = " << m_setValues;
 
     return result;
 }
@@ -314,6 +306,7 @@ void OpenDSHandler::updateSetSignalValues()
 
     // Build OpenDS SET message with all set values
     QByteArray message = getSetMessage();
+
     qDebug() << "updateSetSignalValues : " << message;
 
     // Clear the set values
