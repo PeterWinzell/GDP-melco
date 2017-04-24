@@ -44,6 +44,7 @@ private:
 
     QJsonArray parseGetPath(const QString &path);
     QJsonArray parseSetPath(const QString &path, const QJsonValue &values);
+    bool checkSignals(const QJsonArray &paths, bool getOrSet);
 
     QStringList splitPath(QString path);
 

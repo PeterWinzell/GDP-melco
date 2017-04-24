@@ -26,13 +26,7 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     QJsonArray paths = parseGetPath(path);
 
     // Check if signal exists.
-    foreach (QJsonValue const &value, paths)
-    {
-        if(getVSSNode(value.toString()).isEmpty())
-        {
-            return false;
-        }
-    }
+    if(checkSignals(paths, true)) { return false; }
 
     // Create message to send
     QJsonObject message;
@@ -66,13 +60,7 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     // Check if signal exists.
-    foreach (QJsonValue const &value, paths)
-    {
-        if(getVSSNode(value.toString()).isEmpty())
-        {
-            return false;
-        }
-    }
+    if(checkSignals(paths, false)) { return false; }
 
     // Create message to send
     QJsonObject message;
@@ -357,6 +345,25 @@ QJsonArray WebSocketBroker::parseSetPath(const QString& path, const QJsonValue &
     }
 
     return values;
+}
+
+bool WebSocketBroker::checkSignals(const QJsonArray &paths, bool getOrSet)
+{
+    foreach (QJsonValue const &value, paths)
+    {
+        QJsonObject signal = getVSSNode(value.toString());
+        if(signal.isEmpty()) { return false; }
+
+        if(getOrSet)
+        {
+            // TODO Check if the signal is ok to get
+        }
+        else
+        {
+            // TODO Check if the signal is ok to set
+        }
+    }
+    return true;
 }
 
 QStringList WebSocketBroker::getPath(QString startsWith)
