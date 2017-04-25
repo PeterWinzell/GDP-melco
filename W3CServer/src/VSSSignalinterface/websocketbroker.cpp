@@ -14,7 +14,7 @@ WebSocketBroker::WebSocketBroker(const QString& vssFile)
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
-    m_webSocket.open(QUrl("ws://localhost:42"));
+    m_webSocket.open(QUrl("ws://localhost:8008"));
 }
 
 bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
@@ -26,7 +26,7 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     QJsonArray paths = parseGetPath(path);
 
     // Check if signal exists.
-    if(checkSignals(paths, true)) { return false; }
+    if(!checkSignals(paths, true)) { return false; }
 
     // Create message to send
     QJsonObject message;
@@ -60,7 +60,7 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     // Check if signal exists.
-    if(checkSignals(paths, false)) { return false; }
+    if(!checkSignals(paths, false)) { return false; }
 
     // Create message to send
     QJsonObject message;
@@ -349,18 +349,22 @@ QJsonArray WebSocketBroker::parseSetPath(const QString& path, const QJsonValue &
 
 bool WebSocketBroker::checkSignals(const QJsonArray &paths, bool getOrSet)
 {
-    foreach (QJsonValue const &value, paths)
+    foreach (QJsonValue const &obj, paths)
     {
-        QJsonObject signal = getVSSNode(value.toString());
-        if(signal.isEmpty()) { return false; }
+        foreach (QJsonValue key, obj.toObject().keys())
+        {
+            QJsonObject signal = getVSSNode(key.toString());
+            if(signal.isEmpty()) { return false; }
 
-        if(getOrSet)
-        {
-            // TODO Check if the signal is ok to get
-        }
-        else
-        {
-            // TODO Check if the signal is ok to set
+            if(getOrSet)
+            {
+                // TODO Check if the signal is ok to get
+            }
+            else
+            {
+                // TODO Check if the signal is ok to set
+                // Check if set is correct type
+            }
         }
     }
     return true;
