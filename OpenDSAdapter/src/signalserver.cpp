@@ -89,12 +89,16 @@ void SignalServer::processTextMessage(const QString& message)
         QJsonParseError parseError;
         QJsonDocument jsonRequest = QJsonDocument::fromJson(message.toUtf8(), &parseError);
         QJsonObject jsonMsg = jsonRequest.object();
+
         QJsonArray valueList;
 
-         //First check whether Get or Set
+        QJsonObject responseMsg;
+
+        bool result = false;
+
+        //First check whether Get or Set
         if (jsonMsg["get"].isArray())
         {
-            QJsonObject responseMsg;
             QJsonArray responseValueList;
 
             valueList = jsonMsg["get"].toArray();
@@ -105,7 +109,7 @@ void SignalServer::processTextMessage(const QString& message)
                 QString signal = entry.toObject().keys().first();
                 QString value = m_openDSHandler->getSignalValue(signal);
 
-                qDebug() << "signal :" << signal << "value :" << value;
+                qDebug() << "GET signal :" << signal << "value :" << value;
 
                 // Store value in response Json
                 QJsonObject responseValue;
@@ -115,29 +119,37 @@ void SignalServer::processTextMessage(const QString& message)
                 qDebug() << "responseValueList:" << responseValueList;
             }
             responseMsg.insert("get", responseValueList);
-
-            QJsonDocument jsonDoc(responseMsg);
-            QString responseMessage = jsonDoc.toJson();
-            zeClient->sendTextMessage(responseMessage);
+            result = true;
         }
         else if (jsonMsg["set"].isArray())
         {
             valueList = jsonMsg["set"].toArray();
+
+            // For each signal in list, set value in OpenDS
+            foreach (QJsonValue entry, valueList)
+            {
+                QString signal = entry.toObject().keys().first();
+                QString value = entry.toObject().value(signal).toString();
+
+                m_openDSHandler->setSignalValue(signal, value);
+
+                qDebug() << "SET signal :" << signal << "value :" << value;
+
+                result = true;
+            }
+            m_openDSHandler->updateSetSignalValues();
+
+            responseMsg.insert("set", result);
         }
         else
         {
             qDebug() << "Json parse error: no set or get found";
         }
 
-        if (valueList.isEmpty())
-        {
-            qDebug() << "Json parse error: list is empty";
-        }
-        else
-        {
-            // For each
+        QJsonDocument jsonDoc(responseMsg);
+        QString responseMessage = jsonDoc.toJson();
+        zeClient->sendTextMessage(responseMessage);
 
-        }
     }
 }
 

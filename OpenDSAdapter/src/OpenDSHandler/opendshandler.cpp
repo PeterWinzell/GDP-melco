@@ -37,11 +37,6 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
         QString get = "get";
         QString set = "set";
 
-        //qDebug() << "provid = " << settings->value(provid);
-        //qDebug() << "vssid = " << settings->value(vssid);
-        //qDebug() << "get = " << settings->value(get);
-        //qDebug() << "set = " << settings->value(set);
-
         // Fill the "get" lookup table
         if (settings->value(get).toBool())
         {
@@ -138,26 +133,6 @@ void OpenDSHandler::xmlParser(QString xmlData)
             emit valueChanged(providerPath, value);
         }
     }
-
-    //DN DEBUG-----------------------------
-#if 0
-    static int ctr = 0;
-    if (ctr > 5)
-    {
-        setSignalValue("Signal.Chassis.ParkingBrake.IsEngaged", "true");
-        setSignalValue("Signal.ADAS.CruiseControl.IsActive", "true");
-        //setSignalValue("Signal.ADAS.CruiseControl.SpeedUp", "15");
-        setSignalValue("Signal.ADAS.CruiseControl.SpeedUp", "35");
-        //setSignalValue("Signal.ADAS.CruiseControl.SpeedDown", "25");
-        updateSetSignalValues();
-        ctr = 0;
-    }
-    else
-    {
-        ctr++;
-    }
-#endif
-    //--------------------------------------
 }
 
 void OpenDSHandler::connected()
