@@ -61,9 +61,12 @@ void SubscribeHandler::processRequest()
     {
         //Get latest value of subscribed signal
         QJsonArray values;
-        if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values))
+        QString signal = m_pVissrequest->getSignalPath();
+
+        if(m_pSignalInterface->getSignalValue(signal, values))
         {
-            QString value = values.takeAt(0).toString();
+            QString value = values.takeAt(0).toObject().value(signal).toString();
+
             if (isFilterPass(value))
             {
                 m_lastValue = value.toInt();
@@ -111,7 +114,7 @@ WebSocketWrapper* SubscribeHandler::getSocketClient()
 QString SubscribeHandler::getSubscriptionNotificationJson(QString signalValue)
 {
     QJsonObject jsonObject;
-    jsonObject.insert("action", "subscribing");
+    jsonObject.insert("action", "subscription");
     jsonObject.insert("subscriptionId", m_subId);
     jsonObject.insert("value", signalValue);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
