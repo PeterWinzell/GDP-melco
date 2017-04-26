@@ -10,7 +10,7 @@
 class WebSocketBroker : public VSSSignalInterface
 {
 public:
-    WebSocketBroker(const QString &vssDir, const QString &vssName);
+    WebSocketBroker(const QString &vssDir, const QString &vssName, const QString &brokerUrl = "ws://localhost:8008");
 
     struct JsonNode
     {

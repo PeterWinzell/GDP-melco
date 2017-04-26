@@ -88,9 +88,10 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
     settings->beginGroup("WebSocketBroker");
     QString vssName = settings->value("vss_name").toString();
     QString vssDir = settings->value("vss_dir").toString();
+    QString signal_broker_url = settings->value("signal_broker_url").toString();
     settings->endGroup();
 
-    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssDir, vssName));
+    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssDir, vssName, signal_broker_url));
 }
 
 W3CServer::~W3CServer()

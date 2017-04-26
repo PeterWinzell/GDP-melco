@@ -7,14 +7,14 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 
-WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName)
+WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, const QString &brokerUrl)
 {
     loadJson(vssDir + "/" + vssName + ".json");
     loadTempSignalList(vssDir + "/" + vssName + ".vsi");
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
-    m_webSocket.open(QUrl("ws://localhost:8008"));
+    m_webSocket.open(QUrl(brokerUrl));
 }
 
 bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
