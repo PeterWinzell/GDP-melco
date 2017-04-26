@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QPointer>
+#include <QSettings>
 
 #include "w3cserver.h"
 #include "jsonrequestparser.h"
@@ -83,8 +84,13 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
                 this, &W3CServer::onSslErrors);
     }
 
-    const QString vssFile = "/etc/vss_rel_1.json";
-    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssFile));
+    QPointer<QSettings> settings = new QSettings();
+    settings->beginGroup("WebSocketBroker");
+    QString vssName = settings->value("vss_name").toString();
+    QString vssDir = settings->value("vss_dir").toString();
+    settings->endGroup();
+
+    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssDir, vssName));
 }
 
 W3CServer::~W3CServer()

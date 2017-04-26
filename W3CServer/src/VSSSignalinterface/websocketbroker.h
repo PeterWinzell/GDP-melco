@@ -10,7 +10,7 @@
 class WebSocketBroker : public VSSSignalInterface
 {
 public:
-    WebSocketBroker(const QString &vssFile);
+    WebSocketBroker(const QString &vssDir, const QString &vssName);
 
     struct JsonNode
     {
@@ -40,7 +40,7 @@ private:
 
     void sendMessage(const QString& message);
 
-    void loadTempSignalList();
+    void loadTempSignalList(const QString &vssFile);
 
     QJsonArray parseGetPath(const QString &path);
     QJsonArray parseSetPath(const QString &path, const QJsonValue &values);

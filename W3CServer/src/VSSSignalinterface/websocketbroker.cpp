@@ -7,10 +7,10 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 
-WebSocketBroker::WebSocketBroker(const QString& vssFile)
+WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName)
 {
-    loadJson(vssFile);
-    loadTempSignalList();
+    loadJson(vssDir + "/" + vssName + ".json");
+    loadTempSignalList(vssDir + "/" + vssName + ".vsi");
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
@@ -251,11 +251,11 @@ void WebSocketBroker::loadJson(const QString &fileName)
     m_vssTree = doc.object();
 }
 
-void WebSocketBroker::loadTempSignalList()
+void WebSocketBroker::loadTempSignalList(const QString &vssFile)
 {
     QRegularExpression regex(QString("^(\\S+) \\d+"));
 
-    QFile file(QCoreApplication::applicationDirPath() + "/vss_rel_1.vsi");
+    QFile file(vssFile);
     file.open(QFile::ReadOnly);
     if(!file.exists())
     {
