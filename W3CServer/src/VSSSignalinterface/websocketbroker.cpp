@@ -7,14 +7,14 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 
-WebSocketBroker::WebSocketBroker(const QString& vssFile)
+WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, const QString &brokerUrl, QObject *parent) : QObject(parent)
 {
-    loadJson(vssFile);
-    loadTempSignalList();
+    loadJson(vssDir + "/" + vssName + ".json");
+    loadTempSignalList(vssDir + "/" + vssName + ".vsi");
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
-    m_webSocket.open(QUrl("ws://localhost:8008"));
+    m_webSocket.open(QUrl(brokerUrl));
 }
 
 bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
@@ -37,11 +37,10 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     QMutexLocker locker(&m_mutex);
     sendMessage(jsonDoc.toJson());
 
-    // TODO Need to implement some kind of timer here.
-    while(!m_messageReceivedFromBroker)
-    {
-        //DEBUG("TEST","Waiting for response...");
-    }
+    QEventLoop messageLoop;
+    connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);
+    QTimer::singleShot(m_timeout, &messageLoop, &QEventLoop::quit);
+    messageLoop.exec();
 
     jsonDoc = QJsonDocument(m_receivedMessage);
 
@@ -71,11 +70,10 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QMutexLocker locker(&m_mutex);
     sendMessage(jsonDoc.toJson());
 
-    // TODO Need to implement some kind of timer here.
-    while(!m_messageReceivedFromBroker)
-    {
-        //DEBUG("TEST","Waiting for response...");
-    }
+    QEventLoop messageLoop;
+    connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);
+    QTimer::singleShot(m_timeout, &messageLoop, &QEventLoop::quit);
+    messageLoop.exec();
 
     jsonDoc = QJsonDocument(m_receivedMessage);
 
@@ -126,7 +124,8 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
 
 void WebSocketBroker::sendMessage(const QString& message)
 {
-    m_messageReceivedFromBroker = false;
+    // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
+    m_receivedMessage = QJsonObject();
     m_webSocket.sendTextMessage(message);
     m_webSocket.flush();
 }
@@ -142,12 +141,11 @@ void WebSocketBroker::onTextMessageReceived(QString message)
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
     if(parseError.error != QJsonParseError::NoError)
     {
-        m_receivedMessage = doc.object(); // Change to error.
-        m_messageReceivedFromBroker = true;
-        return;
+        m_receivedMessage = QJsonObject(); // Change to error.
     }
-    m_receivedMessage = doc.object();
-    m_messageReceivedFromBroker = true;
+    else { m_receivedMessage = doc.object(); }
+
+    emit messageReceived();
 }
 
 
@@ -251,11 +249,11 @@ void WebSocketBroker::loadJson(const QString &fileName)
     m_vssTree = doc.object();
 }
 
-void WebSocketBroker::loadTempSignalList()
+void WebSocketBroker::loadTempSignalList(const QString &vssFile)
 {
     QRegularExpression regex(QString("^(\\S+) \\d+"));
 
-    QFile file(QCoreApplication::applicationDirPath() + "/vss_rel_1.vsi");
+    QFile file(vssFile);
     file.open(QFile::ReadOnly);
     if(!file.exists())
     {

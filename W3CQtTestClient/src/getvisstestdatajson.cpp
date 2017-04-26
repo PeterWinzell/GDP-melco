@@ -2,7 +2,7 @@
 #include "qjsonwebtoken.h"
 #include <QDateTime>
 #include <QJsonArray>
-#include <QDebug>
+
 int GetVissTestDataJson::m_requestId = 0;
 QString GetVissTestDataJson::m_setValue = "0";
 
@@ -50,7 +50,7 @@ QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId)
             testJSON = getSetManyJson();
             break;
     }
-    qDebug()<< testJSON;
+
     return testJSON;
 }
 

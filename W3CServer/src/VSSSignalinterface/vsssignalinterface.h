@@ -2,7 +2,8 @@
 #define VSSSIGNALINTERFACE_H
 
 #include <QJsonObject>
-class VSSSignalInterface : public QObject
+
+class VSSSignalInterface
 {
 public:
     virtual bool getSignalValue(const QString& path, QJsonArray& values) = 0;

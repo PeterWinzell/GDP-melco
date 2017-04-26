@@ -12,7 +12,6 @@
 Logger *Logger::instance = 0;
 Logger::Logger(QObject *parent): QObject(parent)
 {
-    qDebug() << "Constructor"; // Testing
 }
 
 Logger *Logger::getInstance()

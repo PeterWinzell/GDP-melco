@@ -9,7 +9,7 @@ using namespace testing;
 
 TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 {
-    WebSocketBroker* signalInterface = new WebSocketBroker("vss_rel_1.json");
+    WebSocketBroker* signalInterface = new WebSocketBroker(".", "vss_rel_1");
     QJsonObject obj = signalInterface->getVSSNode("Signal.Drivetrain.InternalCombustionEngine.RPM");
 
     QJsonValue val1 = obj.value("Signal");
@@ -40,7 +40,7 @@ TEST(VSSSignalinterfaceImpl, getVssNode_one_signal)
 
 TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 {
-    WebSocketBroker* signalInterface = new WebSocketBroker("vss_rel_1.json");
+    WebSocketBroker* signalInterface = new WebSocketBroker(".", "vss_rel_1");
     QJsonObject obj = signalInterface->getVSSNode("");
 
     QJsonValue val1 = obj.value("Attribute");
@@ -56,7 +56,7 @@ TEST(VSSSignalinterfaceImpl, getVssNode_full_tree)
 
 TEST(VSSSignalinterfaceImpl, getVssNode_branch)
 {
-    WebSocketBroker* signalInterface = new WebSocketBroker("vss_rel_1.json");
+    WebSocketBroker* signalInterface = new WebSocketBroker(".", "vss_rel_1");
     QJsonObject obj = signalInterface->getVSSNode("Signal.Drivetrain");
 
     // check that we get any signal from Signal.Drivetrain
