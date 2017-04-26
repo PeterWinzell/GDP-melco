@@ -65,6 +65,7 @@ private:
     QWebSocket *m_webSocket = 0;
 
     int m_clientId;
+    int m_requestId = 0;
     QUrl m_url;
 
     QQueue<TestCase> m_tests;

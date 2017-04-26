@@ -467,8 +467,9 @@ void W3cTestClient::onTextMessageReceived(QString message)
 void W3cTestClient::RunSubscribeUnsubscribeTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Subscribe + Unsubscribe Test.");
+    m_requestId++;
 
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
     QTimer::singleShot(10000,this,SLOT(unsubscribe()));
 }
@@ -476,10 +477,12 @@ void W3cTestClient::RunSubscribeUnsubscribeTest()
 void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Subscribe + UnsubscribeAll Test.");
-
-    QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
+    m_requestId++;
+    QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
+    m_requestId++;
+    QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
+    m_requestId++;
+    QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
     /*QString subMess4 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
     QString subMess5 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
     QString subMess6 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
@@ -510,24 +513,24 @@ void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 void W3cTestClient::RunGetVssTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running GetVSS Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 }
 
 void W3cTestClient::RunAuthorizeTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Authorize Test.");
-
-    QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE);
+    m_requestId++;
+    QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE, QString::number(m_requestId));
     m_webSocket->sendTextMessage(dataJson);
 }
 
 void W3cTestClient::RunSetGetTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running SetGet Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 
     QTimer::singleShot(4000,this,SLOT(RunGetTest()));
@@ -536,40 +539,40 @@ void W3cTestClient::RunSetGetTest()
 void W3cTestClient::RunSetTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Set Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 }
 
 void W3cTestClient::RunGetTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Get Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 }
 
 void W3cTestClient::RunStatusTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Status Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::STATUS);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::STATUS, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 }
 
 void W3cTestClient::RunGetManyTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Get Many Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET_MANY);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET_MANY, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 }
 
 void W3cTestClient::RunSetManyTest()
 {
     INFO(QString("Client# %1").arg(m_clientId),"Running Set Many Test.");
-
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET_MANY);
+    m_requestId++;
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET_MANY, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
 }
 
@@ -593,9 +596,9 @@ void W3cTestClient::passTestRun(bool success)
 void W3cTestClient::unsubscribe()
 {
     TRACE(QString("Client# %1").arg(m_clientId),"Unsubscribing " + m_unsubscribeCachedSubscriptionId);
-
+    m_requestId++;
     m_pendingTest = true;
-    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE,m_unsubscribeCachedSubscriptionId);
+    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE, QString::number(m_requestId), m_unsubscribeCachedSubscriptionId);
     m_webSocket->sendTextMessage(unsubMess);
 
     // wait a while for subscriptions to end
@@ -605,9 +608,9 @@ void W3cTestClient::unsubscribe()
 void W3cTestClient::unsubscribeAll()
 {
     TRACE(QString("Client# %1").arg(m_clientId),"Unsubscribing All");
-
+    m_requestId++;
     m_pendingTest = true;
-    QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL);
+    QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL, QString::number(m_requestId));
     m_webSocket->sendTextMessage(usubscribeAllMess);
 
     // wait a while for subscriptions to end

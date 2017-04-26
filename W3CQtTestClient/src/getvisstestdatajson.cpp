@@ -3,7 +3,7 @@
 #include <QDateTime>
 #include <QJsonArray>
 
-int GetVissTestDataJson::m_requestId = 0;
+//int GetVissTestDataJson::m_requestId = 0;
 QString GetVissTestDataJson::m_setValue = "0";
 
 GetVissTestDataJson::GetVissTestDataJson()
@@ -12,49 +12,48 @@ GetVissTestDataJson::GetVissTestDataJson()
 }
 
 
-QString GetVissTestDataJson::getTestDataString(requesttype type, QString subId)
+QString GetVissTestDataJson::getTestDataString(requesttype type, QString& requestId, QString subId)
 {
 
     QString testJSON;
-    m_requestId++;
     switch(type)
     {
         case requesttype::GET:
-            testJSON = getGetJson();
+            testJSON = getGetJson(requestId);
             break;
         case requesttype::SET:
-            testJSON = getSetJson();
+            testJSON = getSetJson(requestId);
             break;
         case requesttype::SUBSCRIBE:
-            testJSON = getSubscriptionJson();
+            testJSON = getSubscriptionJson(requestId);
             break;
         case requesttype::UNSUBSCRIBE:
-            testJSON = getUnsubscribe(subId);
+            testJSON = getUnsubscribe(requestId, subId);
             break;
         case requesttype::UNSUBSCRIBEALL:
-            testJSON = getUnsubscribeAll();
+            testJSON = getUnsubscribeAll(requestId);
             break;
         case requesttype::GETVSS:
-            testJSON = getGetVssJson();
+            testJSON = getGetVssJson(requestId);
             break;
         case requesttype::AUTHORIZE:
-            testJSON = getAuthJson();
+            testJSON = getAuthJson(requestId);
             break;
         case requesttype::STATUS:
-            testJSON = getStatusJson();
+            testJSON = getStatusJson(requestId);
             break;
         case requesttype::GET_MANY:
-            testJSON = getGetManyJson();
+            testJSON = getGetManyJson(requestId);
             break;
         case requesttype::SET_MANY:
-            testJSON = getSetManyJson();
+            testJSON = getSetManyJson(requestId);
             break;
     }
 
     return testJSON;
 }
 
-QString GetVissTestDataJson::getSubscriptionJson()
+QString GetVissTestDataJson::getSubscriptionJson(QString& requestId)
 {
     QJsonObject jsonObject;
     QJsonObject jsonFilterObject;
@@ -73,41 +72,41 @@ QString GetVissTestDataJson::getSubscriptionJson()
     jsonFilterObject.insert("interval",500);
     jsonObject.insert("filters", jsonFilterObject);
 
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId", requestId);
     jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getGetJson()
+QString GetVissTestDataJson::getGetJson(QString& requestId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getGetManyJson()
+QString GetVissTestDataJson::getGetManyJson(QString& requestId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
     jsonObject.insert("path","Signal.Cabin.Door.*.IsLocked");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getGetVssJson()
+QString GetVissTestDataJson::getGetVssJson(QString& requestId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","getVSS");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
@@ -118,20 +117,20 @@ QString GetVissTestDataJson::getSetValue()
     return m_setValue;
 }
 
-QString GetVissTestDataJson::getSetJson()
+QString GetVissTestDataJson::getSetJson(QString& requestId)
 {
     QJsonObject jsonObject;
     m_setValue = "90";
     jsonObject.insert("action","set");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
     jsonObject.insert("value", m_setValue);
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getSetManyJson()
+QString GetVissTestDataJson::getSetManyJson(QString& requestId)
 {
     QJsonObject jsonObject;
     m_setValue = "90";
@@ -152,35 +151,35 @@ QString GetVissTestDataJson::getSetManyJson()
     jsonObject.insert("value", values);
 
 
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getUnsubscribe(QString subscriptionId)
+QString GetVissTestDataJson::getUnsubscribe(QString& requestId, QString subscriptionId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","unsubscribe");
     jsonObject.insert("subscriptionId",subscriptionId);
-    jsonObject.insert("requestId",QString::number(m_requestId));
+    jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getUnsubscribeAll()
+QString GetVissTestDataJson::getUnsubscribeAll(QString& requestId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","unsubscribeAll");
-    jsonObject.insert("requestId",QString::number(m_requestId));
+    jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
 }
 
 // { "action": "authorize", "tokens":{ "authorization": "a-token-value" }, "requestId": "1" }'
-QString GetVissTestDataJson::getAuthJson()
+QString GetVissTestDataJson::getAuthJson(QString& requestId)
 {
 
     QJsonWebToken l_jwtObj;
@@ -204,7 +203,7 @@ QString GetVissTestDataJson::getAuthJson()
     QJsonObject jsonObject2;
     jsonObject2.insert("authorization",zeToken);
     jsonObject.insert("tokens",jsonObject2);
-    jsonObject.insert("requestId",QString::number(m_requestId));
+    jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     QString dataJson = jsonDoc.toJson();
@@ -213,12 +212,12 @@ QString GetVissTestDataJson::getAuthJson()
     return dataJson;
 }
 
-QString GetVissTestDataJson::getStatusJson()
+QString GetVissTestDataJson::getStatusJson(QString& requestId)
 {
     QJsonObject jsonObject;
     m_setValue = "90";
     jsonObject.insert("action","status");
-    jsonObject.insert("requestId","1");
+    jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
     return jsonDoc.toJson();
