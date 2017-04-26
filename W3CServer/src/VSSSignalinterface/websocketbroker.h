@@ -6,11 +6,14 @@
 #include <QJsonObject>
 #include <QWebSocket>
 #include "vsssignalinterface.h"
+#include <QTimer>
+#include <QEventLoop>
 
-class WebSocketBroker : public VSSSignalInterface
+class WebSocketBroker : public QObject, public VSSSignalInterface
 {
+    Q_OBJECT
 public:
-    WebSocketBroker(const QString &vssFile);
+    WebSocketBroker(const QString &vssFile, QObject *parent = Q_NULLPTR);
 
     struct JsonNode
     {
@@ -25,11 +28,11 @@ public:
 
 signals:
     void closed();
+    void messageReceived();
 
 private slots:
     void onConnected();
     void onTextMessageReceived(QString message);
-
 
 private:
     void loadJson(const QString& fileName);
@@ -51,16 +54,13 @@ private:
     QStringList getPath(QString startsWith);
     QStringList getPath(QString startsWith, QString endsWith);
 
-
-
     QMutex m_mutex;
-
+    long m_timeout = 150;
     QWebSocket m_webSocket;
 
     QJsonObject m_vssTree;
     QJsonObject m_vssTreeNode;
 
-    bool m_messageReceivedFromBroker = false;
     QJsonObject m_receivedMessage;
 
     QStringList m_tempSignalList;
