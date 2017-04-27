@@ -12,7 +12,7 @@
 
 #include "testresult.h"
 #include "clientreport.h"
-
+#include "TestCases/gettestcase.h"
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
 Q_DECLARE_METATYPE(TestResult)
@@ -41,21 +41,19 @@ signals:
     void testresult(TestResult *result);
     void testsfinished(ClientReport *m_currentRunningTest);
 
-private Q_SLOTS:
+private slots:
     void onConnected();
-    void onTextMessageReceived(QString message);
     void onSslErrors(const QList<QSslError> &errors);
+    void onTestFinished(bool result);
 
     //timer slots
     void RunGetTest();
-    void unsubscribe();
-    void unsubscribeAll();
-    void pendingTestTimeout();
+    //void pendingTestTimeout();
     void testTimeout();
 
 private:
-    void passTestRun(bool success);
-
+    //void passTestRun(bool success);
+    TestCaseBase* test;
     QString getTestCaseAsString(TestCase testCase);
 
     bool m_clientStarted = false;
@@ -65,6 +63,7 @@ private:
     QWebSocket *m_webSocket = 0;
 
     int m_clientId;
+    QString m_clientIdStr;
     int m_requestId = 0;
     QUrl m_url;
 

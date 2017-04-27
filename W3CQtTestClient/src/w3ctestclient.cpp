@@ -8,16 +8,25 @@
 #include <QTimer>
 
 #include "logger.h"
+#include "TestCases/gettestcase.h"
+#include "TestCases/settestcase.h"
+#include "TestCases/subscribeunsubscribetestcase.h"
+#include "TestCases/subscribeunsubscribealltestcase.h"
+#include "TestCases/getvsstestcase.h"
+#include "TestCases/authorizetestcase.h"
+#include "TestCases/getmanytestcase.h"
+#include "TestCases/setmanytestcase.h"
+#include "TestCases/statustestcase.h"
 
 QT_USE_NAMESPACE
 
 W3cTestClient::W3cTestClient(int clientId, QQueue<TestCase> tests, bool randomize, const QUrl &url, QObject *parent) :
-    QObject(parent), m_clientId(clientId), m_tests(tests), m_url(url), m_testTimeoutSec(60)
+    QObject(parent), m_clientId(clientId), m_clientIdStr(QString("Client# %1").arg(m_clientId)), m_tests(tests), m_url(url), m_testTimeoutSec(60)
 {
     qRegisterMetaType<TestResult>();
     m_clientReport = new ClientReport(m_clientId);
     if(randomize) { std::random_shuffle(tests.begin(), tests.end()); }
-    TRACE(QString("Client# %1").arg(m_clientId),"< W3cTestClient > created.");
+    TRACE(m_clientIdStr,"< W3cTestClient > created.");
 
     m_runningTestTimer = new QTimer(this);
     connect(m_runningTestTimer, SIGNAL(timeout()), this, SLOT(testTimeout()));
@@ -27,13 +36,13 @@ W3cTestClient::~W3cTestClient()
 {
     if(m_webSocket->isValid()) { m_webSocket->close(); }
     m_webSocket->deleteLater();
-    TRACE(QString("Client# %1").arg(m_clientId),"< W3cTestClient > destroyed.");
+    TRACE(m_clientIdStr,"< W3cTestClient > destroyed.");
 }
 
 void W3cTestClient::startClient()
 {
     if(m_clientStarted) { return; }
-    INFO(QString("Client# %1").arg(m_clientId), QString("Starting client. Connecting to %1 ...").arg(m_url.toString()));
+    INFO(m_clientIdStr, QString("Starting client. Connecting to %1 ...").arg(m_url.toString()));
     m_webSocket = new QWebSocket();
 
     connect(m_webSocket, &QWebSocket::connected, this, &W3cTestClient::onConnected);
@@ -43,7 +52,7 @@ void W3cTestClient::startClient()
     connect(m_webSocket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
             [=]()
     {
-        WARNING(QString("Client# %1").arg(m_clientId), QString("Socket error: %1").arg(m_webSocket->errorString()));
+        WARNING(m_clientIdStr, QString("Socket error: %1").arg(m_webSocket->errorString()));
         QCoreApplication::exit(-1);
     });
 
@@ -53,9 +62,8 @@ void W3cTestClient::startClient()
 
 void W3cTestClient::onConnected()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"WebSocket connected..");
-    connect(m_webSocket, &QWebSocket::textMessageReceived,
-            this, &W3cTestClient::onTextMessageReceived);
+    INFO(m_clientIdStr,"WebSocket connected..");
+    //connect(m_webSocket, &QWebSocket::textMessageReceived, this, &W3cTestClient::onTextMessageReceived);
 
     m_currentTest = TestCase::UNKNOWN;
     m_pendingTest = false;
@@ -127,7 +135,7 @@ void W3cTestClient::runTest()
     }
     else
     {
-        TRACE(QString("Client# %1").arg(m_clientId), QString("Test: %1 pending, waiting...").arg(getTestCaseAsString(m_currentTest)));
+        TRACE(m_clientIdStr, QString("Test: %1 pending, waiting...").arg(getTestCaseAsString(m_currentTest)));
     }
 }
 
@@ -184,351 +192,53 @@ QString W3cTestClient::getTestCaseAsString(TestCase testCase)
     return caseStr;
 }
 
-void W3cTestClient::onTextMessageReceived(QString message)
-{
-    DEBUG(QString("Client# %1").arg(m_clientId),"Message received");
-    TRACE(QString("Client# %1").arg(m_clientId),message);
-
-    QJsonParseError parseError;
-    QJsonDocument  jsonDocument;
-    QJsonObject    jsonObject;
-
-    jsonDocument = QJsonDocument::fromJson(message.toUtf8(),&parseError);
-    jsonObject = jsonDocument.object();
-    if (parseError.error == QJsonParseError::NoError)
-    {
-        QString actionString =jsonObject["action"].toString();
-
-        if (actionString == "subscribe")
-        {
-            if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Subcribe action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Failed to subscribe.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-            QString path = jsonObject["path"].toString();
-
-            //cache last received subscribeId
-            m_unsubscribeCachedSubscriptionId = jsonObject["subscriptionId"].toString();
-
-            INFO(QString("Client# %1").arg(m_clientId), QString("Successfully subscribed to signal : %1, sub ID : %2").arg(path, m_unsubscribeCachedSubscriptionId));
-        }
-        else if (actionString == "unsubscribe")
-        {
-            if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Unsubcribe action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QString  subscriptionId = jsonObject["subscriptionId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Unsubscribe failed.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-            INFO(QString("Client# %1").arg(m_clientId),"Successfully unsubscribed from Sub ID : " + subscriptionId);
-
-            passTestRun(true);
-
-        }
-        else if (actionString == "unsubscribeAll")
-        {
-            if(m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received UnsubcribeAll action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Unsubscribe all failed.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-            INFO(QString("Client# %1").arg(m_clientId),"Successfully unsubscribed from all signals.");
-
-            passTestRun(true);
-        }
-        else if (actionString == "subscription")
-        {
-            if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Subscribing action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Subscribing failed.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-            //QString subId = jsonObject["subscriptionId"].toString();
-            //QString valueStr  =  jsonObject["value"].toString();
-            //int value = valueStr.toInt();
-            //QString timeString  = jsonObject["timestamp"].toString();
-            //QDateTime time_t = QDateTime::fromTime_t(timeString.toInt());
-
-            //qDebug() << " subscriptionId is : " + subId << " \n";
-            //qDebug() << " currentTime is : " + time_t.toString() << " \n";
-            //qDebug() << " The value is :   " << value << " \n";
-
-            TRACE(QString("Client# %1").arg(m_clientId),"Received Subscribing message.");
-
-            //passTestRun(true); //Add a counter of some sort before we pass?
-        }
-        else if (actionString == "getVSS")
-        {
-            if(m_currentTest != TestCase::GET_VSS)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received GetVSS action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Failed to get VSS Data.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-
-            //QJsonObject vssObject = jsonObject["vss"].toObject();
-            INFO(QString("Client# %1").arg(m_clientId),"Successfully received VSS Data.");
-            TRACE(QString("Client# %1").arg(m_clientId), jsonObject["vss"].toString());
-            passTestRun(true);
-        }
-        else if (actionString == "authorize")
-        {
-            if(m_currentTest != TestCase::AUTHORIZE_SUCCESS)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Authorize action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Authorize failed.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-
-            INFO(QString("Client# %1").arg(m_clientId),"Successfully authorized.");
-            passTestRun(true);
-        }
-        else if (actionString == "get")
-        {
-            if((m_currentTest != TestCase::GET) && (m_currentTest != TestCase::GET_MANY)  && (m_currentTest != TestCase::SET_GET))
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Get action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Get failed.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-
-            QString receivedValue = jsonObject["value"].toString();
-            QString setValue = GetVissTestDataJson::getSetValue();
-            if (receivedValue != setValue)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),QString("Warning! Received value < %1 > does not match set value < %2 >").arg(receivedValue, setValue));
-            }
-
-            INFO(QString("Client# %1").arg(m_clientId),"Successfully got value.");
-            passTestRun(true);
-        }
-        else if (actionString == "set")
-        {
-            if((m_currentTest != TestCase::SET) && (m_currentTest != TestCase::SET_MANY) && (m_currentTest != TestCase::SET_GET))
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Set action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Set failed.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-
-            if(m_currentTest == TestCase::SET && (m_currentTest != TestCase::SET_MANY))
-            {
-                INFO(QString("Client# %1").arg(m_clientId),"Successfully set value.");
-                passTestRun(true);
-            }
-            else
-            {
-                TRACE(QString("Client# %1").arg(m_clientId),"Set response received, waiting for get.");
-            }
-        }
-        else if (actionString == "status")
-        {
-            if(m_currentTest != TestCase::STATUS)
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Received Status action when not requested.");
-                passTestRun(false);
-                return;
-            }
-
-            QString requestId = jsonObject["requestId"].toString();
-            QJsonObject errorObject = jsonObject["error"].toObject();
-            if (!errorObject.empty())
-            {
-                WARNING(QString("Client# %1").arg(m_clientId),"Failed to receive status.");
-                QString errorMessage = errorObject["message"].toString();
-                DEBUG(QString("Client# %1").arg(m_clientId),QString("Error! Request ID : %1, Message : %2").arg(requestId, errorMessage));
-
-                passTestRun(false);
-                return;
-            }
-
-            INFO(QString("Client# %1").arg(m_clientId),"Successfully received status.");
-            passTestRun(true);
-        }
-        else
-        {
-            WARNING(QString("Client# %1").arg(m_clientId),"Received unknown request : " + actionString);
-            passTestRun(false);
-        }
-    }
-    else
-    {
-        WARNING(QString("Client# %1").arg(m_clientId),"JSON parse error : " + parseError.errorString());
-        passTestRun(false);
-    }
-}
-
-
 /**
  * @brief W3cTestClient::RunSubscribeUnsubscribeTest
  * Testing subscribe and unsubscribe and unsubscribeall scenario
  */
 void W3cTestClient::RunSubscribeUnsubscribeTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Subscribe + Unsubscribe Test.");
-    m_requestId++;
+    INFO(m_clientIdStr,"Running Subscribe + Unsubscribe Test.");
+    test = new SubscribeUnsubscribeTestCase(m_clientIdStr, m_requestId);
 
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
-    QTimer::singleShot(10000,this,SLOT(unsubscribe()));
+    connect(static_cast<SubscribeUnsubscribeTestCase*>(test), &SubscribeUnsubscribeTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Subscribe + UnsubscribeAll Test.");
-    m_requestId++;
-    QString subMess1 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
-    m_requestId++;
-    QString subMess2 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
-    m_requestId++;
-    QString subMess3 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
-    /*QString subMess4 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess5 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess6 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess7 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess8 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess9 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess10 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess11= GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);
-    QString subMess12 = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE);*/
+    INFO(m_clientIdStr,"Running Subscribe + UnsubscribeAll Test.");
+    test = new SubscribeUnsubscribeAllTestCase(m_clientIdStr, m_requestId);
 
+    connect(static_cast<SubscribeUnsubscribeAllTestCase*>(test), &SubscribeUnsubscribeAllTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    //do 3 subscriptions
-    m_webSocket->sendTextMessage(subMess1);
-    m_webSocket->sendTextMessage(subMess2);
-    m_webSocket->sendTextMessage(subMess3);
-    /*
-        m_webSocket.sendTextMessage(subMess8);
-        m_webSocket.sendTextMessage(subMess9);
-        m_webSocket.sendTextMessage(subMess10);
-        m_webSocket.sendTextMessage(subMess11);
-        m_webSocket.sendTextMessage(subMess12);*/
-
-
-
-    QTimer::singleShot(60000,this,SLOT(unsubscribeAll()));
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunGetVssTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running GetVSS Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GETVSS, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
+    INFO(m_clientIdStr,"Running GetVSS Test.");
+    test = new GetVSSTestCase(m_clientIdStr, m_requestId);
+
+    connect(static_cast<GetVSSTestCase*>(test), &GetVSSTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunAuthorizeTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Authorize Test.");
-    m_requestId++;
-    QString dataJson = GetVissTestDataJson::getTestDataString(requesttype::AUTHORIZE, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(dataJson);
+    INFO(m_clientIdStr,"Running Authorize Test.");
+    test = new AuthorizeTestCase(m_clientIdStr, m_requestId);
+
+    connect(static_cast<AuthorizeTestCase*>(test), &AuthorizeTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunSetGetTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running SetGet Test.");
+    INFO(m_clientIdStr,"Running SetGet Test.");
     m_requestId++;
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId));
     m_webSocket->sendTextMessage(subMess);
@@ -538,47 +248,79 @@ void W3cTestClient::RunSetGetTest()
 
 void W3cTestClient::RunSetTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Set Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
+    INFO(m_clientIdStr,"Running Set Test.");
+    test = new SetTestCase(m_clientIdStr, m_requestId);
+
+    connect(static_cast<SetTestCase*>(test), &SetTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunGetTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Get Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
+    INFO(m_clientIdStr,"Running Get Test.");
+    test = new GetTestCase(m_clientIdStr, m_requestId);
+
+    connect(static_cast<GetTestCase*>(test), &GetTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunStatusTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Status Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::STATUS, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
+    INFO(m_clientIdStr,"Running Status Test.");
+    test = new StatusTestCase(m_clientIdStr, m_requestId);
+
+    connect(static_cast<StatusTestCase*>(test), &StatusTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunGetManyTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Get Many Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::GET_MANY, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
+    INFO(m_clientIdStr,"Running Get Many Test.");
+    test = new GetManyTestCase(m_clientIdStr, m_requestId);
+
+    connect(static_cast<GetManyTestCase*>(test), &GetManyTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunSetManyTest()
 {
-    INFO(QString("Client# %1").arg(m_clientId),"Running Set Many Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET_MANY, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
-}
+    INFO(m_clientIdStr,"Running Set Many Test.");
+    test = new SetManyTestCase(m_clientIdStr, m_requestId);
 
+    connect(static_cast<SetManyTestCase*>(test), &SetManyTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    test->startTest(m_webSocket);
+}
+/*
 void W3cTestClient::passTestRun(bool success)
 {
+    qDebug() << "Old Test Finished";
     m_runningTestTimer->stop();
+
+    QHash <QString, QString> finishedTest;
+    finishedTest.insert("testcase", QString::number((int)m_currentTest));
+    finishedTest.insert("outcome", success ? "passed" : "failed");
+    finishedTest.insert("started", m_testStartTime.toString());
+    finishedTest.insert("ended", QDateTime::currentDateTime().toString());
+
+    // Handle special cases here also, if needed
+
+    m_clientReport->m_testResults.append(finishedTest);
+
+    runTest();
+}*/
+void W3cTestClient::onTestFinished(bool success)
+{
+    INFO(m_clientIdStr,"New Test Finished.");
+
+    m_runningTestTimer->stop();
+    //test->disconnect();
+    disconnect(test,0,0,0);
+    test->deleteLater();
 
     QHash <QString, QString> finishedTest;
     finishedTest.insert("testcase", QString::number((int)m_currentTest));
@@ -593,42 +335,10 @@ void W3cTestClient::passTestRun(bool success)
     runTest();
 }
 
-void W3cTestClient::unsubscribe()
-{
-    TRACE(QString("Client# %1").arg(m_clientId),"Unsubscribing " + m_unsubscribeCachedSubscriptionId);
-    m_requestId++;
-    m_pendingTest = true;
-    QString unsubMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBE, QString::number(m_requestId), m_unsubscribeCachedSubscriptionId);
-    m_webSocket->sendTextMessage(unsubMess);
-
-    // wait a while for subscriptions to end
-    QTimer::singleShot(2000,this,SLOT(pendingTestTimeout()));
-}
-
-void W3cTestClient::unsubscribeAll()
-{
-    TRACE(QString("Client# %1").arg(m_clientId),"Unsubscribing All");
-    m_requestId++;
-    m_pendingTest = true;
-    QString usubscribeAllMess = GetVissTestDataJson::getTestDataString(requesttype::UNSUBSCRIBEALL, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(usubscribeAllMess);
-
-    // wait a while for subscriptions to end
-    QTimer::singleShot(2000,this,SLOT(pendingTestTimeout()));
-}
-
-void W3cTestClient::pendingTestTimeout()
-{
-    TRACE(QString("Client# %1").arg(m_clientId),"Pending test ready, continue with next test.");
-
-    m_pendingTest = false;
-    runTest();
-}
-
 void W3cTestClient::testTimeout()
 {
-    WARNING(QString("Client# %1").arg(m_clientId), QString("No response from server! Waited %1 seconds").arg(m_testTimeoutSec));
-    passTestRun(false);
+    WARNING(m_clientIdStr, QString("No response from server! Waited %1 seconds").arg(m_testTimeoutSec));
+    onTestFinished(false);
 }
 
 void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
@@ -641,7 +351,7 @@ void W3cTestClient::onSslErrors(const QList<QSslError> &errors)
 
     foreach( const QSslError &error, errors )
     {
-        WARNING(QString("Client# %1").arg(m_clientId), QString("SSL Error: %1").arg(error.errorString()));
+        WARNING(m_clientIdStr, QString("SSL Error: %1").arg(error.errorString()));
     }
 
 

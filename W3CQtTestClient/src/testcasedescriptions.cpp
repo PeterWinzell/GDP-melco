@@ -49,12 +49,26 @@ TestCaseDescriptions::TestCaseDescriptions()
                 "get",
                 "Will send one 'get' request and expect an answer."
                 );
+    m_descriptions[(int)TestCase::GET_MANY] = TestCaseDescription(
+                (int)TestCase::GET_MANY,
+                TestCase::GET_MANY,
+                "GetMany",
+                "get",
+                "Will send one 'get' request with asterisk and expect an answer."
+                );
     m_descriptions[(int)TestCase::SET] = TestCaseDescription(
                 (int)TestCase::SET,
                 TestCase::SET,
                 "Set",
                 "set",
                 "Will send one 'set' request and expect an answer."
+                );
+    m_descriptions[(int)TestCase::SET_MANY] = TestCaseDescription(
+                (int)TestCase::SET_MANY,
+                TestCase::SET_MANY,
+                "SetMany",
+                "set",
+                "Will send one 'set' with asterisk request and expect an answer."
                 );
     m_descriptions[(int)TestCase::STATUS] = TestCaseDescription(
                 (int)TestCase::STATUS,
