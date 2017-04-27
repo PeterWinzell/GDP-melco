@@ -27,6 +27,7 @@ signals:
 public slots:
     void connected();
     void disconnected();
+    void reconnect();
     void bytesWritten(qint64 bytes);
     void readyRead();
     void socketError(QAbstractSocket::SocketError error);
@@ -46,8 +47,6 @@ private:
     QByteArray getSubscribeMessage();
     QByteArray getSetMessage();
 
-    void reconnect();
-    void delay(int delay);
     void xmlParser(QString xmlData);
 
     QTcpSocket *m_Socket;
