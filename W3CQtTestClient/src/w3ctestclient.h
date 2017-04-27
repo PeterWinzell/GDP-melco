@@ -53,7 +53,7 @@ private slots:
 
 private:
     //void passTestRun(bool success);
-    TestCaseBase* test;
+
     QString getTestCaseAsString(TestCase testCase);
 
     bool m_clientStarted = false;
@@ -69,6 +69,7 @@ private:
 
     QQueue<TestCase> m_tests;
     TestCase m_currentTest;
+    TestCaseBase* m_currentRunningTest;
     QDateTime m_testStartTime;
     const int m_testTimeoutSec;
     bool m_pendingTest;

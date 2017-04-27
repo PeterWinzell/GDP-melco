@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     TestCases/authorizetestcase.cpp \
     TestCases/getmanytestcase.cpp \
     TestCases/setmanytestcase.cpp \
-    TestCases/statustestcase.cpp
+    TestCases/statustestcase.cpp \
+    TestCases/setgettestcase.cpp
 
 HEADERS += \
     w3ctestclient.h \
@@ -40,7 +41,9 @@ HEADERS += \
     TestCases/authorizetestcase.h \
     TestCases/getmanytestcase.h \
     TestCases/setmanytestcase.h \
-    TestCases/statustestcase.h
+    TestCases/statustestcase.h \
+    TestCases/setgettestcase.h \
+    TestCases/testcasebase.h
 
 INCLUDEPATH += $$PWD/../../lib/QJsonWebToken \
                 $$PWD/../../lib/Logger

@@ -17,11 +17,12 @@
 #include "TestCases/getmanytestcase.h"
 #include "TestCases/setmanytestcase.h"
 #include "TestCases/statustestcase.h"
+#include "TestCases/setgettestcase.h"
 
 QT_USE_NAMESPACE
 
 W3cTestClient::W3cTestClient(int clientId, QQueue<TestCase> tests, bool randomize, const QUrl &url, QObject *parent) :
-    QObject(parent), m_clientId(clientId), m_clientIdStr(QString("Client# %1").arg(m_clientId)), m_tests(tests), m_url(url), m_testTimeoutSec(60)
+    QObject(parent), m_clientId(clientId), m_clientIdStr(QString("Client# %1").arg(m_clientId)), m_url(url),m_tests(tests),  m_testTimeoutSec(60)
 {
     qRegisterMetaType<TestResult>();
     m_clientReport = new ClientReport(m_clientId);
@@ -200,128 +201,109 @@ QString W3cTestClient::getTestCaseAsString(TestCase testCase)
 void W3cTestClient::RunSubscribeUnsubscribeTest()
 {
     INFO(m_clientIdStr,"Running Subscribe + Unsubscribe Test.");
-    test = new SubscribeUnsubscribeTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new SubscribeUnsubscribeTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<SubscribeUnsubscribeTestCase*>(test), &SubscribeUnsubscribeTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<SubscribeUnsubscribeTestCase*>(m_currentRunningTest), &SubscribeUnsubscribeTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunSubscribeUnsubscribeAllTest()
 {
     INFO(m_clientIdStr,"Running Subscribe + UnsubscribeAll Test.");
-    test = new SubscribeUnsubscribeAllTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new SubscribeUnsubscribeAllTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<SubscribeUnsubscribeAllTestCase*>(test), &SubscribeUnsubscribeAllTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<SubscribeUnsubscribeAllTestCase*>(m_currentRunningTest), &SubscribeUnsubscribeAllTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunGetVssTest()
 {
     INFO(m_clientIdStr,"Running GetVSS Test.");
-    test = new GetVSSTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new GetVSSTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<GetVSSTestCase*>(test), &GetVSSTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<GetVSSTestCase*>(m_currentRunningTest), &GetVSSTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunAuthorizeTest()
 {
     INFO(m_clientIdStr,"Running Authorize Test.");
-    test = new AuthorizeTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new AuthorizeTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<AuthorizeTestCase*>(test), &AuthorizeTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<AuthorizeTestCase*>(m_currentRunningTest), &AuthorizeTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunSetGetTest()
 {
     INFO(m_clientIdStr,"Running SetGet Test.");
-    m_requestId++;
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId));
-    m_webSocket->sendTextMessage(subMess);
+    m_currentRunningTest = new SetGetTestCase(m_clientIdStr, m_requestId);
 
-    QTimer::singleShot(4000,this,SLOT(RunGetTest()));
+    connect(static_cast<SetGetTestCase*>(m_currentRunningTest), &SetGetTestCase::finished, this, &W3cTestClient::onTestFinished);
+
+    m_currentRunningTest->startTest(m_webSocket);
+
 }
 
 void W3cTestClient::RunSetTest()
 {
     INFO(m_clientIdStr,"Running Set Test.");
-    test = new SetTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new SetTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<SetTestCase*>(test), &SetTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<SetTestCase*>(m_currentRunningTest), &SetTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunGetTest()
 {
     INFO(m_clientIdStr,"Running Get Test.");
-    test = new GetTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new GetTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<GetTestCase*>(test), &GetTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<GetTestCase*>(m_currentRunningTest), &GetTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunStatusTest()
 {
     INFO(m_clientIdStr,"Running Status Test.");
-    test = new StatusTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new StatusTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<StatusTestCase*>(test), &StatusTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<StatusTestCase*>(m_currentRunningTest), &StatusTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunGetManyTest()
 {
     INFO(m_clientIdStr,"Running Get Many Test.");
-    test = new GetManyTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new GetManyTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<GetManyTestCase*>(test), &GetManyTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<GetManyTestCase*>(m_currentRunningTest), &GetManyTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
 
 void W3cTestClient::RunSetManyTest()
 {
     INFO(m_clientIdStr,"Running Set Many Test.");
-    test = new SetManyTestCase(m_clientIdStr, m_requestId);
+    m_currentRunningTest = new SetManyTestCase(m_clientIdStr, m_requestId);
 
-    connect(static_cast<SetManyTestCase*>(test), &SetManyTestCase::finished, this, &W3cTestClient::onTestFinished);
+    connect(static_cast<SetManyTestCase*>(m_currentRunningTest), &SetManyTestCase::finished, this, &W3cTestClient::onTestFinished);
 
-    test->startTest(m_webSocket);
+    m_currentRunningTest->startTest(m_webSocket);
 }
-/*
-void W3cTestClient::passTestRun(bool success)
-{
-    qDebug() << "Old Test Finished";
-    m_runningTestTimer->stop();
 
-    QHash <QString, QString> finishedTest;
-    finishedTest.insert("testcase", QString::number((int)m_currentTest));
-    finishedTest.insert("outcome", success ? "passed" : "failed");
-    finishedTest.insert("started", m_testStartTime.toString());
-    finishedTest.insert("ended", QDateTime::currentDateTime().toString());
-
-    // Handle special cases here also, if needed
-
-    m_clientReport->m_testResults.append(finishedTest);
-
-    runTest();
-}*/
 void W3cTestClient::onTestFinished(bool success)
 {
-    INFO(m_clientIdStr,"New Test Finished.");
-
     m_runningTestTimer->stop();
-    //test->disconnect();
-    disconnect(test,0,0,0);
-    test->deleteLater();
+    disconnect(m_currentRunningTest,0,0,0);
+    m_currentRunningTest->deleteLater();
 
     QHash <QString, QString> finishedTest;
     finishedTest.insert("testcase", QString::number((int)m_currentTest));

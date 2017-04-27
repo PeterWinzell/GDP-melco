@@ -12,7 +12,7 @@ GetVissTestDataJson::GetVissTestDataJson()
 }
 
 
-QString GetVissTestDataJson::getTestDataString(requesttype type, QString& requestId, QString subId)
+QString GetVissTestDataJson::getTestDataString(requesttype type, QString requestId, QString subId)
 {
 
     QString testJSON;

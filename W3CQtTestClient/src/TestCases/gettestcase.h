@@ -2,7 +2,7 @@
 #define GETTESTCASE_H
 
 #include <QObject>
-#include <TestCases/testcase.h>
+#include <TestCases/testcasebase.h>
 
 class GetTestCase : public TestCaseBase
 {

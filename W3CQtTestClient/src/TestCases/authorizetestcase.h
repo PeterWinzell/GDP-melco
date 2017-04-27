@@ -2,7 +2,7 @@
 #define AUTHORIZETESTCASE_H
 
 #include <QObject>
-#include <TestCases/testcase.h>
+#include <TestCases/testcasebase.h>
 
 class AuthorizeTestCase : public TestCaseBase
 {

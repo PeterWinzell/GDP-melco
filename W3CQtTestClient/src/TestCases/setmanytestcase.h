@@ -2,7 +2,7 @@
 #define SETMANYTESTCASE_H
 
 #include <QObject>
-#include <TestCases/testcase.h>
+#include <TestCases/testcasebase.h>
 
 class SetManyTestCase : public TestCaseBase
 {

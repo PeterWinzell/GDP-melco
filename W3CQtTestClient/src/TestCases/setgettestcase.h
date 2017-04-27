@@ -1,14 +1,14 @@
-#ifndef SETTESTCASE_H
-#define SETTESTCASE_H
+#ifndef SETGETTESTCASE_H
+#define SETGETTESTCASE_H
 
 #include <QObject>
 #include <TestCases/testcasebase.h>
 
-class SetTestCase : public TestCaseBase
+class SetGetTestCase : public TestCaseBase
 {
     Q_OBJECT
 public:
-    SetTestCase(QString testClientId, int& requestid, QObject *parent = NULL);
+    SetGetTestCase(QString testClientId, int& requestid, QObject *parent = NULL);
     void startTest(QWebSocket* webSocket);
 
 signals:
@@ -19,4 +19,4 @@ public slots:
     void onTextMessageReceived(QString message);
 };
 
-#endif // SETTESTCASE_H
+#endif // SETGETTESTCASE_H
