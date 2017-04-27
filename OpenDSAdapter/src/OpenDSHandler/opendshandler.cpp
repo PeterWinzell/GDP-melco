@@ -36,12 +36,16 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
         QString vssid = "vssid";
         QString get = "get";
         QString set = "set";
+        QString type = "type";
+
+        QString vssPath = settings->value(vssid).toString();
+        QString providerPath = settings->value(provid).toString();
+
+        m_valueTypes.insert(providerPath, settings->value(type).toString());
 
         // Fill the "get" lookup table
         if (settings->value(get).toBool())
         {
-            QString vssPath = settings->value(vssid).toString();
-            QString providerPath = settings->value(provid).toString();
             m_lookupGetProvider.insert(vssPath, providerPath);
             qDebug() << "Inserted GET key: " << vssPath << ", value: " << m_lookupGetProvider[vssPath];
 
@@ -52,8 +56,6 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
         // Fill the "get" lookup table
         if (settings->value(set).toBool())
         {
-            QString vssPath = settings->value(vssid).toString();
-            QString providerPath = settings->value(provid).toString();
             m_lookupSetProvider.insert(vssPath, providerPath);
             qDebug() << "Inserted SET key: " << vssPath << ", value: " << m_lookupGetProvider[vssPath];
 
@@ -261,7 +263,7 @@ void OpenDSHandler::updateValue(QString signal, QString value)
 //    qDebug()  << "Storing signal. All values: " << m_getValues;
 }
 
-QString OpenDSHandler::getSignalValue(const QString& path)
+QVariant OpenDSHandler::getSignalValue(const QString& path)
 {
     QMutex mutex;
     QMutexLocker locker(&mutex);
@@ -270,10 +272,32 @@ QString OpenDSHandler::getSignalValue(const QString& path)
 
     qDebug()  << "getSignalValue: providerPath = " << providerPath;
 
-    return m_getValues.value(providerPath);
+    QString valueType = m_valueTypes.value(providerPath);
+    QVariant valueString = m_getValues.value(providerPath);
+
+    QVariant value = valueString;
+    if ("bool" == valueType)
+    {
+        value = valueString.toBool();
+    }
+    else if ("int" == valueType)
+    {
+        value = valueString.toInt();
+    }
+    else if ("double" == valueType)
+    {
+        value = valueString.toDouble();
+    }
+    else
+    {
+        // string
+    }
+
+    qDebug()  << "getSignalValue: value = " << value;
+    return value;
 }
 
-qint8 OpenDSHandler::setSignalValue(const QString& path, QString value)
+qint8 OpenDSHandler::setSignalValue(const QString& path, QVariant value)
 {
     QMutex mutex;
     QMutexLocker locker(&mutex);
@@ -282,7 +306,7 @@ qint8 OpenDSHandler::setSignalValue(const QString& path, QString value)
 
     QString providerPath = m_lookupSetProvider[path];
 
-    m_setValues.insert(providerPath, value);
+    m_setValues.insert(providerPath, value.toString());
 
     qDebug()  << "setSignalValue: providerPath = " << providerPath << "value = " << value;
 

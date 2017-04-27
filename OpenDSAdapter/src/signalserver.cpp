@@ -107,13 +107,13 @@ void SignalServer::processTextMessage(const QString& message)
             foreach (QJsonValue entry, valueList)
             {
                 QString signal = entry.toObject().keys().first();
-                QString value = m_openDSHandler->getSignalValue(signal);
+                QVariant value = m_openDSHandler->getSignalValue(signal);
 
                 qDebug() << "GET signal :" << signal << "value :" << value;
 
                 // Store value in response Json
                 QJsonObject responseValue;
-                responseValue.insert(signal, value);
+                responseValue.insert(signal, QJsonValue::fromVariant(value));
                 responseValueList.append(responseValue);
 
                 qDebug() << "responseValueList:" << responseValueList;
@@ -129,7 +129,7 @@ void SignalServer::processTextMessage(const QString& message)
             foreach (QJsonValue entry, valueList)
             {
                 QString signal = entry.toObject().keys().first();
-                QString value = entry.toObject().value(signal).toString();
+                QVariant value = entry.toObject().value(signal);
 
                 m_openDSHandler->setSignalValue(signal, value);
 
