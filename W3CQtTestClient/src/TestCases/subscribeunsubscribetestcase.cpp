@@ -15,7 +15,7 @@ void SubscribeUnsubscribeTestCase::startTest(QWebSocket* webSocket)
 
     connect(m_webSocket, &QWebSocket::textMessageReceived, this, &SubscribeUnsubscribeTestCase::onTextMessageReceived);
 
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId));
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SUBSCRIBE, QString::number(m_requestId++));
     m_webSocket->sendTextMessage(subMess);
     QTimer::singleShot(10000,this,SLOT(unsubscribe()));
 }

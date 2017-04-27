@@ -2,7 +2,7 @@
 #define SUBSCRIBEUNSUBSCRIBEALLTESTCASE_H
 
 #include <QObject>
-#include <TestCases/testcase.h>
+#include <TestCases/testcasebase.h>
 
 class SubscribeUnsubscribeAllTestCase : public TestCaseBase
 {

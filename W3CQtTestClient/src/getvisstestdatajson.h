@@ -8,7 +8,7 @@ class GetVissTestDataJson
 {
 public:
     GetVissTestDataJson();
-    static QString getTestDataString(requesttype type, QString& requestId, QString subId = "1");
+    static QString getTestDataString(requesttype type, QString requestId, QString subId = "1");
 
     // return a JSON {"action":"authorize...}
     static QString getAuthJson(QString& requestId);
