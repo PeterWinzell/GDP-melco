@@ -17,7 +17,7 @@ public:
     explicit OpenDSHandler(QObject *parent = 0);
     //~OpenDSHandler();
     QVariant getSignalValue(const QString& path);
-    qint8   setSignalValue(const QString& path, QVariant value);
+    bool setSignalValue(const QString& path, QVariant value);
 
     void updateSetSignalValues();
 

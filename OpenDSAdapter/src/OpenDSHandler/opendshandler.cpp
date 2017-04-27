@@ -217,23 +217,27 @@ QByteArray OpenDSHandler::getSubscribeMessage()
 
 QByteArray OpenDSHandler::getSetMessage()
 {
-    // Constructing XML request to OpenDS
-    QString message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
-    message = message % "<Message>""\r";
-
-    qDebug()  << "getSetMessage:  m_setValues: " << m_setValues;
-
-    foreach (QString providerPath, m_setValues.keys())
+    QString message = "";
+    if (!m_setValues.isEmpty())
     {
-        QString value = m_setValues.value(providerPath);
+        // Constructing XML request to OpenDS
+        message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
+        message = message % "<Message>""\r";
 
-        qDebug()  << "getSetMessage:  providerPath: " << providerPath << "value: " << value;
+        qDebug()  << "getSetMessage:  m_setValues: " << m_setValues;
 
-        QString event = "<Event Name=\"SetValue\" Value=\"" % value % "\">" % providerPath % "</Event>\r";
-        message = message % event;
+        foreach (QString providerPath, m_setValues.keys())
+        {
+            QString value = m_setValues.value(providerPath);
+
+            qDebug()  << "getSetMessage:  providerPath: " << providerPath << "value: " << value;
+
+            QString event = "<Event Name=\"SetValue\" Value=\"" % value % "\">" % providerPath % "</Event>\r";
+            message = message % event;
+        }
+
+        message = message % "</Message>\r";
     }
-
-    message = message % "</Message>\r";
 
     return message.toLocal8Bit();
 }
@@ -288,16 +292,19 @@ QVariant OpenDSHandler::getSignalValue(const QString& path)
     return value;
 }
 
-qint8 OpenDSHandler::setSignalValue(const QString& path, QVariant value)
+bool OpenDSHandler::setSignalValue(const QString& path, QVariant value)
 {
     QMutex mutex;
     QMutexLocker locker(&mutex);
 
-    qint8 result = 0;
+    bool result = false;
 
     QString providerPath = m_lookupSetProvider[path];
 
-    m_setValues.insert(providerPath, value.toString());
+    if (!providerPath.isEmpty())
+    {
+        m_setValues.insert(providerPath, value.toString());
+    }
 
     qDebug()  << "setSignalValue: providerPath = " << providerPath << "value = " << value;
 
@@ -314,7 +321,10 @@ void OpenDSHandler::updateSetSignalValues()
 
     qDebug() << "updateSetSignalValues : " << message;
 
-    m_Socket->write(message);
+    if (!message.isEmpty())
+    {
+        m_Socket->write(message);
+    }
 
     // Clear the set values
     m_setValues.clear();

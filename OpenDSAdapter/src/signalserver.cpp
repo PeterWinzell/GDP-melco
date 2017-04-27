@@ -131,11 +131,11 @@ void SignalServer::processTextMessage(const QString& message)
                 QString signal = entry.toObject().keys().first();
                 QVariant value = entry.toObject().value(signal);
 
-                m_openDSHandler->setSignalValue(signal, value);
-
-                qDebug() << "SET signal :" << signal << "value :" << value;
-
-                result = true;
+                if (m_openDSHandler->setSignalValue(signal, value))
+                {
+                    qDebug() << "SET signal :" << signal << "value :" << value;
+                    result = true;
+                }
             }
             m_openDSHandler->updateSetSignalValues();
 
