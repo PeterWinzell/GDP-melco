@@ -4,18 +4,16 @@
 service=W3CServer
 params="-secure"
 
-cd "/usr/bin"
-
 case "$1" in
     start)
-        ./$service $params &
+        start-stop-daemon --start --quiet --background --exec /usr/bin/$service -- -secure
         ;;
     stop)
         killall $service
         ;;
     restart)
         killall $service
-        ./$service $params &
+        start-stop-daemon --start --quiet --background --exec /usr/bin/$service -- -secure
         ;;
     *)
         echo "Usage: $0 {start|stop|restart}"
