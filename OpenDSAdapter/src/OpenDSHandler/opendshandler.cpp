@@ -11,6 +11,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QTimer>
 
 #include "opendshandler.h"
 
@@ -86,6 +87,8 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
     m_server_port = settings->value("server_port").toInt();
     m_delay_sec = settings->value("delay_sec").toInt();
 
+    m_delay_sec = 10;
+
     qDebug() << "server ip: " << m_server_ip;
     qDebug() << "server port: " << m_server_port;
 
@@ -95,19 +98,7 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
 void OpenDSHandler::reconnect()
 {
     //if connection to OpenDS Server was lost we wait for x seconds and then retries!
-    //delay(m_delay_sec);
-    delay(10000);
-    // "times up, should now retry....";
     m_Socket->connectToHost(m_server_ip, m_server_port);
-}
-
-void OpenDSHandler::delay(int delay)
-{
-    QTime delayTime = QTime::currentTime().addSecs(delay);
-    while (QTime::currentTime() < delayTime)
-    {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-    }
 }
 
 void OpenDSHandler::xmlParser(QString xmlData)
@@ -175,7 +166,7 @@ void OpenDSHandler::connected()
 void OpenDSHandler::disconnected()
 {
     qDebug() << "disconnected... reconnecting";
-    reconnect();
+    QTimer::singleShot(m_delay_sec * 1000, this, SLOT(reconnect()));
 }
 
 void OpenDSHandler::bytesWritten(qint64 bytes)
@@ -196,8 +187,7 @@ void OpenDSHandler::socketError(QAbstractSocket::SocketError error)
     // check if socket is still connected or if we need to reconnect!
     if(!(m_Socket->state() == QTcpSocket::ConnectedState))
     {
-//        qDebug() << "Trying to recover";
-        reconnect();
+        QTimer::singleShot(m_delay_sec * 1000, this, SLOT(reconnect()));
     }
 }
 
