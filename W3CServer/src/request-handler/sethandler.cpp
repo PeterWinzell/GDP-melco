@@ -23,28 +23,30 @@
 SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,signalInterface, vissrequest,client)
 {
+    TRACE("Server", "< SetHandler > created.");
 }
 
 void SetHandler::processRequest()
 {
-    qDebug() << "Processing set handler requests";
+    DEBUG("Server","Processing < Set > request.");
+    QJsonObject response;
+    response.insert("requestId", m_pVissrequest->getRequestId());
+    response.insert("action", "set");
 
-    QString key = m_pVissrequest->getSignalPath();
-    QVariant value = m_pVissrequest->getValue();
-
-    qDebug() << "key = " << key << ", value = " << value;
-    m_pSignalInterface->setSignalValue(key, value);
+    if(!m_pSignalInterface->setSignalValue(m_pVissrequest->getSignalPath(), m_pVissrequest->getValue()))
+    {
+        // TODO Need to be able to differentiate between different errors.
+        QJsonObject error;
+        error.insert("number", 400);
+        error.insert("reason", "bad_request");
+        error.insert("message", "Something something bad side.");
+        response.insert("error", error);
+    }
 
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
-
-    QJsonObject response = QJsonObject(m_pVissrequest->getJsonObject());
-
-    response.remove("path");
-    response.remove("value");
     response.insert("timestamp", time);
 
-    QJsonDocument jsonDoc(response);
-    QString message = jsonDoc.toJson();
 
-    m_pClient->sendTextMessage(message);
+    QJsonDocument jsonDoc(response);
+    m_pClient->sendTextMessage(jsonDoc.toJson());
 }

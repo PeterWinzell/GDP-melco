@@ -1,10 +1,9 @@
 TEMPLATE = subdirs
 
-SUBDIRS += QJsonWebToken
+SUBDIRS += QJsonWebToken Logger
 
 DEPENDPATH += $$PWD/*
-INCLUDEPATH += $$PWD/QJsonWebToken
-
-
+INCLUDEPATH += $$PWD/QJsonWebToken \
+                $$PWD/Logger
 
 

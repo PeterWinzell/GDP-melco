@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QXmlStreamWriter>
 #include <QFile>
+#include <QMutex>
 
 #include "w3ctestclient.h"
 #include "clientreport.h"
@@ -39,6 +40,8 @@ private:
     bool m_randomize;
     QString m_reportDir;
     //int m_finishedClients = 0;
+
+    QMutex m_mutex;
 };
 
 #endif // W3CTESTCLIENTHANDLER_H

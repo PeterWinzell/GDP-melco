@@ -31,22 +31,21 @@
 
 const int SubscribeHandler::m_defaultIntervalMs = 1000;
 
-
-SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
-    RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
+SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
+                                   WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
 {
+    TRACE("Server", "< SubscribeHandler > created.");
     m_pSignalInterface = signalInterface;
 }
 
 void SubscribeHandler::processRequest()
 {
+    DEBUG("Server","Processing < Subscribe > request.");
     connect(m_pClient->getSocket(), &QWebSocket::disconnected, this, &SubscribeHandler::socketDisconnected);
 
     //Add to subscriptions and store subscriptions ID
     Subscriptions* subscriptions = Subscriptions::getInstance();
     m_subId = subscriptions -> addSubcription(this);
-
-    qDebug() << " processing subscribe handler requests";
 
     //Setup filter params
     initializeFilter();
@@ -61,39 +60,46 @@ void SubscribeHandler::processRequest()
     while (m_dosubscription)
     {
         //Get latest value of subscribed signal
-        QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
-
-        if (isFilterPass(value))
+        QJsonArray values;
+        if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values))
         {
-            m_lastValue = value.toInt();
+            QString value = values.takeAt(0).toString();
+            if (isFilterPass(value))
+            {
+                m_lastValue = value.toInt();
 
-            //Format response on JSON format
-            QString message = getSubscriptionNotificationJson(value);
+                //Format response on JSON format
+                QString message = getSubscriptionNotificationJson(value);
 
-            qDebug() << "Sending message:" << message;
-
-            //Send message to client
-            m_pClient->sendTextMessage(message);
+                //Send message to client. Make sure that the subscription is still active!
+                if(m_dosubscription)
+                {
+                    m_pClient->sendTextMessage(message);
+                }
+            }
         }
-
+        else
+        {
+            //TODO Error, not able to get value.
+        }
         //Let the event loop process events so that signals are not blocked
         QCoreApplication::processEvents(QEventLoop::AllEvents);
         //Sleep for the period defined by filter
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
 
-    qDebug() << " subscription cancelled ";
+    DEBUG("Server","Subscription cancelled.");
 }
 
 void SubscribeHandler::socketDisconnected()
 {
-    qDebug() << " socket disconnected slot called in subscribehandler";
+    DEBUG("Server","Socket disconnected during subscription.");
     m_dosubscription = false;
 }
 
 void SubscribeHandler::unsubscribe()
 {
-    qDebug() << " usubscribe signal invoked ";
+    DEBUG("Server","Subscription cancelled due to unsubscription.");
     m_dosubscription = false;
 }
 

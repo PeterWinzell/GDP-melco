@@ -16,20 +16,19 @@
 #include "request-handler/processrequesttask.h"
 #include "qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
-#include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
+#include "VSSSignalinterface/websocketbroker.h"
 #include "messaging/websocketwrapper.h"
-#include "OpenDSHandler/opendshandler.h"
-#include <VSSSignalinterface/vsiimpl.h>
+
+#include "logger.h"
 
 QT_USE_NAMESPACE
 
 class W3CServer;
 int W3CServer::m_nrOfClients;
-W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *parent) : QObject(parent),
+W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QObject(parent),
     m_pWebSocketServer(0),
     m_clients(),
-    m_debug(debug),
     m_secure(usesecureprotocol)
 {
     QThreadPool::globalInstance()->setMaxThreadCount(100);
@@ -48,7 +47,9 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
         certFile.open(QIODevice::ReadOnly);
         const QByteArray bytes = certFile.readAll();
         QJsonWebToken e;
-        qDebug() << "cert file length : " + QString::number(bytes.length());
+
+        TRACE("Server","Certification file length : " + QString::number(bytes.length()));
+
         QSslCertificate certificate(bytes, QSsl::Pem);
 
         keyFile.open(QIODevice::ReadOnly);
@@ -68,13 +69,11 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
     else
     {
         m_pWebSocketServer = new QWebSocketServer(QStringLiteral("W3CServer Test"),QWebSocketServer::NonSecureMode,this);
+
     }
     if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
-        if (m_debug)
-        {
-            qDebug() << "W3CServer is listening on port " << port;
-        }
+        INFO("Server","W3CServer is listening on port " + QString::number(port));
 
         //Connect QWebSocketServer newConnection signal with W3cServer slot onNewConnection
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,this,&W3CServer::onNewConnection);
@@ -85,21 +84,26 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, bool debug, QObject *p
                 this, &W3CServer::onSslErrors);
     }
 
-    // TODO: select implementation based on application configuration
-
     QPointer<QSettings> settings = new QSettings();
-    settings->beginGroup("W3CServer");
+    settings->beginGroup("WebSocketBroker");
     QString vssName = settings->value("vss_name").toString();
     QString vssDir = settings->value("vss_dir").toString();
+    QString signal_broker_url = settings->value("signal_broker_url").toString();
+    settings->endGroup();
 
-    m_vsssInterface = QSharedPointer<VSIImpl>(new VSIImpl(vssDir, vssName));
-    //m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
-    //m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    //connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
+    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssDir, vssName, signal_broker_url));
 }
 
 W3CServer::~W3CServer()
 {
+    closingDown();
+}
+
+void W3CServer::closingDown()
+{
+    DEBUG("Server", "closing down.");
+    disconnect(m_pWebSocketServer);
+    //disconnect(m_openDSHandler.data());
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
@@ -109,8 +113,10 @@ W3CServer::~W3CServer()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-    // pSocket ->
-    qDebug() << " attempting to connect ";
+
+    pSocket ->ignoreSslErrors();
+
+    DEBUG("Server","Attemping to connect");
 
     // Connect socket textMessageReceived signal with server processTextMessage slot
     connect(pSocket, &QWebSocket::textMessageReceived, this, &W3CServer::processTextMessage);
@@ -124,13 +130,11 @@ void W3CServer::onNewConnection()
 
 void W3CServer::processTextMessage(const QString& message)
 {
-    if (m_debug)
-    {
-        qDebug() << "Message recieved: " << message;
-    }
+
+    DEBUG("Server","Message received");
+    TRACE("Server", message);
 
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
-
     if (m_clients.contains(zeClient))
     {
         // we need a mutex per client .
@@ -140,19 +144,15 @@ void W3CServer::processTextMessage(const QString& message)
     }
     else
     {
-        qDebug() << "fatal connection error, websocket client not found ";
+        WARNING("Server","Fatal connection error, Websocket client not found.");
     }
-
-    qDebug() << "Message received: " << message;
 }
 
 void W3CServer::socketDisconnected()
 {
     QWebSocket *zeClient = qobject_cast<QWebSocket *> (sender());
-    if (m_debug)
-    {
-        qDebug() << " socket disconnected: " << zeClient;
-    }
+
+    DEBUG("Server","Socket disconnected");// : " + zeClient);
 
     //remove from client list and delete from heap
     if (zeClient)
@@ -163,9 +163,9 @@ void W3CServer::socketDisconnected()
     }
 }
 
-void W3CServer::onSslErrors(const QList<QSslError> &)
+void W3CServer::onSslErrors(const QList<QSslError> &l)
 {
-    qDebug() << "Ssl error occurred";
+    TRACE("Server","SSL Error occurred."); // Change to WARNING
 }
 
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
@@ -175,11 +175,11 @@ void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message
 
     if(!QThreadPool::globalInstance()->tryStart(requesttask))
     {
-        qWarning() << "Failed to start thread! Active threads: " << QThreadPool::globalInstance()->activeThreadCount();
-        qWarning() << "Max threads allowed: " << QThreadPool::globalInstance()->maxThreadCount();
+        WARNING("Server","Failed to start thread! Active threads : " + QString::number(QThreadPool::globalInstance()->activeThreadCount()));
+        WARNING("Server","Max threads alloved : " + QString::number(QThreadPool::globalInstance()->maxThreadCount()));
     }
     else
     {
-        qDebug() << "New thread started!, active threads: " << QThreadPool::globalInstance()->activeThreadCount();
+        DEBUG("Server","New thread started! Active threads : " + QString::number(QThreadPool::globalInstance()->activeThreadCount()));
     }
 }

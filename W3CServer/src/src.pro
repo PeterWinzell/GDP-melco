@@ -10,13 +10,9 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../../lib/QJsonWebToken
-INCLUDEPATH += ../../lib/vsi
-
 SOURCES += main.cpp \
     w3cserver.cpp \
     jsonrequestparser.cpp \
-    vissrequest.cpp \
     request-handler/requesthandler.cpp \
     request-handler/gethandler.cpp \
     request-handler/authorizationhandler.cpp \
@@ -29,11 +25,9 @@ SOURCES += main.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/subscriptions.cpp \
     messaging/websocketwrapper.cpp \
-    VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
-    VSSSignalinterface/vsiimpl.cpp
+    VSSSignalinterface/websocketbroker.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -51,19 +45,10 @@ HEADERS += \
     request-handler/processrequesttask.h \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
-    VSSSignalinterface/vsssignalinterfaceimpl.h \
-    OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
-    VSSSignalinterface/vsiimpl.h \
-    ../../lib/vsi/vsi_list.h \
-    ../../lib/vsi/vsi.h \
-    ../../lib/vsi/sharedMemory.h \
-    ../../lib/vsi/utils.h \
-    ../../lib/vsi/btree.h \
-    ../../lib/vsi/sharedMemoryLocks.h \
-    ../../lib/vsi/vsi_core_api.h
+    VSSSignalinterface/websocketbroker.h
 
 target.path = /home/pi
 INSTALLS += target
@@ -71,10 +56,18 @@ INSTALLS += target
 RESOURCES += \
     ../ssl.qrc
 
-LIBS += ../../lib/vsi/*.so
+INCLUDEPATH += $$PWD/../../lib/QJsonWebToken \
+                $$PWD/../../lib/Logger
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken
-else:unix: LIBS += $$PWD/../../lib/vsi/* -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken
-
-
+win32:CONFIG(release, debug|release){
+    LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken \
+             -L$$OUT_PWD/../../lib/Logger/release/ -llogger
+}
+win32:CONFIG(debug, debug|release){
+    LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken \
+             -L$$OUT_PWD/../../lib/Logger/debug/ -llogger
+}
+unix{
+    LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken \
+            -L$$OUT_PWD/../../lib/Logger/ -llogger
+}

@@ -11,12 +11,12 @@ ProcessRequestTask::ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSS
     m_jsonRequestMessage(message),
     m_pSignalInterface(signalInterface)
 {
-    qDebug() << "ProcessRequestTask created";
+    TRACE("Server", "< ProcessRequestTask > created.");
 }
 
 ProcessRequestTask::~ProcessRequestTask()
 {
-    qDebug() << "ProcessRequestTask dying...";
+    TRACE("Server", "< ProcessRequestTask > destroyed.");
 }
 
 void ProcessRequestTask::run()

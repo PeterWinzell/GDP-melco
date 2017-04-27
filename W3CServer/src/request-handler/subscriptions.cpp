@@ -117,7 +117,7 @@ bool Subscriptions::unsubscribeAll(WebSocketWrapper* client)
 
    int removeditems = m_clientsubscriptions.remove(client_ws);
    if (removeditems <= 0)
-       qDebug() << " error in removing subcriptions ";
+       DEBUG("Server", "Subscription could not be removed.");
 
    return true;
 }

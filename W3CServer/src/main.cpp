@@ -8,12 +8,25 @@
 #include <QFile>
 #include <QDir>
 
-#include <OpenDSHandler/opendshandler.h>
+#include <signal.h>
 
+#include <logger.h>
+
+void cleanExit(int sig)
+{
+    DEBUG("Server", QString("Got signal: %1").arg(sig));
+    QCoreApplication::quit();
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    // TODO Add as arguments
+    //Logger::getInstance()->logEnabled = false;
+    //Logger::getInstance()->logLevel = 0;
+    Logger::getInstance()->logToFile = false;
+    //Logger::getInstance()->logFilename = "w3c-server-log.log";
 
     //initiating QSettings
     QCoreApplication::setApplicationName("W3CServer");
@@ -22,23 +35,21 @@ int main(int argc, char *argv[])
     QPointer<QSettings> settings = new QSettings();
     QSharedPointer<QFileInfo> checkFile(new QFileInfo(settings->fileName()));
 
-    qDebug() << "Try to open settings file: " << settings->fileName();
+    INFO("Server", "Trying to open settings file: " + settings->fileName());
 
     //check if settings file exists on local filesystem otherwise copy
     //the default settings file from resources
     if(!checkFile->isFile())
     {
-        qDebug() << "No settings file found";
+        INFO("Server","No settings file found, trying to copy defualt settings file...");
 
         if(QDir().mkpath(checkFile->absolutePath()))
         {
-            qDebug() << "Path exists";
-
+            TRACE("Server","Settings file path exists.");
             //could we copy?
             if (QFile::copy(":/W3CServer.ini",settings->fileName()))
             {
-                qDebug() << "Default settings file copied";
-
+                TRACE("Server","Default settings file copied.");
                 //waits for settings file to become available and loads content
                 while(!checkFile->isFile());
                 settings->sync();
@@ -53,8 +64,29 @@ int main(int argc, char *argv[])
     bool serverDebug = settings->value("server_debug").toBool();
     settings->endGroup();
 
-    W3CServer *server = new W3CServer(serverPort,serverWSS,serverDebug);
-    QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
+    Logger::getInstance()->logEnabled = serverDebug ? true : false;
+
+    W3CServer *server = new W3CServer(serverPort,serverWSS);
+
+    //QObject::connect(server, &W3CServer::closed, &a, &QCoreApplication::quit);
+    QObject::connect(&a, SIGNAL(aboutToQuit()), server, SLOT(closingDown()));
+
+    // Do a clean exit on signals
+
+    // general
+    signal(SIGINT, cleanExit);
+    signal(SIGTERM, cleanExit);
+
+#ifdef WIN32
+    // windows
+    signal(SIGBREAK, cleanExit);
+#else
+    // unix
+    signal(SIGQUIT, cleanExit);
+    signal(SIGHUP, cleanExit);
+    signal(SIGKILL, cleanExit);
+
+#endif
 
     return a.exec(); // start exec loop
 }

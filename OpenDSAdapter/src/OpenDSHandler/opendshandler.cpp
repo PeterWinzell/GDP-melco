@@ -92,7 +92,8 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
 void OpenDSHandler::reconnect()
 {
     //if connection to OpenDS Server was lost we wait for x seconds and then retries!
-    delay(m_delay_sec);
+    //delay(m_delay_sec);
+    delay(10000);
     // "times up, should now retry....";
     m_Socket->connectToHost(m_server_ip, m_server_port);
 }

@@ -2,7 +2,7 @@
 #define TESTRESULT_H
 
 #include <QDateTime>
-#include "testcase.h"
+#include "TestCases/testcase.h"
 #include <QPair>
 
 struct TestResult

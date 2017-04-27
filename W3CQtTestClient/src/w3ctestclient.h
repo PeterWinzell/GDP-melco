@@ -8,10 +8,11 @@
 #include <QtCore/QQueue>
 #include <QtCore/QString>
 #include <QtCore/QUrl>
+#include <QTimer>
 
 #include "testresult.h"
 #include "clientreport.h"
-
+#include "TestCases/gettestcase.h"
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
 Q_DECLARE_METATYPE(TestResult)
@@ -30,27 +31,30 @@ public:
     void RunSetTest();
     void RunAuthorizeTest();
     void RunStatusTest();
+    void RunGetManyTest();
+    void RunSetManyTest();
 
     void startClient();
     void runTest();
-    void debugOutput(QString text);
 
 signals:
     void testresult(TestResult *result);
     void testsfinished(ClientReport *m_currentRunningTest);
 
-private Q_SLOTS:
+private slots:
     void onConnected();
-    void onTextMessageReceived(QString message);
     void onSslErrors(const QList<QSslError> &errors);
+    void onTestFinished(bool result);
 
     //timer slots
     void RunGetTest();
-    void unsubscribe();
-    void unsubscribeAll();
+    //void pendingTestTimeout();
+    void testTimeout();
+
 private:
-    void passTestRun();
-    void failTestRun();
+    //void passTestRun(bool success);
+    TestCaseBase* test;
+    QString getTestCaseAsString(TestCase testCase);
 
     bool m_clientStarted = false;
     ClientReport *m_clientReport;
@@ -59,11 +63,18 @@ private:
     QWebSocket *m_webSocket = 0;
 
     int m_clientId;
+    QString m_clientIdStr;
+    int m_requestId = 0;
     QUrl m_url;
 
     QQueue<TestCase> m_tests;
     TestCase m_currentTest;
     QDateTime m_testStartTime;
+    const int m_testTimeoutSec;
+    bool m_pendingTest;
+
+    QTimer* m_runningTestTimer;
+
 };
 
 #endif // W3CTESTCLIENT_H

@@ -22,51 +22,48 @@
 #include "jwt-utility/visstokenvalidator.h"
 #include <QDebug>
 
-
 AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
-        WebSocketWrapper *client):
-    RequestHandler(parent, signalInterface, vissrequest,client)
+        WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest,client)
 {
+    TRACE("Server", "< AuthorizeHandler > created.");
 }
 
 void AuthorizationHandler::processRequest()
 {
-    qDebug() << " processing authorization handler requests";
-    // qDebug() << " token is : " + (m_pVissrequest->getTokens().["authorization"]);
+    DEBUG("Server", "Processing < Authorize > request.");
+    TRACE("Server", QString("Token : %1").arg(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString()));
 
     VissTokenValidator tokenValidator(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString());
 
     if (tokenValidator.validateToken("mydirtysecret"))
     {
-        qDebug() << " TOKEN IS VERIFIED \n";
+        TRACE("Server", "Token not verified.");
     }
     else
     {
-        qDebug() << " TOKEN IS NOT VERIFIED \n";
+        TRACE("Server", "Token verified.");
     }
 
     QString zePayload = tokenValidator.getJsonPayload();
 
-    qDebug() << " token payload is " + (zePayload);
+    //TRACE("Server", QString("Token payload : %1").arg(zePayload));
 
     QJsonDocument doc2;
     doc2 = QJsonDocument::fromJson(zePayload.toUtf8());
 
     QJsonObject tokenpl = doc2.object();
     QString issuer = tokenpl["iss"].toString();
-    qDebug() << " Token issuer is : " + issuer;
+    TRACE("Server", QString("Token issuer : %1").arg(issuer));
 
     QString valid_from = tokenpl["ValidFrom"].toString();
-    qDebug() << " ValidFrom : " + valid_from;
-
     QString valid_to = tokenpl["ValidTo"].toString();
-    qDebug() << " Valid To : " + valid_to;
+    TRACE("Server", QString("Token valid from : %1, to : %2").arg(valid_from, valid_to));
 
     QString path = tokenpl["path"].toString();
-    qDebug() << " Signal path is : " + path;
+    TRACE("Server", QString("Token signal path : %1").arg(path));
 
     QString actions = tokenpl["actions"].toString();
-    qDebug() << " Actions are : " + actions;
+    TRACE("Server", QString("Token actions : %1").arg(actions));
 
 
 
