@@ -122,6 +122,7 @@ void W3cTestClient::runTest()
         }
         else
         {
+            m_webSocket->close();
             emit testsfinished(m_clientReport);
         }
     }
