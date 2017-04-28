@@ -25,6 +25,7 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     // Check if path contains asterisk and leaf.
     QJsonArray paths = parseGetPath(path);
 
+    QMutexLocker locker(&m_mutex);
     // Check if signal exists.
     if(!checkSignals(paths, true)) { return false; }
 
@@ -34,7 +35,7 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     QJsonDocument jsonDoc(message);
 
     // Lock and send message.
-    QMutexLocker locker(&m_mutex);
+
     sendMessage(jsonDoc.toJson());
 
     QEventLoop messageLoop;
@@ -58,6 +59,7 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
 {
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
+    QMutexLocker locker(&m_mutex);
     // Check if signal exists.
     if(!checkSignals(paths, false)) { return false; }
 
@@ -66,8 +68,6 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     message.insert("set", paths);
     QJsonDocument jsonDoc(message);
 
-    // Lock and send message.
-    QMutexLocker locker(&m_mutex);
     sendMessage(jsonDoc.toJson());
 
     QEventLoop messageLoop;
