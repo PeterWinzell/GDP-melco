@@ -17,4 +17,6 @@ SOURCES += main.cpp \
 HEADERS += signalserver.h \
             OpenDSHandler/opendshandler.h
 
+RESOURCES += \
+    ../settings.qrc
 
