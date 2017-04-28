@@ -20,6 +20,7 @@
 ***************************************************************************************************************/
 #include "authorizationhandler.h"
 #include "jwt-utility/visstokenvalidator.h"
+#include "errors/errorresponse.h"
 #include <QDebug>
 
 AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
@@ -28,26 +29,8 @@ AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSi
     TRACE("Server", "< AuthorizeHandler > created.");
 }
 
-void AuthorizationHandler::processRequest()
+QString AuthorizationHandler::AddToAuthManager(QString zePayload)
 {
-    DEBUG("Server", "Processing < Authorize > request.");
-    TRACE("Server", QString("Token : %1").arg(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString()));
-
-    VissTokenValidator tokenValidator(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString());
-
-    if (tokenValidator.validateToken("mydirtysecret"))
-    {
-        TRACE("Server", "Token not verified.");
-    }
-    else
-    {
-        TRACE("Server", "Token verified.");
-    }
-
-    QString zePayload = tokenValidator.getJsonPayload();
-
-    //TRACE("Server", QString("Token payload : %1").arg(zePayload));
-
     QJsonDocument doc2;
     doc2 = QJsonDocument::fromJson(zePayload.toUtf8());
 
@@ -65,19 +48,72 @@ void AuthorizationHandler::processRequest()
     QString actions = tokenpl["actions"].toString();
     TRACE("Server", QString("Token actions : %1").arg(actions));
 
-
-
+    // calulate TTL time to live in milliseconds
+    qint64 validFrom = valid_from.toLongLong();
+    qint64 validTo = valid_to.toLongLong();
+    qint64 timeToLive = validTo - validFrom; // yes use current time but wtf
+    TRACE("Server",QString("Auth TTL is : %1").arg(timeToLive));
 
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
 
+
     QJsonObject response;
     response.insert("action", "authorize");
-    response.insert("requestId", "3");
-    response.insert("TTL", 42);
+    response.insert("requestId", m_pVissrequest -> getRequestId());
+    response.insert("TTL", timeToLive);
     response.insert("timestamp", time);
 
     QJsonDocument jsonDoc(response);
     QString message = jsonDoc.toJson();
 
+    //TODO: Need to add in some format to the authmanager
+    // Signal path and token validation data...
+
+    return message;
+}
+
+QString AuthorizationHandler::getAuthErrorMessage()
+{
+    QJsonObject errorJson;
+    ErrorResponse::getInstance()->getErrorJson(ErrorReason::user_token_invalid,&errorJson);
+
+   QJsonObject responseJson;
+
+   responseJson.insert("error",errorJson);
+   responseJson.insert("action","authorize");
+   responseJson.insert("requestId",m_pVissrequest -> getRequestId());
+
+   QJsonDocument jsonDoc(responseJson);
+   QString message = jsonDoc.toJson();
+
+   return message;
+}
+
+QString AuthorizationHandler::ValidateToken()
+{
+    TRACE("Server", QString("Token : %1").arg(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString()));
+
+    VissTokenValidator tokenValidator(m_pVissrequest->getTokens().toJsonObject()["authorization"].toString());
+
+    QString responseM;
+    if (tokenValidator.validateToken("mydirtysecret"))
+    {
+        TRACE("Server", "Token verified.");
+        responseM = AddToAuthManager(tokenValidator.getJsonPayload());
+    }
+    else
+    {
+        TRACE("Server", "Token not verified.");
+        responseM = getAuthErrorMessage();
+    }
+
+    return responseM;
+}
+
+void AuthorizationHandler::processRequest()
+{
+    DEBUG("Server", "Processing < Authorize > request.");
+
+    QString message = ValidateToken();
     m_pClient->sendTextMessage(message);
 }

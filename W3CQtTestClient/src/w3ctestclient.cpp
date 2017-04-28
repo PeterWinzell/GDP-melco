@@ -249,7 +249,7 @@ void W3cTestClient::onTextMessageReceived(QString message)
 
             passTestRun();
         }
-        else if (actionString == "subscribing")
+        else if (actionString == "subscription")
         {
             if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
             {

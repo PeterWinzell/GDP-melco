@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
-    authorization/authorizationmanager.cpp
+    authorization/authorizationmanager.cpp \
+    errors/errorresponse.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -52,7 +53,8 @@ HEADERS += \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
     request-handler/authorizationhandler.h \
-    authorization/authorizationmanager.h
+    authorization/authorizationmanager.h \
+    errors/errorresponse.h
 
 target.path = /home/pi
 INSTALLS += target

@@ -145,8 +145,8 @@ QString GetVissTestDataJson::getAuthJson()
     l_jwtObj.setSecret("mydirtysecret");
     // set a default payload
     l_jwtObj.appendClaim("iss", "MelcoGot");
-    l_jwtObj.appendClaim("ValidFrom", QString::number(QDateTime::currentDateTime().toTime_t()));
-    l_jwtObj.appendClaim("ValidTo", QString::number(QDateTime::currentDateTime().addDays(365).toTime_t()));
+    l_jwtObj.appendClaim("ValidFrom", QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+    l_jwtObj.appendClaim("ValidTo", QString::number(QDateTime::currentDateTime().addDays(365).toMSecsSinceEpoch()));
     l_jwtObj.appendClaim("path", "Vehicle.*");
     l_jwtObj.appendClaim("actions", "GET,SET,GETVSS,SUBSCRIBE,UNSUBSCRIBE,USUBSCRIBEALL");
 

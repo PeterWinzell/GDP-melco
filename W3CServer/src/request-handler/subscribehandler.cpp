@@ -61,6 +61,7 @@ void SubscribeHandler::processRequest()
     {
         //Get latest value of subscribed signal
         QString value = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath());
+        //QString value = getSignalValue("");
 
         if (isFilterPass(value))
         {

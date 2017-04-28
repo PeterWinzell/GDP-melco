@@ -1,10 +1,13 @@
 #include "websocketwrapper.h"
 #include "logger.h"
+#include <QThread>
 
 WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *parent)
     : QObject(parent), m_pSocket(socket),m_pMutex(mutex)
 {
     TRACE("Server", "< WebSocketWrapper > created.");
+
+
 
     connect(socket, &QWebSocket::connected, this, &WebSocketWrapper::socketConnected);
     connect(socket, &QWebSocket::disconnected, this, &WebSocketWrapper::socketDisconnected);

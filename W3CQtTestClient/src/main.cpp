@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
-        //tests << TestCase::AUTHORIZE_SUCCESS;
-        tests << TestCase::GET;
+         //tests << TestCase::AUTHORIZE_SUCCESS;
+        //tests << TestCase::GET;
         //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
         //tests << TestCase::GET_VSS;
 
 //        tests << TestCase::STATUS;
-//        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+          tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
 //        tests << TestCase::GET_VSS;
 //        tests << TestCase::STATUS;
 
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
     bool secure = parser.isSet(secureOption);
 
     // QString url = "ws://192.168.31.128:8080"; // default url
-    QString url = "wss://127.0.0.1:8080"; // default url
+    QString url = "ws://127.0.0.1:8008"; // default url
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
 
 
