@@ -25,11 +25,9 @@ SOURCES += main.cpp \
     request-handler/processrequesttask.cpp \
     request-handler/subscriptions.cpp \
     messaging/websocketwrapper.cpp \
-    VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    OpenDSHandler/opendshandler.cpp  \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
-    authorization/authorizationmanager.cpp \
+    VSSSignalinterface/websocketbroker.cpp
     errors/errorresponse.cpp
 
 HEADERS += \
@@ -47,12 +45,10 @@ HEADERS += \
     request-handler/processrequesttask.h \
     VSSSignalinterface/vsssignalinterface.h \
     messaging/websocketwrapper.h \
-    VSSSignalinterface/vsssignalinterfaceimpl.h \
-    OpenDSHandler/opendshandler.h  \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
-    request-handler/authorizationhandler.h \
+    VSSSignalinterface/websocketbroker.h
     authorization/authorizationmanager.h \
     errors/errorresponse.h
 
@@ -67,12 +63,11 @@ INCLUDEPATH += $$PWD/../../lib/QJsonWebToken \
 
 win32:CONFIG(release, debug|release){
     LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/release/ -lqjsonwebtoken \
-             L$$OUT_PWD/../../lib/Logger/release/ -llogger
-
+             -L$$OUT_PWD/../../lib/Logger/release/ -llogger
 }
 win32:CONFIG(debug, debug|release){
     LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/debug/ -lqjsonwebtoken \
-             L$$OUT_PWD/../../lib/Logger/debug/ -llogger
+             -L$$OUT_PWD/../../lib/Logger/debug/ -llogger
 }
 unix{
     LIBS += -L$$OUT_PWD/../../lib/QJsonWebToken/ -lqjsonwebtoken \

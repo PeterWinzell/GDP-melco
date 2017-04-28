@@ -54,7 +54,7 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
 
 RequestHandler::~RequestHandler()
 {
-    if (m_pClient != 0)
+    if (m_pClient != Q_NULLPTR)
     {
         delete m_pClient;
     }

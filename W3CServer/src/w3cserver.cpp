@@ -9,16 +9,16 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QPointer>
+#include <QSettings>
 
 #include "w3cserver.h"
 #include "jsonrequestparser.h"
 #include "request-handler/processrequesttask.h"
 #include "qjsonwebtoken.h"
 #include "jwt-utility/visstokenvalidator.h"
-#include "VSSSignalinterface/vsssignalinterfaceimpl.h"
 #include "VSSSignalinterface/vsssignalinterface.h"
+#include "VSSSignalinterface/websocketbroker.h"
 #include "messaging/websocketwrapper.h"
-#include "OpenDSHandler/opendshandler.h"
 
 #include "logger.h"
 
@@ -84,16 +84,26 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
                 this, &W3CServer::onSslErrors);
     }
 
-    // TODO: select implementation based on application configuration
+    QPointer<QSettings> settings = new QSettings();
+    settings->beginGroup("WebSocketBroker");
+    QString vssName = settings->value("vss_name").toString();
+    QString vssDir = settings->value("vss_dir").toString();
+    QString signal_broker_url = settings->value("signal_broker_url").toString();
+    settings->endGroup();
 
-    const QString vssFile = "/etc/vss_rel_1.json";
-    m_vsssInterface = QSharedPointer<VSSSignalInterfaceImpl>(new VSSSignalInterfaceImpl(vssFile));
-    //m_openDSHandler = QSharedPointer<OpenDSHandler>(new OpenDSHandler());
-    //connect(m_openDSHandler.data(), &OpenDSHandler::valueChanged, static_cast <VSSSignalInterfaceImpl*>(m_vsssInterface.data()), &VSSSignalInterfaceImpl::updateValue);
+    m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssDir, vssName, signal_broker_url));
 }
 
 W3CServer::~W3CServer()
 {
+    closingDown();
+}
+
+void W3CServer::closingDown()
+{
+    DEBUG("Server", "closing down.");
+    disconnect(m_pWebSocketServer);
+    //disconnect(m_openDSHandler.data());
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
@@ -103,6 +113,7 @@ W3CServer::~W3CServer()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+
     pSocket ->ignoreSslErrors();
     DEBUG("Server","Attemping to connect");
 

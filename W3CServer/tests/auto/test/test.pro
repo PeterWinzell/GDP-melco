@@ -31,9 +31,7 @@ SOURCES += main.cpp \
     ../../../src/request-handler/unsubnotifier.cpp \
     ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
-    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.cpp \
-    ../../../src/OpenDSHandler/opendshandler.cpp
-
+    ../../../src/VSSSignalinterface/websocketbroker.cpp \
 
 HEADERS += \
     ../../../src/w3cserver.h \
@@ -54,8 +52,7 @@ HEADERS += \
     ../../../src/request-handler/statushandler.h \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
-    ../../../src/VSSSignalinterface/vsssignalinterfaceimpl.h \
-    ../../../src/OpenDSHandler/opendshandler.h
+    ../../../src/VSSSignalinterface/websocketbroker.h \
 
 INCLUDEPATH += $$PWD/../../../src/messaging
 INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface
@@ -79,12 +76,12 @@ INCLUDEPATH += ../../../../lib/QJsonWebToken \
 
 win32:CONFIG(release, debug|release){
     LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/release/ -lqjsonwebtoken \
-             L$$OUT_PWD/../../../../lib/Logger/release/ -llogger
+             -L$$OUT_PWD/../../../../lib/Logger/release/ -llogger
 
 }
 win32:CONFIG(debug, debug|release){
     LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/debug/ -lqjsonwebtoken \
-             L$$OUT_PWD/../../../../lib/Logger/debug/ -llogger
+             -L$$OUT_PWD/../../../../lib/Logger/debug/ -llogger
 }
 unix{
     LIBS += -L$$OUT_PWD/../../../../lib/QJsonWebToken/ -lqjsonwebtoken \

@@ -2,7 +2,7 @@
 #define TESTCASEDESCRIPTIONS_H
 
 #include <QObject>
-#include "testcase.h"
+#include "TestCases/testcase.h"
 
 
 class TestCaseDescriptions

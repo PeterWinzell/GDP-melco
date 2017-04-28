@@ -30,14 +30,20 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
     {
         TRACE("Server", "Sending message : " + message);
         bytesSent = m_pSocket->sendTextMessage(message);
-        m_pSocket->flush(); // well, sometimes you really need to flush
-        qDebug() << "Sending: byte sent " << bytesSent;
+
+        // flush seems cause problems, why?
+        //if (m_pSocket->)
+        //{
+            //m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
+        //}
+
+        TRACE("Server", "Bytes sent: " + QString::number(bytesSent));
     }
     else
     {
         WARNING("Server", "Socket not connected. Unable to send.");
         TRACE("Server", "Message : " + message);
-   }
+    }
 
     m_lastMessage = message;
 

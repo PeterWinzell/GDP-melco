@@ -1,8 +1,6 @@
 #ifndef TESTCASE_H
 #define TESTCASE_H
 
-#include <QString>
-
 enum class TestCase
 {
     UNKNOWN,
@@ -14,12 +12,9 @@ enum class TestCase
     SET,
     GET,
     STATUS,
+    GET_MANY,
+    SET_MANY,
     NR_OF_TESTCASES
 };
-
-
-
-
-
 
 #endif // TESTCASE_H

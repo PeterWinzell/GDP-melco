@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     qDebug() << "Client: main started";
     QCoreApplication a(argc, argv);
-
+    Logger::getInstance()->logLevel = 1;
     QCommandLineParser parser;
     parser.setApplicationDescription("Melco Gothenburg W3C VISS Reference Implementation - Test Client Application");
     parser.addHelpOption();
@@ -52,9 +52,9 @@ int main(int argc, char *argv[])
 
 
     parser.process(a);
-    qDebug() << parser.optionNames();
+    //qDebug() << parser.optionNames();
 
-    int nrOfClients = 2; // Default number of clients
+    int nrOfClients = 3; // Default number of clients
     if(parser.isSet(clientOption))
     {
         nrOfClients = parser.value(clientOption).toInt();    // Needs better validation
@@ -96,6 +96,14 @@ int main(int argc, char *argv[])
         {
             tests << TestCase::STATUS;
         }
+        else if (test == "getmany")
+        {
+            tests << TestCase::GET_MANY;
+        }
+        else if (test == "setmany")
+        {
+            tests << TestCase::SET_MANY;
+        }
         else
         {
             CRITICAL("Client Handler", "Unknown argument : " + test);
@@ -105,25 +113,23 @@ int main(int argc, char *argv[])
 
     if(tests.length() == 0)
     {
-         //tests << TestCase::AUTHORIZE_SUCCESS;
-        //tests << TestCase::GET;
-        //tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        tests << TestCase::AUTHORIZE_SUCCESS;
         //tests << TestCase::GET_VSS;
-
-//        tests << TestCase::STATUS;
-          tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
-//        tests << TestCase::GET_VSS;
-//        tests << TestCase::STATUS;
+        //tests << TestCase::GET;
+        //tests << TestCase::GET_MANY;
+        //tests << TestCase::SET;
+        //tests << TestCase::SET_MANY;
+        tests << TestCase::SUBSCRIBE_UNSUBSCRIBE;
+        tests << TestCase::STATUS;
+        //tests << TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL;
 
     }
     bool randomize = parser.isSet(randomizeOption);
     bool secure = parser.isSet(secureOption);
 
-    // QString url = "ws://192.168.31.128:8080"; // default url
-    QString url = "ws://127.0.0.1:8008"; // default url
+    QString url = "ws://127.0.0.1:8080"; // default url
+
     // Is url set, change url. If not, and secure is set, set to secure url, else use default url.
-
-
     if(parser.isSet(urlOption))
     {
         url = parser.value(urlOption);
@@ -146,7 +152,7 @@ int main(int argc, char *argv[])
     QString timestamp = parser.value(timestampOption);
     W3cTestClientHandler handler(nrOfClients, tests, url, swversion,timestamp,randomize, reportDir);
 
-
+    qDebug() << "DONE!";
     Q_UNUSED(handler);
     return a.exec();
 }

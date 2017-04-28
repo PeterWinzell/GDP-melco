@@ -6,7 +6,6 @@
 #include <QByteArray>
 #include <QSslError>
 #include <QMutex>
-#include "OpenDSHandler/opendshandler.h"
 
 class WebSocketWrapper;
 class VSSSignalInterface;
@@ -33,13 +32,13 @@ private  Q_SLOTS:
     void processTextMessage(const QString& message);
     void socketDisconnected();
     void onSslErrors(const QList<QSslError> &errors);
+    void closingDown();
 
 private:
     void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
     QSharedPointer<VSSSignalInterface> m_vsssInterface;
-    QSharedPointer<OpenDSHandler> m_openDSHandler;
     bool m_secure;
 
 };
