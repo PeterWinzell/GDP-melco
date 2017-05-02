@@ -60,7 +60,7 @@ void SubscribeUnsubscribeTestCase::onTextMessageReceived(QString message)
 
             INFO(m_testClientId, QString("Successfully subscribed to signal : %1, sub ID : %2").arg(path, m_unsubscribeCachedSubscriptionId));
         }
-        else if (actionString == "subscribing")
+        else if (actionString == "subscription")
         {
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();

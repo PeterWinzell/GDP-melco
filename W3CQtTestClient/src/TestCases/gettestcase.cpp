@@ -63,7 +63,8 @@ void GetTestCase::onTextMessageReceived(QString message)
             return;
         }
 
-        INFO(m_testClientId,"Successfully got value.");
+        INFO(m_testClientId, QString("Successfully got value : %1").arg(receivedValue.toBool()));
+        //INFO(m_testClientId, QString("Successfully got value : %1 km/h").arg(QString::number((receivedValue.toDouble() * 60) * 60)));
         emit finished(true);
     }
     else
