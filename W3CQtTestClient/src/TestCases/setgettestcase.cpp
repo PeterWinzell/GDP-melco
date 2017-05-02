@@ -59,6 +59,7 @@ void SetGetTestCase::onTextMessageReceived(QString message)
         {
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
+
             if (!errorObject.empty())
             {
                 WARNING(m_testClientId,"Set Get failed.");
@@ -68,7 +69,17 @@ void SetGetTestCase::onTextMessageReceived(QString message)
                 return;
             }
 
-            QString receivedValue = jsonObject["value"].toString();
+            QJsonValue receivedValue = jsonObject.value("value");
+            if(receivedValue.isUndefined())
+            {
+                WARNING(m_testClientId,"Get response doesn't contain any value.");
+                emit finished(false);
+                return;
+            }
+
+            // TODO Add check so that we set the same value as we set.
+            // This would probably cause some errors though.. as two or more tests could do this at the same time
+            // thus set different values and get differing results.
 
             INFO(m_testClientId,"Successfully set and got value.");
             emit  finished(true);
