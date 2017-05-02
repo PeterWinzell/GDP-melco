@@ -48,13 +48,6 @@ void SubscribeUnsubscribeAllTestCase::onTextMessageReceived(QString message)
 
         if (actionString == "subscribe")
         {
-            /*if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(m_testClientId,"Received Subcribe action when not requested.");
-                passTestRun(false);
-                return;
-            }
-*/
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())
@@ -75,13 +68,6 @@ void SubscribeUnsubscribeAllTestCase::onTextMessageReceived(QString message)
         }
         else if (actionString == "subscribing")
         {
-            /*if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(m_testClientId,"Received Subscribing action when not requested.");
-                emit finished(false);
-                return;
-            }
-*/
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())
@@ -109,13 +95,6 @@ void SubscribeUnsubscribeAllTestCase::onTextMessageReceived(QString message)
         }
         else if (actionString == "unsubscribeAll")
         {
-            /*if(m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(m_testClientId,"Received UnsubcribeAll action when not requested.");
-                emit finished(false);
-                return;
-            }*/
-
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())

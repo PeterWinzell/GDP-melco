@@ -152,7 +152,6 @@ int main(int argc, char *argv[])
     QString timestamp = parser.value(timestampOption);
     W3cTestClientHandler handler(nrOfClients, tests, url, swversion,timestamp,randomize, reportDir);
 
-    qDebug() << "DONE!";
     Q_UNUSED(handler);
     return a.exec();
 }

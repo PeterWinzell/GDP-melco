@@ -145,7 +145,7 @@ bool SubscribeHandler::isFilterPass(QString valueString)
 
 void SubscribeHandler::initializeFilter()
 {
-    qDebug() << "initializeFilter(): Enter";
+   // qDebug() << "initializeFilter(): Enter";
 
     m_filter.intervalMs = m_defaultIntervalMs;
     m_filter.rangeMin = 0;
@@ -159,8 +159,8 @@ void SubscribeHandler::initializeFilter()
     //First, check that filter is included in the request
     if(!jsonObject["filters"].isNull())
     {
-        qDebug() << "initializeFilter(): filters found";
-
+        //qDebug() << "initializeFilter(): filters found";
+        TRACE("Server", "Filters found in request.");
         //Filter can be one or more tags, where supported tags are:
         //
         // "interval" , for example:
@@ -181,13 +181,13 @@ void SubscribeHandler::initializeFilter()
         {
             m_filter.intervalMs = filterList["interval"].toInt();
 
-            qDebug() << "initializeFilter(): interval = " << m_filter.intervalMs;
+            //qDebug() << "initializeFilter(): interval = " << m_filter.intervalMs;
         }
 
         // Handle range
         if(!filterList["range"].isNull())
         {
-            qDebug() << "initializeFilter(): range found";
+           // qDebug() << "initializeFilter(): range found";
 
             // Range can consist of "above", "below" or both
             QJsonObject range = filterList["range"].toObject();
@@ -196,13 +196,13 @@ void SubscribeHandler::initializeFilter()
             {
                 m_filter.rangeMin = range["above"].toInt();
 
-                qDebug() << "initializeFilter(): above = " << m_filter.rangeMin;
+                //qDebug() << "initializeFilter(): above = " << m_filter.rangeMin;
             }
             if(!range["below"].isNull())
             {
                 m_filter.rangeMax = range["below"].toInt();
 
-                qDebug() << "initializeFilter(): below = " << m_filter.rangeMax;
+                //qDebug() << "initializeFilter(): below = " << m_filter.rangeMax;
             }
         }
 
@@ -211,7 +211,7 @@ void SubscribeHandler::initializeFilter()
         {
             m_filter.minChange = filterList["minChange"].toInt();
 
-            qDebug() << "initializeFilter(): minChange = " << m_filter.minChange;
+            //qDebug() << "initializeFilter(): minChange = " << m_filter.minChange;
         }
     }
 }

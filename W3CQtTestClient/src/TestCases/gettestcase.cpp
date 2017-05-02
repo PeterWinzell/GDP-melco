@@ -55,10 +55,16 @@ void GetTestCase::onTextMessageReceived(QString message)
             return;
         }
 
-        QString receivedValue = jsonObject["value"].toString();
+        QJsonValue receivedValue = jsonObject.value("value");
+        if(receivedValue.isUndefined())
+        {
+            WARNING(m_testClientId,"Get response doesn't contain any value.");
+            emit finished(false);
+            return;
+        }
 
         INFO(m_testClientId,"Successfully got value.");
-        emit  finished(true);
+        emit finished(true);
     }
     else
     {
