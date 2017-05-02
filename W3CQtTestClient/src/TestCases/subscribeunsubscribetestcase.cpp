@@ -40,22 +40,8 @@ void SubscribeUnsubscribeTestCase::onTextMessageReceived(QString message)
         
         QString actionString =jsonObject["action"].toString();
 
-        /*if (actionString != "get")
-        {
-            WARNING(m_testClientId,"Received Get action when not requested.");
-            emit finished(false);
-            return;
-        }*/
-
         if (actionString == "subscribe")
         {
-            /*if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(m_testClientId,"Received Subcribe action when not requested.");
-                passTestRun(false);
-                return;
-            }
-*/
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())
@@ -74,15 +60,8 @@ void SubscribeUnsubscribeTestCase::onTextMessageReceived(QString message)
 
             INFO(m_testClientId, QString("Successfully subscribed to signal : %1, sub ID : %2").arg(path, m_unsubscribeCachedSubscriptionId));
         }
-        else if (actionString == "subscribing")
+        else if (actionString == "subscription")
         {
-            /*if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE && m_currentTest != TestCase::SUBSCRIBEALL_UNSUBSCRIBEALL)
-            {
-                WARNING(m_testClientId,"Received Subscribing action when not requested.");
-                emit finished(false);
-                return;
-            }
-*/
             QString requestId = jsonObject["requestId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();
             if (!errorObject.empty())
@@ -110,13 +89,6 @@ void SubscribeUnsubscribeTestCase::onTextMessageReceived(QString message)
         }
         else if (actionString == "unsubscribe")
         {
-            /*if(m_currentTest != TestCase::SUBSCRIBE_UNSUBSCRIBE)
-            {
-                WARNING(m_testClientId,"Received Unsubcribe action when not requested.");
-                emit finished(false);
-                return;
-            }*/
-
             QString requestId = jsonObject["requestId"].toString();
             QString  subscriptionId = jsonObject["subscriptionId"].toString();
             QJsonObject errorObject = jsonObject["error"].toObject();

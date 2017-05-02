@@ -55,8 +55,19 @@ void GetManyTestCase::onTextMessageReceived(QString message)
             return;
         }
 
-
-        QString receivedValue = jsonObject["value"].toString();
+        QJsonValue receivedValue = jsonObject.value("value");
+        if(receivedValue.isUndefined())
+        {
+            WARNING(m_testClientId,"Get response doesn't contain any values.");
+            emit finished(false);
+            return;
+        }
+        else if(!receivedValue.isArray())
+        {
+            WARNING(m_testClientId,"Get response doesn't contain a value array as it should.");
+            emit finished(false);
+            return;
+        }
 
         INFO(m_testClientId,"Successfully got many values.");
         emit  finished(true);

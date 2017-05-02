@@ -83,7 +83,7 @@ QString GetVissTestDataJson::getGetJson(QString& requestId)
 {
     QJsonObject jsonObject;
     jsonObject.insert("action","get");
-    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
+    jsonObject.insert("path","Signal.ADAS.CruiseControl.IsActive");
     jsonObject.insert("requestId", requestId);
 
     QJsonDocument jsonDoc(jsonObject);
@@ -106,6 +106,7 @@ QString GetVissTestDataJson::getGetVssJson(QString& requestId)
     QJsonObject jsonObject;
     jsonObject.insert("action","getVSS");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
+    //jsonObject.insert("path","Signal.ADAS.CruiseControl.IsActive");
     jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);
@@ -122,8 +123,8 @@ QString GetVissTestDataJson::getSetJson(QString& requestId)
     QJsonObject jsonObject;
     m_setValue = "90";
     jsonObject.insert("action","set");
-    jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
-    jsonObject.insert("value", m_setValue);
+    jsonObject.insert("path","Signal.ADAS.CruiseControl.IsActive");
+    jsonObject.insert("value", false);
     jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);
@@ -133,7 +134,6 @@ QString GetVissTestDataJson::getSetJson(QString& requestId)
 QString GetVissTestDataJson::getSetManyJson(QString& requestId)
 {
     QJsonObject jsonObject;
-    m_setValue = "90";
 
     jsonObject.insert("action","set");
     jsonObject.insert("path","Signal.Cabin.Door.*.IsLocked");
@@ -141,11 +141,11 @@ QString GetVissTestDataJson::getSetManyJson(QString& requestId)
     QJsonArray values;
 
     QJsonObject value1;
-    value1.insert("Row1.Right.IsLocked", m_setValue);
+    value1.insert("Row1.Right.IsLocked", true);
     values.append(value1);
 
     QJsonObject value2;
-    value2.insert("Row1.Left.IsLocked", m_setValue);
+    value2.insert("Row1.Left.IsLocked", true);
     values.append(value2);
 
     jsonObject.insert("value", values);
@@ -215,7 +215,6 @@ QString GetVissTestDataJson::getAuthJson(QString& requestId)
 QString GetVissTestDataJson::getStatusJson(QString& requestId)
 {
     QJsonObject jsonObject;
-    m_setValue = "90";
     jsonObject.insert("action","status");
     jsonObject.insert("requestId", requestId);
 

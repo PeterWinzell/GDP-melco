@@ -132,6 +132,7 @@ void WebSocketBroker::sendMessage(const QString& message)
 
 void WebSocketBroker::onConnected()
 {
+    WARNING("","Connected to OpenDSAdapter");
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketBroker::onTextMessageReceived);
 }
 
@@ -352,7 +353,11 @@ bool WebSocketBroker::checkSignals(const QJsonArray &paths, bool getOrSet)
         foreach (QJsonValue key, obj.toObject().keys())
         {
             QJsonObject signal = getVSSNode(key.toString());
-            if(signal.isEmpty()) { return false; }
+            if(signal.isEmpty())
+            {
+                WARNING("Server", QString("Requested signal was not found : %1").arg(key.toString()));
+                return false;
+            }
 
             if(getOrSet)
             {
