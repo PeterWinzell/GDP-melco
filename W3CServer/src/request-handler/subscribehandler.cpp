@@ -28,6 +28,7 @@
 #include "unsubnotifier.h"
 #include "subscribehandler.h"
 #include "subscriptions.h"
+#include <QDebug>
 
 const int SubscribeHandler::m_defaultIntervalMs = 1000;
 
@@ -63,20 +64,44 @@ void SubscribeHandler::processRequest()
         QJsonArray values;
         if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values))
         {
-            QString value = values.takeAt(0).toString();
-            if (isFilterPass(value))
+            QJsonObject obj = values.takeAt(0).toObject();
+            QJsonValue value = obj.value(obj.keys().first());
+
+            QJsonObject jsonObject;
+            jsonObject.insert("action", "subscription");
+            jsonObject.insert("subscriptionId", m_subId);
+
+            if(value.isBool())
             {
+                jsonObject.insert("value", value.toBool());
+            }
+            if(value.isDouble())
+            {
+                jsonObject.insert("value", value.toDouble());
+            }
+            else
+            {
+                qDebug() << value;
+                jsonObject.insert("value", value.toString());
+            }
+
+            jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+
+            //if (isFilterPass(value))
+            //{
                 m_lastValue = value.toInt();
 
                 //Format response on JSON format
-                QString message = getSubscriptionNotificationJson(value);
+                QJsonDocument doc(jsonObject);
+                //QString message = getSubscriptionNotificationJson(value);
 
                 //Send message to client. Make sure that the subscription is still active!
                 if(m_dosubscription)
                 {
-                    m_pClient->sendTextMessage(message);
+                    m_pClient->sendTextMessage(doc.toJson());
                 }
-            }
+            //}
         }
         else
         {
@@ -145,7 +170,7 @@ bool SubscribeHandler::isFilterPass(QString valueString)
 
 void SubscribeHandler::initializeFilter()
 {
-   // qDebug() << "initializeFilter(): Enter";
+    // qDebug() << "initializeFilter(): Enter";
 
     m_filter.intervalMs = m_defaultIntervalMs;
     m_filter.rangeMin = 0;
@@ -187,7 +212,7 @@ void SubscribeHandler::initializeFilter()
         // Handle range
         if(!filterList["range"].isNull())
         {
-           // qDebug() << "initializeFilter(): range found";
+            // qDebug() << "initializeFilter(): range found";
 
             // Range can consist of "above", "below" or both
             QJsonObject range = filterList["range"].toObject();
