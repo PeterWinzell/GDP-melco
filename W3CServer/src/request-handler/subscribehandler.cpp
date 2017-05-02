@@ -70,38 +70,25 @@ void SubscribeHandler::processRequest()
             QJsonObject jsonObject;
             jsonObject.insert("action", "subscription");
             jsonObject.insert("subscriptionId", m_subId);
+            jsonObject.insert("value", value);
 
-            if(value.isBool())
-            {
-                jsonObject.insert("value", value.toBool());
-            }
             if(value.isDouble())
             {
-                jsonObject.insert("value", value.toDouble());
-            }
-            else
-            {
-                qDebug() << value;
-                jsonObject.insert("value", value.toString());
+                if (!isFilterPass(value.toDouble())) continue;
             }
 
+            jsonObject.insert("value", value);
             jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
 
+            //Format response on JSON format
+            QJsonDocument doc(jsonObject);
 
-            //if (isFilterPass(value))
-            //{
-                m_lastValue = value.toInt();
+            //Send message to client. Make sure that the subscription is still active!
+            if(m_dosubscription)
+            {
+                m_pClient->sendTextMessage(doc.toJson());
+            }
 
-                //Format response on JSON format
-                QJsonDocument doc(jsonObject);
-                //QString message = getSubscriptionNotificationJson(value);
-
-                //Send message to client. Make sure that the subscription is still active!
-                if(m_dosubscription)
-                {
-                    m_pClient->sendTextMessage(doc.toJson());
-                }
-            //}
         }
         else
         {
@@ -157,11 +144,10 @@ QString SubscribeHandler::getSubscriptionSuccessJson()
     return jsonDoc.toJson();
 }
 
-bool SubscribeHandler::isFilterPass(QString valueString)
+bool SubscribeHandler::isFilterPass(double value)
 {
-    int value = valueString.toInt();
     int diff = abs(value - m_lastValue);
-
+    m_lastValue = value;
     //Check whether value is within range and from last value is big enough
     return ((value >= m_filter.rangeMin) &&
             (value <= m_filter.rangeMax) &&

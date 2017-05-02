@@ -42,7 +42,7 @@ protected:
 
 private:
     QString m_subId;
-    int m_lastValue;
+    double m_lastValue;
     static const int m_defaultIntervalMs;
 
     class Filter
@@ -57,7 +57,7 @@ private:
 
     QString getSubscriptionNotificationJson(QString signalValue);
     QString getSubscriptionSuccessJson();
-    bool isFilterPass(QString valueString);
+    bool isFilterPass(double valueString);
     void initializeFilter();
     QString getSignalValue(QString path);
     static QMutex locking;
