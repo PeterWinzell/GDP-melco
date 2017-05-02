@@ -155,7 +155,7 @@ void W3CServer::socketDisconnected()
     //remove from client list and delete from heap
     if (zeClient)
     {
-        m_clients.remove(zeClient);
+        m_clients.remove(zeClient); //TODO: do we need to call delete in mutex object here ?
         zeClient->deleteLater();
         W3CServer::m_nrOfClients--;
     }

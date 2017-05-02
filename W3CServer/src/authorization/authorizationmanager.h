@@ -22,16 +22,27 @@
 #define AUTHORIZATIONMANAGER_H
 
 #include <QObject>
+#include <QWebSocket>
+#include <QList>
 
 class AuthorizationManager : public QObject
 {
     Q_OBJECT
 public:
     explicit AuthorizationManager(QObject *parent = 0);
-
+    bool insertAuthData(QWebSocket* , QJsonObject& obj);
+    // bool isAuthorized(QWebSocket*,QJsonObject actions);
+    bool deleteAuthData(QWebSocket* , QJsonObject& obj);
+    QList<QJsonObject>* getAuthData(QWebSocket* thesocket);
 signals:
 
 public slots:
+
+private:
+    typedef QList<QJsonObject*> Alist;
+
+    QMultiMap<QWebSocket *,Alist> m_authDataTable;
+
 };
 
 #endif // AUTHORIZATIONMANAGER_H

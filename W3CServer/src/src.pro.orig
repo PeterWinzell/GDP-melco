@@ -28,7 +28,11 @@ SOURCES += main.cpp \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
 <<<<<<< HEAD
+    authorization/authorizationmanager.cpp \
+    errors/errorresponse.cpp
+=======
     VSSSignalinterface/websocketbroker.cpp
+>>>>>>> origin/demo-birmingham
 =======
     authorization/authorizationmanager.cpp
 >>>>>>> origin/LP-107c
@@ -52,11 +56,12 @@ HEADERS += \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
 <<<<<<< HEAD
-    VSSSignalinterface/websocketbroker.h
-=======
     request-handler/authorizationhandler.h \
-    authorization/authorizationmanager.h
->>>>>>> origin/LP-107c
+    authorization/authorizationmanager.h \
+    errors/errorresponse.h
+=======
+    VSSSignalinterface/websocketbroker.h
+>>>>>>> origin/demo-birmingham
 
 target.path = /home/pi
 INSTALLS += target

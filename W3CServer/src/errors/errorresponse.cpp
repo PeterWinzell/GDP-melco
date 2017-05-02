@@ -18,19 +18,41 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef AUTHORIZATIONHANDLER_H
-#define AUTHORIZATIONHANDLER_H
-#include "requesthandler.h"
+#include "errorresponse.h"
 
-class AuthorizationHandler: public RequestHandler
+ErrorResponse* ErrorResponse::m_Pinstance = nullptr;
+QMutex ErrorResponse::m_mutex;
+
+ErrorResponse* ErrorResponse::getInstance()
 {
-public:
-    explicit AuthorizationHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,WebSocketWrapper* client=0);
-    void processRequest();
+    QMutexLocker mutexlock(&m_mutex);
+    if (m_Pinstance == nullptr)
+    {
+        m_Pinstance = new ErrorResponse();
+     }
+    return m_Pinstance;
+}
 
-    QString AddToAuthManager(QString zePayload);
-    QString getAuthErrorMessage();
-    QString ValidateToken();
-};
 
-#endif // AUTHORIZATIONHANDLER_H
+ErrorResponse::ErrorResponse()
+{
+    initErrorTable();
+}
+
+ErrorResponse::~ErrorResponse()
+{
+    //TODO: clean the errortable...
+}
+
+void ErrorResponse::initErrorTable()
+{
+    m_errortable.insert(ErrorReason::bad_request,400);
+    m_errortable.insert(ErrorReason::user_token_invalid,401);
+}
+
+void ErrorResponse::getErrorJson(ErrorReason anError,QJsonObject* errorObject)
+{
+    errorObject->insert("number",m_errortable.value(anError));
+    errorObject->insert("reason",anError);
+    errorObject->insert("message",""); //TODO: add message strings later later
+}

@@ -1,10 +1,13 @@
 #include "websocketwrapper.h"
 #include "logger.h"
+#include <QThread>
 
 WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *parent)
     : QObject(parent), m_pSocket(socket),m_pMutex(mutex)
 {
     TRACE("Server", "< WebSocketWrapper > created.");
+
+
 
     connect(socket, &QWebSocket::connected, this, &WebSocketWrapper::socketConnected);
     connect(socket, &QWebSocket::disconnected, this, &WebSocketWrapper::socketDisconnected);
@@ -31,7 +34,7 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
         // flush seems cause problems, why?
         //if (m_pSocket->)
         //{
-            //m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
+        m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
         //}
 
         TRACE("Server", "Bytes sent: " + QString::number(bytesSent));

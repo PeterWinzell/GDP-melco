@@ -27,8 +27,12 @@ SOURCES += main.cpp \
     messaging/websocketwrapper.cpp \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
+<<<<<<< HEAD
     VSSSignalinterface/websocketbroker.cpp \
     errors/errorresponse.cpp
+=======
+    authorization/authorizationmanager.cpp
+>>>>>>> demo-birmingham
 
 HEADERS += \
     w3cserver.h \
@@ -49,9 +53,14 @@ HEADERS += \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
+<<<<<<< HEAD
     VSSSignalinterface/websocketbroker.h \
     authorization/authorizationmanager.h \
     errors/errorresponse.h
+=======
+    VSSSignalinterface/websocketbroker.h
+    authorization/authorizationmanager.h
+>>>>>>> demo-birmingham
 
 target.path = /home/pi
 INSTALLS += target
