@@ -113,7 +113,6 @@ void W3CServer::closingDown()
 void W3CServer::onNewConnection()
 {
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-
     pSocket ->ignoreSslErrors();
     DEBUG("Server","Attemping to connect");
 

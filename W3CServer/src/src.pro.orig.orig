@@ -28,14 +28,11 @@ SOURCES += main.cpp \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
 <<<<<<< HEAD
-    authorization/authorizationmanager.cpp \
+    VSSSignalinterface/websocketbroker.cpp \
     errors/errorresponse.cpp
 =======
-    VSSSignalinterface/websocketbroker.cpp
->>>>>>> origin/demo-birmingham
-=======
     authorization/authorizationmanager.cpp
->>>>>>> origin/LP-107c
+>>>>>>> demo-birmingham
 
 HEADERS += \
     w3cserver.h \
@@ -44,6 +41,7 @@ HEADERS += \
     jsonrequestparser.h \
     vissrequest.h \
     request-handler/gethandler.h \
+    request-handler/authorizationhandler.h \
     request-handler/sethandler.h \
     request-handler/subscribehandler.h \
     request-handler/unsubscribeallhandler.h \
@@ -56,12 +54,13 @@ HEADERS += \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
 <<<<<<< HEAD
-    request-handler/authorizationhandler.h \
+    VSSSignalinterface/websocketbroker.h \
     authorization/authorizationmanager.h \
     errors/errorresponse.h
 =======
     VSSSignalinterface/websocketbroker.h
->>>>>>> origin/demo-birmingham
+    authorization/authorizationmanager.h
+>>>>>>> demo-birmingham
 
 target.path = /home/pi
 INSTALLS += target
