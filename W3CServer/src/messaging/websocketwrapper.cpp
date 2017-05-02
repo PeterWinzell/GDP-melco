@@ -34,7 +34,7 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
         // flush seems cause problems, why?
         //if (m_pSocket->)
         //{
-            //m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
+        m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
         //}
 
         TRACE("Server", "Bytes sent: " + QString::number(bytesSent));

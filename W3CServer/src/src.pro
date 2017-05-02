@@ -27,7 +27,7 @@ SOURCES += main.cpp \
     messaging/websocketwrapper.cpp \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
-    VSSSignalinterface/websocketbroker.cpp
+    VSSSignalinterface/websocketbroker.cpp \
     errors/errorresponse.cpp
 
 HEADERS += \
@@ -37,6 +37,7 @@ HEADERS += \
     jsonrequestparser.h \
     vissrequest.h \
     request-handler/gethandler.h \
+    request-handler/authorizationhandler.h \
     request-handler/sethandler.h \
     request-handler/subscribehandler.h \
     request-handler/unsubscribeallhandler.h \
@@ -48,7 +49,7 @@ HEADERS += \
     request-handler/unsubnotifier.h \
     request-handler/subscriptions.h \
     request-handler/statushandler.h \
-    VSSSignalinterface/websocketbroker.h
+    VSSSignalinterface/websocketbroker.h \
     authorization/authorizationmanager.h \
     errors/errorresponse.h
 
