@@ -7,8 +7,6 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 
-//DN DEBUG
-#include <QThread>
 
 WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, const QString &brokerUrl, QObject *parent) : QObject(parent)
 {
@@ -16,9 +14,6 @@ WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, 
     loadTempSignalList(vssDir + "/" + vssName + ".vsi");
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
-    //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
-
-    //DN DEBUG
     connect(this, &WebSocketBroker::sendMessageSignal, this, &WebSocketBroker::sendMessageSlot);
 
     m_webSocket.open(QUrl(brokerUrl));
@@ -26,9 +21,6 @@ WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, 
 
 bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 {
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::getSignalValue : path= " << path;
-
     // Check if path is single leaf.
     // Check if path is single branch.
     // Check if path contains asterisk.
@@ -50,9 +42,6 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     // Lock and send message.
 
     sendMessage(jsonDoc.toJson());
-
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::getSignalValue : task= " << QThread::currentThread();
 
     QEventLoop messageLoop;
     connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);
@@ -76,9 +65,6 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 
 bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
 {
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::setSignalValue : path= " << path << "values= " << values;
-
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     QMutexLocker locker(&m_mutex);
@@ -91,10 +77,6 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QJsonDocument jsonDoc(message);
 
     sendMessage(jsonDoc.toJson());
-
-
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::setSignalValue : task= " << QThread::currentThread();
 
     QEventLoop messageLoop;
     connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);

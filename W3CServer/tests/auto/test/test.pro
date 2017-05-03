@@ -32,6 +32,7 @@ SOURCES += main.cpp \
     ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
     ../../../src/VSSSignalinterface/websocketbroker.cpp \
+    ../../../src/errors/errorresponse.cpp
 
 HEADERS += \
     ../../../src/w3cserver.h \
@@ -53,6 +54,7 @@ HEADERS += \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
     ../../../src/VSSSignalinterface/websocketbroker.h \
+    ../../../src/errors/errorresponse.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging
 INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface
