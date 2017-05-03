@@ -4,7 +4,7 @@
 #include <QJsonArray>
 
 //int GetVissTestDataJson::m_requestId = 0;
-QString GetVissTestDataJson::m_setValue = "0";
+QVariant GetVissTestDataJson::m_setValue = "0";
 
 GetVissTestDataJson::GetVissTestDataJson()
 {
@@ -113,7 +113,7 @@ QString GetVissTestDataJson::getGetVssJson(QString& requestId)
     return jsonDoc.toJson();
 }
 
-QString GetVissTestDataJson::getSetValue()
+QVariant GetVissTestDataJson::getSetValue()
 {
     return m_setValue;
 }
@@ -121,10 +121,10 @@ QString GetVissTestDataJson::getSetValue()
 QString GetVissTestDataJson::getSetJson(QString& requestId)
 {
     QJsonObject jsonObject;
-    m_setValue = "90";
+    m_setValue = true;
     jsonObject.insert("action","set");
     jsonObject.insert("path","Signal.ADAS.CruiseControl.IsActive");
-    jsonObject.insert("value", false);
+    jsonObject.insert("value", m_setValue.toBool());
     jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);
@@ -141,11 +141,11 @@ QString GetVissTestDataJson::getSetManyJson(QString& requestId)
     QJsonArray values;
 
     QJsonObject value1;
-    value1.insert("Row1.Right.IsLocked", true);
+    value1.insert("Row1.Right.IsLocked", m_setValue.toBool());
     values.append(value1);
 
     QJsonObject value2;
-    value2.insert("Row1.Left.IsLocked", true);
+    value2.insert("Row1.Left.IsLocked", m_setValue.toBool());
     values.append(value2);
 
     jsonObject.insert("value", values);

@@ -11,8 +11,11 @@ WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *pa
 {
     TRACE("Server", "< WebSocketWrapper > created.");
 
+<<<<<<< HEAD
+=======
     //DN DEBUG
     qDebug() << "WebSocketWrapper: task= " << QThread::currentThread();
+>>>>>>> 116351b22c8843f2812a371128af9edeb00e08a3
 
 
     connect(socket, &QWebSocket::connected, this, &WebSocketWrapper::socketConnected);
@@ -45,7 +48,11 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
         // flush seems cause problems, why?
         //if (m_pSocket->)
         //{
+<<<<<<< HEAD
         m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
+=======
+ //DN DEBUG           m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
+>>>>>>> 116351b22c8843f2812a371128af9edeb00e08a3
         //}
 
         TRACE("Server", "Bytes sent: " + QString::number(bytesSent));

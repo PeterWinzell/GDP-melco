@@ -1,6 +1,7 @@
 #ifndef GETVISSTESTDATAJSON_H
 #define GETVISSTESTDATAJSON_H
 #include <QString>
+#include <QVariant>
 
 enum requesttype {GET=1,SET,SUBSCRIBE,UNSUBSCRIBE,UNSUBSCRIBEALL,GETVSS,AUTHORIZE,STATUS,GET_MANY, SET_MANY};
 
@@ -20,10 +21,10 @@ public:
     static QString getSetJson(QString& requestId);
     static QString getSetManyJson(QString& requestId);
     static QString getGetVssJson(QString& requestId);
-    static QString getSetValue();
+    static QVariant getSetValue();
     static QString getStatusJson(QString& requestId);
 private:
-    static QString m_setValue;
+    static QVariant m_setValue;
 };
 
 #endif // GETVISSTESTDATAJSON_H

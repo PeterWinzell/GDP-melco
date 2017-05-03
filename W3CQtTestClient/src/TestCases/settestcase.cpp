@@ -15,6 +15,9 @@ void SetTestCase::startTest(QWebSocket* webSocket)
 
     QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId++));
 
+    //DN DEBUG
+    qDebug() << "SetTestCase::startTest : subMess= " << subMess;
+
     m_webSocket->sendTextMessage(subMess);
 }
 void SetTestCase::forceStop()

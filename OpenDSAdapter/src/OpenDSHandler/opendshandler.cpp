@@ -224,8 +224,6 @@ QByteArray OpenDSHandler::getSetMessage()
         message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r";
         message = message % "<Message>""\r";
 
-        qDebug()  << "getSetMessage:  m_setValues: " << m_setValues;
-
         foreach (QString providerPath, m_setValues.keys())
         {
             QString value = m_setValues.value(providerPath);
@@ -304,9 +302,8 @@ bool OpenDSHandler::setSignalValue(const QString& path, QVariant value)
     if (!providerPath.isEmpty())
     {
         m_setValues.insert(providerPath, value.toString());
+        result = true;
     }
-
-    qDebug()  << "setSignalValue: providerPath = " << providerPath << "value = " << value;
 
     return result;
 }
