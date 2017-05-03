@@ -140,7 +140,7 @@ void WebSocketBroker::sendMessage(const QString& message)
 void WebSocketBroker::sendMessageSlot(const QString& message)
 {
     m_webSocket.sendTextMessage(message);
-    //m_webSocket.flush();
+    m_webSocket.flush();
 }
 
 void WebSocketBroker::onConnected()
