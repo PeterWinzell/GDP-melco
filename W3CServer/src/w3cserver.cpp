@@ -112,6 +112,10 @@ void W3CServer::closingDown()
 
 void W3CServer::onNewConnection()
 {
+    //DN DEBUG
+    qDebug() << "W3CServer::onNewConnection : task= " << QThread::currentThread();
+
+
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
 
     pSocket ->ignoreSslErrors();
@@ -130,6 +134,8 @@ void W3CServer::onNewConnection()
 
 void W3CServer::processTextMessage(const QString& message)
 {
+    //DN DEBUG
+    qDebug() << "W3CServer::processTextMessage : task= " << QThread::currentThread();
 
     DEBUG("Server","Message received");
     TRACE("Server", message);

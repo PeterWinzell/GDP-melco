@@ -7,6 +7,9 @@
 #include <QCoreApplication>
 #include <QRegularExpression>
 
+//DN DEBUG
+#include <QThread>
+
 WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, const QString &brokerUrl, QObject *parent) : QObject(parent)
 {
     loadJson(vssDir + "/" + vssName + ".json");
@@ -14,11 +17,18 @@ WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, 
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
     //connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketBroker::closed);
+
+    //DN DEBUG
+    connect(this, &WebSocketBroker::sendMessageSignal, this, &WebSocketBroker::sendMessageSlot);
+
     m_webSocket.open(QUrl(brokerUrl));
 }
 
 bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 {
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::getSignalValue : path= " << path;
+
     // Check if path is single leaf.
     // Check if path is single branch.
     // Check if path contains asterisk.
@@ -37,6 +47,9 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     // Lock and send message.
 
     sendMessage(jsonDoc.toJson());
+
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::getSignalValue : task= " << QThread::currentThread();
 
     QEventLoop messageLoop;
     connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);
@@ -57,6 +70,9 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 
 bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
 {
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::setSignalValue : path= " << path << "values= " << values;
+
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     QMutexLocker locker(&m_mutex);
@@ -69,6 +85,10 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QJsonDocument jsonDoc(message);
 
     sendMessage(jsonDoc.toJson());
+
+
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::setSignalValue : task= " << QThread::currentThread();
 
     QEventLoop messageLoop;
     connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);
@@ -124,20 +144,46 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
 
 void WebSocketBroker::sendMessage(const QString& message)
 {
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::sendMessage : task= " << QThread::currentThread();
+
+
     // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
     m_receivedMessage = QJsonObject();
+
+    //m_webSocket.sendTextMessage(message);
+    //m_webSocket.flush();
+
+    emit sendMessageSignal(message);
+}
+
+void WebSocketBroker::sendMessageSlot(const QString& message)
+{
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::sendMessageSlot : task= " << QThread::currentThread() << " message = " << message;
+
+    // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
+    //m_receivedMessage = QJsonObject();
+
     m_webSocket.sendTextMessage(message);
     m_webSocket.flush();
 }
 
+
 void WebSocketBroker::onConnected()
 {
     WARNING("","Connected to OpenDSAdapter");
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::onConnected : task= " << QThread::currentThread();
+
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketBroker::onTextMessageReceived);
 }
 
 void WebSocketBroker::onTextMessageReceived(QString message)
 {
+    //DN DEBUG
+    qDebug() << "WebSocketBroker::onTextMessageReceived : task= " << QThread::currentThread();
+
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
     if(parseError.error != QJsonParseError::NoError)

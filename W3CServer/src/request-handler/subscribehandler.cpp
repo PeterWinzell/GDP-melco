@@ -66,6 +66,8 @@ void SubscribeHandler::processRequest()
         {
             QJsonObject obj = values.takeAt(0).toObject();
             QJsonValue value = obj.value(obj.keys().first());
+            //DN DEBUG
+            qDebug() << "SubscribeHandler::processRequest : value" << value;
 
             QJsonObject jsonObject;
             jsonObject.insert("action", "subscription");
@@ -87,6 +89,8 @@ void SubscribeHandler::processRequest()
             if(m_dosubscription)
             {
                 m_pClient->sendTextMessage(doc.toJson());
+                    qDebug() << "SubscribeHandler::processRequest : client = " << m_pClient << " task= " << QThread::currentThread();
+
             }
 
         }

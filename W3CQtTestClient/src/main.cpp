@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     qDebug() << "Client: main started";
     QCoreApplication a(argc, argv);
-    Logger::getInstance()->logLevel = 1;
+    Logger::getInstance()->logLevel = 0;
     QCommandLineParser parser;
     parser.setApplicationDescription("Melco Gothenburg W3C VISS Reference Implementation - Test Client Application");
     parser.addHelpOption();

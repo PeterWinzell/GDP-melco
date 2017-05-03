@@ -115,8 +115,6 @@ void SignalServer::processTextMessage(const QString& message)
                 QJsonObject responseValue;
                 responseValue.insert(signal, QJsonValue::fromVariant(value));
                 responseValueList.append(responseValue);
-
-                qDebug() << "responseValueList:" << responseValueList;
             }
             responseMsg.insert("get", responseValueList);
             result = true;
@@ -129,7 +127,7 @@ void SignalServer::processTextMessage(const QString& message)
             foreach (QJsonValue entry, valueList)
             {
                 QString signal = entry.toObject().keys().first();
-                QVariant value = entry.toObject().value(signal);
+                QVariant value = entry.toObject().value(signal).toVariant();
 
                 if (m_openDSHandler->setSignalValue(signal, value))
                 {

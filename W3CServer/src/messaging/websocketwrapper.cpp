@@ -1,13 +1,23 @@
 #include "websocketwrapper.h"
 #include "logger.h"
 
+
+//DN DEBUG
+#include <QThread>
+
 WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *parent)
     : QObject(parent), m_pSocket(socket),m_pMutex(mutex)
 {
     TRACE("Server", "< WebSocketWrapper > created.");
 
+    //DN DEBUG
+    qDebug() << "WebSocketWrapper: task= " << QThread::currentThread();
+
+
     connect(socket, &QWebSocket::connected, this, &WebSocketWrapper::socketConnected);
     connect(socket, &QWebSocket::disconnected, this, &WebSocketWrapper::socketDisconnected);
+
+    //DN DEBUG //connect(this, &WebSocketWrapper::sendTextMessage, this, &WebSocketWrapper::sendMessage);
 
     // check if socket is connected at first start
     m_connected = socket->isValid();
@@ -28,10 +38,13 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
         TRACE("Server", "Sending message : " + message);
         bytesSent = m_pSocket->sendTextMessage(message);
 
+        //DN DEBUG
+        qDebug() << "WebSocketWrapper::sendTextMessage : m_pSocket = " << m_pSocket << " task= " << QThread::currentThread();
+
         // flush seems cause problems, why?
         //if (m_pSocket->)
         //{
-            //m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
+ //DN DEBUG           m_pSocket->flush(); // well, sometimes (seen in iOS) you really need to flush
         //}
 
         TRACE("Server", "Bytes sent: " + QString::number(bytesSent));

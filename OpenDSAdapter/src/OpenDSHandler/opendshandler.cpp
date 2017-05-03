@@ -301,12 +301,14 @@ bool OpenDSHandler::setSignalValue(const QString& path, QVariant value)
 
     QString providerPath = m_lookupSetProvider[path];
 
+    qDebug()  << "setSignalValue: providerPath = " << providerPath << "value = " << value;
+
     if (!providerPath.isEmpty())
     {
         m_setValues.insert(providerPath, value.toString());
-    }
 
-    qDebug()  << "setSignalValue: providerPath = " << providerPath << "value = " << value;
+        qDebug()  << "setSignalValue: value.toString() = " << value.toString();
+    }
 
     return result;
 }
