@@ -30,7 +30,7 @@
 #include "subscriptions.h"
 #include <QDebug>
 
-const int SubscribeHandler::m_defaultIntervalMs = 1000;
+const int SubscribeHandler::m_defaultIntervalMs = 800;
 
 SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
                                    WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
@@ -70,12 +70,12 @@ void SubscribeHandler::processRequest()
             QJsonObject jsonObject;
             jsonObject.insert("action", "subscription");
             jsonObject.insert("subscriptionId", m_subId);
-            jsonObject.insert("value", value);
+            //jsonObject.insert("value", value);
 
-            if(value.isDouble())
+           /* if(value.isDouble())
             {
                 if (!isFilterPass(value.toDouble())) continue;
-            }
+            }*/
 
             jsonObject.insert("value", value);
             jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
