@@ -51,12 +51,8 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 
     sendMessage(jsonDoc.toJson());
 
-<<<<<<< HEAD
-    DEBUG("WebSocketBroker",jsonDoc.toJson());
-=======
     //DN DEBUG
     qDebug() << "WebSocketBroker::getSignalValue : task= " << QThread::currentThread();
->>>>>>> 116351b22c8843f2812a371128af9edeb00e08a3
 
     QEventLoop messageLoop;
     connect(this, &WebSocketBroker::messageReceived, &messageLoop, &QEventLoop::quit);
@@ -151,7 +147,6 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
     return tree;
 }
 
-
 void WebSocketBroker::sendMessage(const QString& message)
 {
     //DN DEBUG
@@ -161,6 +156,7 @@ void WebSocketBroker::sendMessage(const QString& message)
     // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
     m_receivedMessage = QJsonObject();
 
+<<<<<<< Updated upstream
     //m_webSocket.sendTextMessage(message);
     //m_webSocket.flush();
 
@@ -174,11 +170,31 @@ void WebSocketBroker::sendMessageSlot(const QString& message)
 
     // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
     //m_receivedMessage = QJsonObject();
+=======
+//#define SEND_WITH_SLOT
+#ifndef SEND_WITH_SLOT
+>>>>>>> Stashed changes
 
     m_webSocket.sendTextMessage(message);
     m_webSocket.flush();
+#else
+    emit sendMessageSignal(message);
+#endif
 }
 
+<<<<<<< Updated upstream
+=======
+void WebSocketBroker::sendMessageSlot(const QString& message)
+{
+    // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
+    //m_receivedMessage = QJsonObject();
+
+    m_webSocket.sendTextMessage(message);
+    //m_webSocket.flush();
+}
+
+
+>>>>>>> Stashed changes
 
 void WebSocketBroker::onConnected()
 {
