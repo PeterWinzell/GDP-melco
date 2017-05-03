@@ -147,49 +147,28 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
     return tree;
 }
 
-
 void WebSocketBroker::sendMessage(const QString& message)
 {
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::sendMessage : task= " << QThread::currentThread();
-
-
     // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
     m_receivedMessage = QJsonObject();
-
-    //m_webSocket.sendTextMessage(message);
-    //m_webSocket.flush();
 
     emit sendMessageSignal(message);
 }
 
 void WebSocketBroker::sendMessageSlot(const QString& message)
 {
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::sendMessageSlot : task= " << QThread::currentThread() << " message = " << message;
-
-    // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
-    //m_receivedMessage = QJsonObject();
-
     m_webSocket.sendTextMessage(message);
-    m_webSocket.flush();
+    //m_webSocket.flush();
 }
-
 
 void WebSocketBroker::onConnected()
 {
     WARNING("","Connected to OpenDSAdapter");
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::onConnected : task= " << QThread::currentThread();
-
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketBroker::onTextMessageReceived);
 }
 
 void WebSocketBroker::onTextMessageReceived(QString message)
 {
-    //DN DEBUG
-    qDebug() << "WebSocketBroker::onTextMessageReceived : task= " << QThread::currentThread();
-
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
     if(parseError.error != QJsonParseError::NoError)

@@ -29,15 +29,12 @@ public:
 signals:
     void closed();
     void messageReceived();
-
-    void sendMessageSignal(const QString& message); //DN DEBUG
+    void sendMessageSignal(const QString& message);
 
 private slots:
     void onConnected();
     void onTextMessageReceived(QString message);
-
-
-    void sendMessageSlot(const QString& message); //DN DEBUG
+    void sendMessageSlot(const QString& message);
 
 private:
     void loadJson(const QString& fileName);
