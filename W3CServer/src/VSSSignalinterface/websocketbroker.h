@@ -22,7 +22,7 @@ public:
         bool isBranch;
     };
     bool getSignalValue(const QString& path, QJsonArray& values);
-    bool setSignalValue(const QString& path, const QVariant &value);
+    int setSignalValue(const QString& path, const QVariant &value);
     QJsonObject getVSSNode(const QString& path);
     QJsonObject getVSSTree(const QString& path);
 
