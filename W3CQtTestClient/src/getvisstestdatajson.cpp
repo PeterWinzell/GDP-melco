@@ -136,21 +136,21 @@ QString GetVissTestDataJson::getSetManyJson(QString& requestId)
     QJsonObject jsonObject;
 
     jsonObject.insert("action","set");
-    jsonObject.insert("path","Signal.Cabin.Door.*.IsLocked");
+    jsonObject.insert("path","Signal.ADAS.CruiseControl.*");
 
     QJsonArray values;
 
+    m_setValue = true;
     QJsonObject value1;
-    value1.insert("Row1.Right.IsLocked", m_setValue.toBool());
+    value1.insert("IsActive", m_setValue.toBool());
     values.append(value1);
 
+    m_setValue = 20;
     QJsonObject value2;
-    value2.insert("Row1.Left.IsLocked", m_setValue.toBool());
+    value2.insert("SpeedUp", m_setValue.toInt());
     values.append(value2);
 
     jsonObject.insert("value", values);
-
-
     jsonObject.insert("requestId",requestId);
 
     QJsonDocument jsonDoc(jsonObject);

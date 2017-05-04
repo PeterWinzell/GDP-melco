@@ -13,7 +13,7 @@ void SetManyTestCase::startTest(QWebSocket* webSocket)
     m_webSocket = webSocket;
     connect(m_webSocket, &QWebSocket::textMessageReceived, this, &SetManyTestCase::onTextMessageReceived);
 
-    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET, QString::number(m_requestId++));
+    QString subMess = GetVissTestDataJson::getTestDataString(requesttype::SET_MANY, QString::number(m_requestId++));
 
     m_webSocket->sendTextMessage(subMess);
 }

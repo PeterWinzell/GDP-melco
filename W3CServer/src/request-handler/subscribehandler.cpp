@@ -66,8 +66,6 @@ void SubscribeHandler::processRequest()
         {
             QJsonObject obj = values.takeAt(0).toObject();
             QJsonValue value = obj.value(obj.keys().first());
-            //DN DEBUG
-            qDebug() << "SubscribeHandler::processRequest : value" << value;
 
             QJsonObject jsonObject;
             jsonObject.insert("action", "subscription");
