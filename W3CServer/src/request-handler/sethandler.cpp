@@ -19,6 +19,7 @@
 *
 ***************************************************************************************************************/
 #include "sethandler.h"
+#include "errors/errorresponse.h"
 
 SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,signalInterface, vissrequest,client)
@@ -32,15 +33,13 @@ void SetHandler::processRequest()
     QJsonObject response;
     response.insert("requestId", m_pVissrequest->getRequestId());
     response.insert("action", "set");
+    int error = m_pSignalInterface->setSignalValue(m_pVissrequest->getSignalPath(), m_pVissrequest->getValue());
 
-    if(!m_pSignalInterface->setSignalValue(m_pVissrequest->getSignalPath(), m_pVissrequest->getValue()))
+    if(error != 0)
     {
-        // TODO Need to be able to differentiate between different errors.
-        QJsonObject error;
-        error.insert("number", 400);
-        error.insert("reason", "bad_request");
-        error.insert("message", "Something something bad side.");
-        response.insert("error", error);
+        QJsonObject errorJson;
+        ErrorResponse::getInstance()->getErrorJson((ErrorReason)error,&errorJson);
+        response.insert("error", errorJson);
     }
 
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());

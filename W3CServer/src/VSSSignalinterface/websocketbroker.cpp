@@ -1,5 +1,6 @@
 #include "websocketbroker.h"
 #include "logger.h"
+#include "errors/errorresponse.h"
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QVector>
@@ -63,13 +64,15 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     return false;
 }
 
-bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
+int WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
 {
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     QMutexLocker locker(&m_mutex);
     // Check if signal exists.
-    if(!checkSignals(paths, false)) { return false; }
+    if(!checkSignals(paths, false)) {
+        return ErrorReason::invalid_path;
+    }
 
     // Create message to send
     QJsonObject message;
@@ -85,8 +88,13 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
 
     jsonDoc = QJsonDocument(m_receivedMessage);
 
+    qDebug() << jsonDoc;
+
     // Should return false, or 0 if not bool. So should work without checking if bool
-    return jsonDoc.object()["set"].toBool();
+    if (jsonDoc.object()["set"].toBool())
+        return 0;
+    else
+        return ErrorReason::bad_gateway;
 }
 
 QJsonObject WebSocketBroker::getVSSNode(const QString& path)
