@@ -50,7 +50,7 @@ private slots:
     void RunGetTest();
     //void pendingTestTimeout();
     void testTimeout();
-
+    void connectionTimeout();
 private:
     //void passTestRun(bool success);
 
