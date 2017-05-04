@@ -22,7 +22,7 @@
 #define ERRORRESPONSE_H
 #include <QJsonObject>
 #include <QMultiMap>
-
+#include <QMutex>
 /*
 304 (Not Modified)	not_modified	No changes have been made by the server.
 400 (Bad Request)	bad_request	The server is unable to fulfil the client request because the request is malformed.
