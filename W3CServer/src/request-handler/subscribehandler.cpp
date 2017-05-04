@@ -29,7 +29,7 @@
 #include "subscribehandler.h"
 #include "subscriptions.h"
 #include <QDebug>
-
+#include "errors/errorresponse.h"
 const int SubscribeHandler::m_defaultIntervalMs = 800;
 
 SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
