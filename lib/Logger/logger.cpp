@@ -34,37 +34,37 @@ void Logger::log(LogLevel logType, QString source, QString message, QString file
 
     if (logType == LogLevel::L_TRACE && logType >= logLevel )
     {
-        QString msg = QString("[ %1 ] [ %2 ] [ Trace    ] : %3\n").arg(source, QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
+        QString msg = QString("[ %1 ] [ %2 ] [ Trace    ] : %3\n").arg(source.leftJustified(15, ' ',true), QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
         std::cerr << qPrintable(msg);
         if(logToFile) { writeLogToFile(msg); }
     }
     else if (logType == LogLevel::L_DEBUG && logType >=  logLevel)
     {
-        QString msg = QString("[ %1 ] [ %2 ] [ Debug    ] : %3\n").arg(source, QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
+        QString msg = QString("[ %1 ] [ %2 ] [ Debug    ] : %3\n").arg(source.leftJustified(15, ' ', true), QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
         std::cerr << qPrintable(msg);
         if(logToFile) { writeLogToFile(msg); }
     }
     else if (logType == LogLevel::L_INFO && logType >=  logLevel)
     {
-        QString msg = QString("[ %1 ] [ %2 ] [ Info     ] : %3\n").arg(source, QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
+        QString msg = QString("[ %1 ] [ %2 ] [ Info     ] : %3\n").arg(source.leftJustified(15, ' ',true), QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
         std::cerr << qPrintable(msg);
         if(logToFile) { writeLogToFile(msg); }
     }
     else if (logType == LogLevel::L_WARNING && logType >=  logLevel)
     {
-        QString msg = QString("[ %1 ] [ %2 ] [ Warning  ] : %3\n").arg(source, QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
+        QString msg = QString("[ %1 ] [ %2 ] [ Warning  ] : %3\n").arg(source.leftJustified(15, ' ',true), QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
         std::cerr << qPrintable(msg);
         if(logToFile) { writeLogToFile(msg); }
     }
     else if (logType == LogLevel::L_CRITICAL && logType >=  logLevel)
     {
-        QString msg = QString("[ %1 ] [ %2 ] [ Critical ] : %3\n").arg(source, QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
+        QString msg = QString("[ %1 ] [ %2 ] [ Critical ] : %3\n").arg(source.leftJustified(15, ' ',true), QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
         std::cerr << qPrintable(msg);
         if(logToFile) { writeLogToFile(msg); }
     }
     else if (logType == LogLevel::L_FATAL && logType >=  logLevel)
     {
-        QString msg = QString("[ %1 ] [ %2 ] [ Fatal    ] : %3\n").arg(source, QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
+        QString msg = QString("[ %1 ] [ %2 ] [ Fatal    ] : %3\n").arg(source.leftJustified(15, ' ',true), QDateTime::currentDateTime().toString("yyyy-MM-dd : hh:mm:ss.zzz"),message);
         std::cerr << qPrintable(msg);
         if(logToFile) { writeLogToFile(msg); }
     }
