@@ -22,7 +22,7 @@ public:
         bool isBranch;
     };
     bool getSignalValue(const QString& path, QJsonArray& values);
-    bool setSignalValue(const QString& path, const QVariant &value);
+    int setSignalValue(const QString& path, const QVariant &value);
     QJsonObject getVSSNode(const QString& path);
     QJsonObject getVSSTree(const QString& path);
 
@@ -46,7 +46,7 @@ private:
     void sendMessage(const QString& message);
 
     void loadTempSignalList(const QString &vssFile);
-
+    bool checkOpenDSConnection();
     QJsonArray parseGetPath(const QString &path);
     QJsonArray parseSetPath(const QString &path, const QJsonValue &values);
     bool checkSignals(const QJsonArray &paths, bool getOrSet);
@@ -58,6 +58,7 @@ private:
 
     QMutex m_mutex;
     long m_timeout = 150;
+    QString m_brokerUrl;
     QWebSocket m_webSocket;
 
     QJsonObject m_vssTree;

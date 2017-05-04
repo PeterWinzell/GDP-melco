@@ -22,7 +22,7 @@
 #define ERRORRESPONSE_H
 #include <QJsonObject>
 #include <QMultiMap>
-#include <QMutex>
+
 /*
 304 (Not Modified)	not_modified	No changes have been made by the server.
 400 (Bad Request)	bad_request	The server is unable to fulfil the client request because the request is malformed.
@@ -47,6 +47,7 @@
 503 (Service Unavailable)	service_unavailable	The server is currently unable to handle the request due to a temporary overload or scheduled maintenance (which may be alleviated after some delay).
 504 (Gateway Timeout)	gateway_timeout	The server did not receive a timely response from an upstream server it needed to access in order to complete the request.
 */
+
 
 enum ErrorReason{
     not_modified,
@@ -77,6 +78,7 @@ class ErrorResponse
 public:
     static ErrorResponse* getInstance();
     void getErrorJson(ErrorReason anError,QJsonObject* errorJson);
+    static QString getErrorMessage(ErrorReason code);
 private:
 
     void initErrorTable();

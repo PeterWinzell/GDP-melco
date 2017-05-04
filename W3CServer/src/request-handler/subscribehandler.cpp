@@ -94,7 +94,21 @@ void SubscribeHandler::processRequest()
         }
         else
         {
-            //TODO Error, not able to get value.
+            QJsonObject response;
+            response.insert("action", "subscription");
+            response.insert("subscriptionId", m_subId);
+            response.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+
+
+            DEBUG("Server", "Request contained something bad.");
+            // TODO Need to be able to differentiate between different errors.
+            QJsonObject error;
+            error.insert("number", 400);
+            error.insert("reason", "bad_request");
+            error.insert("message", "Something something bad side.");
+            response.insert("error", error);
+            QJsonDocument doc(response);
+            m_pClient->sendTextMessage(doc.toJson());
         }
         //Let the event loop process events so that signals are not blocked
         QCoreApplication::processEvents(QEventLoop::AllEvents);
