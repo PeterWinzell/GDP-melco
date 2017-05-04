@@ -8,7 +8,8 @@
 #include <QRegularExpression>
 
 
-WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, const QString &brokerUrl, QObject *parent) : QObject(parent)
+WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, const QString &brokerUrl, QObject *parent) :
+    QObject(parent), m_brokerUrl(brokerUrl)
 {
     loadJson(vssDir + "/" + vssName + ".json");
     loadTempSignalList(vssDir + "/" + vssName + ".vsi");
@@ -29,6 +30,7 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     DEBUG("WebSocketBroker",path);
 
     QMutexLocker locker(&m_mutex);
+    if(!checkOpenDSConnection()) return false;
     // Check if signal exists.
     if(!checkSignals(paths, true)) { return false; }
 
@@ -68,6 +70,7 @@ bool WebSocketBroker::setSignalValue(const QString& path, const QVariant& values
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     QMutexLocker locker(&m_mutex);
+    if(!checkOpenDSConnection()) return false;
     // Check if signal exists.
     if(!checkSignals(paths, false)) { return false; }
 
@@ -280,6 +283,13 @@ void WebSocketBroker::loadTempSignalList(const QString &vssFile)
         QRegularExpressionMatch match = regex.match(file.readLine());
         if(match.hasMatch()) { m_tempSignalList.append(match.captured(1).trimmed()); }
     }
+}
+
+bool WebSocketBroker::checkOpenDSConnection(){
+    if(m_webSocket.isValid()) return true;
+    WARNING("WebSocketBroker","No connection to OpenDS Adapter. Trying to reconnect.");
+    m_webSocket.open(QUrl(m_brokerUrl));
+    return false;
 }
 
 QJsonArray WebSocketBroker::parseGetPath(const QString& path)
