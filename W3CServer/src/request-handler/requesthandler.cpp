@@ -10,9 +10,6 @@
 #include "jsonrequestparser.h"
 #include "vissrequest.h"
 
-//DN DEBUG
-#include <QThread>
-
 //factory method for requestHandler
 QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString& message, WebSocketWrapper* client, QSharedPointer<VSSSignalInterface> signalInterface)
 {
@@ -30,10 +27,6 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
             handler = QSharedPointer<SetHandler>(new SetHandler(nullptr,signalInterface, parsedRequest,client));
             break;
         case SUBSCRIBE:
-
-        //DN DEBUG
-        qDebug() << "RequestHandler::makeRequestHandler : client = " << client << " task= " << QThread::currentThread();
-
             handler = QSharedPointer<SubscribeHandler>(new SubscribeHandler(nullptr,signalInterface, parsedRequest,client));
             break;
         case UNSUBSCRIBE:
@@ -63,11 +56,6 @@ RequestHandler::~RequestHandler()
 {
     if (m_pClient != Q_NULLPTR)
     {
-        delete m_pClient;
+        m_pClient->deleteLater();
     }
-
-    //if (m_pVissrequest != 0)
-    //{
-    //    delete m_pVissrequest;
-    //}
 }
