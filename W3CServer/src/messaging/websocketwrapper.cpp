@@ -11,7 +11,7 @@ WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *pa
     connect(socket, &QWebSocket::connected, this, &WebSocketWrapper::socketConnected);
     connect(socket, &QWebSocket::disconnected, this, &WebSocketWrapper::socketDisconnected);
 
-    connect(this, &WebSocketWrapper::sendTextMessageSignal, this, &WebSocketWrapper::sendTextMessageSlot);
+    connect(this, &WebSocketWrapper::sendTextMessageSignal, this, &WebSocketWrapper::sendTextMessageSlot, Qt::QueuedConnection);
 
     // check if socket is connected at first start
     m_connected = socket->isValid();

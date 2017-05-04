@@ -14,7 +14,7 @@ WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, 
     loadTempSignalList(vssDir + "/" + vssName + ".vsi");
 
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketBroker::onConnected);
-    connect(this, &WebSocketBroker::sendMessageSignal, this, &WebSocketBroker::sendMessageSlot);
+    connect(this, &WebSocketBroker::sendMessageSignal, this, &WebSocketBroker::sendMessageSlot, Qt::QueuedConnection);
 
     m_webSocket.open(QUrl(brokerUrl));
 }
