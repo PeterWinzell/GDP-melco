@@ -103,7 +103,6 @@ void W3CServer::closingDown()
 {
     DEBUG("Server", "closing down.");
     disconnect(m_pWebSocketServer);
-    //disconnect(m_openDSHandler.data());
     m_pWebSocketServer->close();
     //clean out all connected clients
     qDeleteAll(m_clients.begin(),m_clients.end());
