@@ -140,7 +140,7 @@ QJsonObject WebSocketBroker::getVSSTree(const QString& path)
     return tree;
 }
 
-void WebSocketBroker::sendMessage(const QString& message)
+void WebSocketBroker::sendMessage(const QString message)
 {
     // Need to reset so that we dont accidentally use old message. Change to timeout errormsg?
     m_receivedMessage = QJsonObject();
@@ -148,7 +148,7 @@ void WebSocketBroker::sendMessage(const QString& message)
     emit sendMessageSignal(message);
 }
 
-void WebSocketBroker::sendMessageSlot(const QString& message)
+void WebSocketBroker::sendMessageSlot(const QString message)
 {
     m_webSocket.sendTextMessage(message);
     m_webSocket.flush();

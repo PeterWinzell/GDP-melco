@@ -20,6 +20,7 @@
 ***************************************************************************************************************/
 #include "sethandler.h"
 #include "errors/errorresponse.h"
+#include <QThread>
 
 SetHandler::SetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent,signalInterface, vissrequest,client)
@@ -33,6 +34,7 @@ void SetHandler::processRequest()
     QJsonObject response;
     response.insert("requestId", m_pVissrequest->getRequestId());
     response.insert("action", "set");
+
     int error = m_pSignalInterface->setSignalValue(m_pVissrequest->getSignalPath(), m_pVissrequest->getValue());
 
     if(error != 0)
@@ -48,4 +50,6 @@ void SetHandler::processRequest()
 
     QJsonDocument jsonDoc(response);
     m_pClient->sendTextMessage(jsonDoc.toJson());
+
+    //QThread::currentThread()->sleep(2);
 }

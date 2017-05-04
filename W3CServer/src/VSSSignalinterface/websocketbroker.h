@@ -29,12 +29,12 @@ public:
 signals:
     void closed();
     void messageReceived();
-    void sendMessageSignal(const QString& message);
+    void sendMessageSignal(const QString message);
 
 private slots:
     void onConnected();
     void onTextMessageReceived(QString message);
-    void sendMessageSlot(const QString& message);
+    void sendMessageSlot(const QString message);
 
 private:
     void loadJson(const QString& fileName);
@@ -43,7 +43,7 @@ private:
     void removeOne(QJsonObject &json, const QString &filter);
     void createJsonVssTree(QVector<JsonNode>& nodes, QJsonObject &json);
 
-    void sendMessage(const QString& message);
+    void sendMessage(const QString message);
 
     void loadTempSignalList(const QString &vssFile);
     bool checkOpenDSConnection();

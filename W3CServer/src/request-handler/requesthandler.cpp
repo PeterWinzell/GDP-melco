@@ -63,7 +63,7 @@ RequestHandler::~RequestHandler()
 {
     if (m_pClient != Q_NULLPTR)
     {
-        delete m_pClient;
+        m_pClient -> deleteLater();
     }
 
     //if (m_pVissrequest != 0)

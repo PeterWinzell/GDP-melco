@@ -30,7 +30,7 @@
 #include "subscriptions.h"
 #include <QDebug>
 
-const int SubscribeHandler::m_defaultIntervalMs = 800;
+const int SubscribeHandler::m_defaultIntervalMs = 100;
 
 SubscribeHandler::SubscribeHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
                                    WebSocketWrapper *client): RequestHandler(parent, signalInterface, vissrequest,client),m_dosubscription(true)
