@@ -56,6 +56,8 @@ void W3cTestClient::startClient()
         WARNING(m_clientIdStr, QString("Socket error: %1").arg(m_webSocket->errorString()));
         QCoreApplication::exit(-1);
     });
+    // Connect for 10 seconds, then abort and fail client.
+    QTimer::singleShot(10000, this, SLOT(connectionTimeout()));
 
     m_webSocket->open(QUrl(m_url));
     m_clientStarted = true;
@@ -321,6 +323,13 @@ void W3cTestClient::onTestFinished(bool success)
 void W3cTestClient::testTimeout()
 {
     WARNING(m_clientIdStr, QString("No response from server! Waited %1 seconds").arg(m_testTimeoutSec));
+    onTestFinished(false);
+}
+
+void W3cTestClient::connectionTimeout()
+{
+    if(m_webSocket->isValid()){ return; }
+    CRITICAL(m_clientIdStr,"Could not connect to Server.");
     onTestFinished(false);
 }
 
