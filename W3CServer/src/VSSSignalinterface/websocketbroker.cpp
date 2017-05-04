@@ -31,9 +31,9 @@ bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     DEBUG("WebSocketBroker",path);
 
     QMutexLocker locker(&m_mutex);
-    if(!checkOpenDSConnection()) return false;
+    if(!checkOpenDSConnection()) return ErrorReason::gateway_timeout;
     // Check if signal exists.
-    if(!checkSignals(paths, true)) { return false; }
+    if(!checkSignals(paths, true)) { return ErrorReason::invalid_path; }
 
     DEBUG("WebSocketBroker","path exist");
 
@@ -71,7 +71,7 @@ int WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
     QJsonArray paths = parseSetPath(path, values.toJsonValue());
 
     QMutexLocker locker(&m_mutex);
-    if(!checkOpenDSConnection()) return false;
+    if(!checkOpenDSConnection()) return ErrorReason::gateway_timeout;
     // Check if signal exists.
     if(!checkSignals(paths, false)) {
         return ErrorReason::invalid_path;

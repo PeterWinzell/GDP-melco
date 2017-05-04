@@ -62,7 +62,7 @@ void SubscribeHandler::processRequest()
     {
         //Get latest value of subscribed signal
         QJsonArray values;
-        if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values))
+        if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values) != 0)
         {
             QJsonObject obj = values.takeAt(0).toObject();
             QJsonValue value = obj.value(obj.keys().first());
@@ -101,12 +101,10 @@ void SubscribeHandler::processRequest()
 
 
             DEBUG("Server", "Request contained something bad.");
-            // TODO Need to be able to differentiate between different errors.
-            QJsonObject error;
-            error.insert("number", 400);
-            error.insert("reason", "bad_request");
-            error.insert("message", "Something something bad side.");
-            response.insert("error", error);
+            QJsonObject errorJson;
+            ErrorResponse::getInstance()->getErrorJson((ErrorReason)error,&errorJson);
+            response.insert("error", errorJson);
+
             QJsonDocument doc(response);
             m_pClient->sendTextMessage(doc.toJson());
         }
