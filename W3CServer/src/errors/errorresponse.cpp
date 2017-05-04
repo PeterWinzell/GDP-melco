@@ -95,6 +95,8 @@ QString ErrorResponse::getErrorMessage(ErrorReason code){
             return "The server is unable to fulfil the client request because the request is malformed.";
         case ErrorReason::invalid_path:
             return "The specified data path does not exist.";
+        case ErrorReason::gateway_timeout:
+            return "The server did not receive a timely response from an upstream server it needed to access in order to complete the request.";
         //TODO: fyll på den som är flitig...
         default:
             return "Error is unknown";

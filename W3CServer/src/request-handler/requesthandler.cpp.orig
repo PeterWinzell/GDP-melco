@@ -56,6 +56,10 @@ RequestHandler::~RequestHandler()
 {
     if (m_pClient != Q_NULLPTR)
     {
+<<<<<<< HEAD
+        m_pClient -> deleteLater();
+=======
         m_pClient->deleteLater();
+>>>>>>> 7b03df4ee73e30e611702410de712975ad118f05
     }
 }

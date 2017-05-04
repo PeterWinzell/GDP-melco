@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include "errors/errorresponse.h"
 
 GetHandler::GetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client)
@@ -22,7 +23,9 @@ void GetHandler::processRequest()
     response.insert("action", "get");
 
     QJsonArray values;
-    if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values))
+
+    int error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
+    if(error != 0)
     {
         // There are several branches, keep whole array as it is.
         if(values.size() > 1)
@@ -63,11 +66,9 @@ void GetHandler::processRequest()
     {
         DEBUG("Server", "Request contained something bad.");
         // TODO Need to be able to differentiate between different errors.
-        QJsonObject error;
-        error.insert("number", 400);
-        error.insert("reason", "bad_request");
-        error.insert("message", "Something something bad side.");
-        response.insert("error", error);
+        QJsonObject errorJson;
+        ErrorResponse::getInstance()->getErrorJson((ErrorReason)error,&errorJson);
+        response.insert("error", errorJson);
     }
 
     QString time = QString::number(QDateTime::currentDateTime().toTime_t());
