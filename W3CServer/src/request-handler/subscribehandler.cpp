@@ -62,7 +62,8 @@ void SubscribeHandler::processRequest()
     {
         //Get latest value of subscribed signal
         QJsonArray values;
-        if(m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values) != 0)
+        int error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
+        if(error != 0)
         {
             QJsonObject obj = values.takeAt(0).toObject();
             QJsonValue value = obj.value(obj.keys().first());

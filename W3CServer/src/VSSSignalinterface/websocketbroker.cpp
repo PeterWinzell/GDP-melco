@@ -21,7 +21,7 @@ WebSocketBroker::WebSocketBroker(const QString& vssDir, const QString &vssName, 
     m_webSocket.open(QUrl(brokerUrl));
 }
 
-bool WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
+int WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
 {
     // Check if path is single leaf.
     // Check if path is single branch.

@@ -6,7 +6,7 @@
 class VSSSignalInterface
 {
 public:
-    virtual bool getSignalValue(const QString& path, QJsonArray& values) = 0;
+    virtual int getSignalValue(const QString& path, QJsonArray& values) = 0;
     virtual int setSignalValue(const QString& path, const QVariant &value) = 0;
     virtual QJsonObject getVSSNode(const QString& path) = 0;
     virtual QJsonObject getVSSTree(const QString& path) = 0;
