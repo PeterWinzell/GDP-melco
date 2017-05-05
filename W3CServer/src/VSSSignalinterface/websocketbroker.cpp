@@ -59,11 +59,11 @@ int WebSocketBroker::getSignalValue(const QString& path, QJsonArray& values)
     {
         values = jsonDoc.object()["get"].toArray();
         DEBUG(" WebSocketBroker", "values are set");
-        return true;
+        return 0;
     }
 
     DEBUG("WebSocketBroker", " there is no array in response ");
-    return false;
+    return ErrorReason::bad_gateway;
 }
 
 int WebSocketBroker::setSignalValue(const QString& path, const QVariant& values)
