@@ -17,7 +17,7 @@ ProcessRequestTask::ProcessRequestTask(WebSocketWrapper* wsw, QSharedPointer<VSS
 
 ProcessRequestTask::~ProcessRequestTask()
 {
-    TRACE("Server", "< ProcessRequestTask > destroyed.");
+    // TRACE("Server", "< ProcessRequestTask > destroyed.");
 }
 
 void ProcessRequestTask::run()
@@ -32,5 +32,7 @@ void ProcessRequestTask::run()
     {
         //blocking
         aHandler->processRequest();
+        //aHandler -> deleteLater();
     }
+
 }

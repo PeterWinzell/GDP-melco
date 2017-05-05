@@ -12,16 +12,16 @@ public:
      ~WebSocketWrapper();
 
     QWebSocket *getSocket() const;
-    qint64 sendTextMessage(const QString& message);
+    qint64 sendTextMessage(const QString message);
     const QString getLastMessage();
 
 signals:
-    void sendTextMessageSignal(const QString& message);
+    void sendTextMessageSignal(const QString message);
 
 public slots:
     void socketDisconnected();
     void socketConnected();
-    void sendTextMessageSlot(const QString& message);
+    void sendTextMessageSlot(const QString message);
 
 private:
     QWebSocket* m_pSocket;

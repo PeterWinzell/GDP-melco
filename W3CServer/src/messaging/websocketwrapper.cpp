@@ -1,6 +1,8 @@
 #include "websocketwrapper.h"
 #include "logger.h"
 #include <QThread>
+#include <QCoreApplication>
+#include <QEventLoop>
 
 
 WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *parent)
@@ -19,12 +21,14 @@ WebSocketWrapper::WebSocketWrapper(QWebSocket *socket, QMutex* mutex,QObject *pa
 
 WebSocketWrapper::~WebSocketWrapper()
 {
+    //QThread::currentThread()->sleep(2);
     TRACE("Server", "< WebSocketWrapper > destroyed.");
 }
 
-qint64 WebSocketWrapper::sendTextMessage(const QString &message)
+qint64 WebSocketWrapper::sendTextMessage(const QString message)
 {
- //   QMutexLocker locker(m_pMutex); // locking per client
+    qDebug() << "Server WebSocketWrapper::sendTextMessage" << QThread::currentThreadId();
+    QMutexLocker locker(m_pMutex); // locking per client
     qint64 bytesSent = 0;
 
     if (m_connected)
@@ -40,13 +44,16 @@ qint64 WebSocketWrapper::sendTextMessage(const QString &message)
     return bytesSent;
 }
 
-void WebSocketWrapper::sendTextMessageSlot(const QString &message)
+void WebSocketWrapper::sendTextMessageSlot(const QString message)
 {
+    //TRACE("Server WebSocketWrapper::sendTextMessageSlot", QThread::currentThreadId());
+    qDebug() << "Server WebSocketWrapper::sendTextMessageSlot" << QThread::currentThreadId();
+    QMutexLocker locker(m_pMutex);
     if (m_connected)
     {
         TRACE("sendTextMessageSlotServer", "Sending message : " + message);
-        m_pSocket->sendTextMessage(message);
-        m_pSocket->flush();
+       m_pSocket->sendTextMessage(message);
+       m_pSocket->flush();
     }
     else
     {
