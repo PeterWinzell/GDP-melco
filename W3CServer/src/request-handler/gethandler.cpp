@@ -25,7 +25,7 @@ void GetHandler::processRequest()
     QJsonArray values;
 
     int error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
-    if(error != 0)
+    if(error == 0)
     {
         // There are several branches, keep whole array as it is.
         if(values.size() > 1)
