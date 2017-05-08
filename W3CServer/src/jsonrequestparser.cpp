@@ -222,7 +222,7 @@ bool JSONRequestParser::validateGetVSSRequest(VISSRequest* request)
     QJsonValue valueId = request->getJsonObject()["requestId"];
     QJsonValue valuePath = request->getJsonObject()["path"];
 
-    bool valid = (validateId(valueId) && validatePath(valuePath));
+    bool valid = (validateId(valueId));
 
     if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (valid); }
 
