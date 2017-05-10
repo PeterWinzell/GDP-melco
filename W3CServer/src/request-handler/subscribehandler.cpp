@@ -60,58 +60,76 @@ void SubscribeHandler::processRequest()
 
     while (m_dosubscription)
     {
-        //Get latest value of subscribed signal
-        QJsonArray values;
+        QJsonObject response;
+        response.insert("action", "subscription");
+        response.insert("subscriptionId", m_subId);
+        response.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t()));
+
+        QJsonArray values(m_lastValues);
+
+        //Get latest value of subscribed signal(s)
         int error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
         if(error == 0)
         {
-            qDebug() << "AAARGGH";
-            QJsonObject obj = values.takeAt(0).toObject();
-            QJsonValue value = obj.value(obj.keys().first());
-
-            QJsonObject jsonObject;
-            jsonObject.insert("action", "subscription");
-            jsonObject.insert("subscriptionId", m_subId);
-            //jsonObject.insert("value", value);
-
-           /* if(value.isDouble())
+            if (values != m_lastValues)
             {
-                if (!isFilterPass(value.toDouble())) continue;
-            }*/
+                m_lastValues = values;
 
-            jsonObject.insert("value", value);
-            jsonObject.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
+                // There are several branches, keep whole array as it is.
+                if(values.size() > 1)
+                {
+                    response.insert("value", values);
+                }
+                // It's one branch...
+                else
+                {
+                    QJsonObject obj = values.first().toObject();
 
-            //Format response on JSON format
-            QJsonDocument doc(jsonObject);
+                    // ... with several leaves, get the single object.
+                    if(obj.keys().count() > 1)
+                    {
+                        response.insert("value", obj);
+                    }
+                    // ... with a single leave, get the value and insert it directly to the value.
+                    else
+                    {
+                        QJsonValue val = obj.value(obj.keys().first());
 
-            //Send message to client. Make sure that the subscription is still active!
-            if(m_dosubscription)
-            {
-                m_pClient->sendTextMessage(doc.toJson());
-                    qDebug() << "SubscribeHandler::processRequest : client = " << m_pClient << " task= " << QThread::currentThread();
-
+                        if(val.isDouble())
+                        {
+                            response.insert("value", val.toDouble());
+                        }
+                        else if(val.isBool())
+                        {
+                            response.insert("value", val.toBool());
+                        }
+                        else
+                        {
+                            response.insert("value", val.toString());
+                        }
+                    }
+                }
+                //Format response on JSON format and send
+                QJsonDocument jsonDoc(response);
+                m_pClient->sendTextMessage(jsonDoc.toJson());
             }
-
         }
         else
         {
-            QJsonObject response;
-            response.insert("action", "subscription");
-            response.insert("subscriptionId", m_subId);
-            response.insert("timestamp", QString::number(QDateTime::currentDateTime().toTime_t() ));
-
-
             DEBUG("Server", "Request contained something bad.");
+            // TODO Need to be able to differentiate between different errors.
             QJsonObject errorJson;
             ErrorResponse::getInstance()->getErrorJson((ErrorReason)error,&errorJson);
             response.insert("error", errorJson);
 
-            QJsonDocument doc(response);
-            m_pClient->sendTextMessage(doc.toJson());
+            //Format response on JSON format and send
+            QJsonDocument jsonDoc(response);
+            m_pClient->sendTextMessage(jsonDoc.toJson());
         }
+
         //Let the event loop process events so that signals are not blocked
         QCoreApplication::processEvents(QEventLoop::AllEvents);
+
         //Sleep for the period defined by filter
         QThread::currentThread()->msleep(m_filter.intervalMs);
     }
