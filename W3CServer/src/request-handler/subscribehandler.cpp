@@ -60,6 +60,7 @@ void SubscribeHandler::processRequest()
 
     while (m_dosubscription)
     {
+        bool dosend = false;
         QJsonObject response;
         response.insert("action", "subscription");
         response.insert("subscriptionId", m_subId);
@@ -73,6 +74,7 @@ void SubscribeHandler::processRequest()
         {
             if (values != m_lastValues)
             {
+                dosend = true;
                 m_lastValues = values;
 
                 // There are several branches, keep whole array as it is.
@@ -97,7 +99,14 @@ void SubscribeHandler::processRequest()
 
                         if(val.isDouble())
                         {
-                            response.insert("value", val.toDouble());
+                            if (isFilterPass(val.toDouble()))
+                            {
+                                response.insert("value", val.toDouble());
+                            }
+                            else
+                            {
+                                dosend = false;
+                            }
                         }
                         else if(val.isBool())
                         {
@@ -109,9 +118,6 @@ void SubscribeHandler::processRequest()
                         }
                     }
                 }
-                //Format response on JSON format and send
-                QJsonDocument jsonDoc(response);
-                m_pClient->sendTextMessage(jsonDoc.toJson());
             }
         }
         else
@@ -121,7 +127,11 @@ void SubscribeHandler::processRequest()
             QJsonObject errorJson;
             ErrorResponse::getInstance()->getErrorJson((ErrorReason)error,&errorJson);
             response.insert("error", errorJson);
+            dosend = true;
+        }
 
+        if (dosend)
+        {
             //Format response on JSON format and send
             QJsonDocument jsonDoc(response);
             m_pClient->sendTextMessage(jsonDoc.toJson());
