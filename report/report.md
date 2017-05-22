@@ -105,10 +105,58 @@ Authorization and authentication is defined and managed by tokens. This implemen
 ```
 *Example 4, authorization*<br>
 
-The implementation currently contains two separate authorization tokens: a (GET,SUBSCRIBE) token and a (SET) token.   
+The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE) token and a (SET) token.   
 
-# Usability According to Spec
-T.B.A
+# Implementation stories
+
+The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
+
+
+client -> {
+		"action": "get",
+		"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
+		"requestId": "8756"
+	}
+
+	receive <- {
+		"action": "get",
+		"requestId": "8756",
+		"value": 2372,
+		"timestamp": <DOMTimeStamp>
+	}
+
+client -> {
+		"action": "get",
+		"path": "Signal.Body.Trunk",
+		"requestId": "9078"
+	}
+
+	receive <- {
+		"action": "get",
+		"requestId": "9078",
+		"value": { "Signal.Body.Trunk.IsLocked": false,
+			"Signal.Body.Trunk.IsOpen": true },
+		"timestamp": <DOMTimeStamp>
+	}
+	
+client -> {
+		"action": "get",
+		"path": "Signal.Cabin.Door.*.IsLocked",
+		"requestId": "4523"
+	}
+
+	receive <- {
+		"action": "get",
+		"requestId": "4523",
+		"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+		           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
+			       {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+			       {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
+		"timestamp": <DOMTimeStamp>
+	}
+
+
+
 # Demo applications
 
 The real power and benefits with the VIS specification is shown when you start writing applications - any application framework that are able to speak wss[[9]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , but it can also be running in a smart phone, tablet or somewhere in the cloud. There is actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the 
