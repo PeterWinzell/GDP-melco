@@ -148,10 +148,10 @@ client -> {
 	receive <- {
 		"action": "get",
 		"requestId": "4523",
-		*"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
-		*           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
-		*	       {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
-		*	       {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
+		_"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true }_,
+		           *{"Signal.Cabin.Door.Row1.Left.IsLocked" : true }*,
+			       {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+			       {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
 		"timestamp": <DOMTimeStamp>
 	}
 
