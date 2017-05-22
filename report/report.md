@@ -121,7 +121,7 @@ client -> {
 	receive <- {
 		"action": "get",
 		"requestId": "8756",
-		"value": 2372,
+		* *"value": 2372
 		"timestamp": <DOMTimeStamp>
 	}
 
@@ -134,7 +134,7 @@ client -> {
 	receive <- {
 		"action": "get",
 		"requestId": "9078",
-		"value": { "Signal.Body.Trunk.IsLocked": false,
+		* *"value": { "Signal.Body.Trunk.IsLocked": false,
 			"Signal.Body.Trunk.IsOpen": true },
 		"timestamp": <DOMTimeStamp>
 	}
@@ -148,7 +148,7 @@ client -> {
 	receive <- {
 		"action": "get",
 		"requestId": "4523",
-		"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+		* *"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
 		           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
 			       {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
 			       {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
