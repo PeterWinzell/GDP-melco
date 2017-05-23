@@ -122,8 +122,7 @@ So, from the picture we see that the values from a ***get*** request are deliver
 	   {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
 	   {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ]
 ```
-This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload. The sepecification have the smae issue with the ***set*** request.
-
+This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload. The specification have a similar issue with the ***set*** request.
 
 
 # Demo applications
