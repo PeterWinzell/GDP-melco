@@ -113,7 +113,7 @@ The implementation of any api should follow a consistent and easy to use data pr
 
 **Get examples:**
 <br>
-<p>
+<p> <div>
 client:  {
 	"action": "get",
 	"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
@@ -125,8 +125,8 @@ receive: {
 	 <strong> "value": 2372 </strong>
 	"timestamp": <DOMTimeStamp>
 }
-<br>
 
+</div><div>
 client: {
 	"action": "get",
 	"path": "Signal.Body.Trunk",
@@ -139,8 +139,8 @@ receive:  {
 	<strong> "value": { "Signal.Body.Trunk.IsLocked": false, "Signal.Body.Trunk.IsOpen": true }, </strong>
 	"timestamp": <DOMTimeStamp>
 }
-<br>
 
+</div><div>
 client: {
 	"action": "get",
 	"path": "Signal.Cabin.Door.*.IsLocked",
@@ -154,6 +154,7 @@ receive: {
 	"timestamp": <DOMTimeStamp>
 }
 
+</div>
 </p>
 
 
