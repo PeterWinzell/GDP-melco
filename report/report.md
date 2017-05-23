@@ -107,7 +107,7 @@ Authorization and authentication is defined and managed by tokens. This implemen
 
 The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE) token and a (SET) token.   
 
-# Implementation stories
+# Implementation stories, deviations
 
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
 
@@ -123,6 +123,15 @@ So, from the picture we see that the values from a ***get*** request are deliver
 	   {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ]
 ```
 This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload. The specification have a similar issue with the ***set*** request.
+
+**Wss and ws**
+Throughout the development we used a self-signed certificate to be able to run the web socket secure protocol. For practical reasons with some of the test clients we also executed the server in the ws mode - this does not affect the actual code on the server side.
+
+** **
+The use of the static server name xxxxx which is part of the specification was not implemented and should be considered a deviation from the specification.
+
+**Authorization**
+We partly implemented the authorization part of the specification - omitting the device token from the implementation.
 
 
 # Demo applications
