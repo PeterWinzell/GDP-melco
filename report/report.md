@@ -138,16 +138,16 @@ We partly implemented the authorization part of the specification - omitting the
 The real power and benefits of the VIS specification starts to show when you start writing applications - any application framework that are able to speak wss[[9]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , in a different ECU on the vehicle network, but it can also be running in a smart phone, tablet, or roadside infrastructure, somewhere in the cloud or even inside another vehicle. There are actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the w3C specification. This is something that needs to be adressed by each OEM, and perhaps even be regulated on a state level in order to achieve real and secure standards.
 
 **Android demo**<br>
-The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017. We implemented an Android client[x] that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of a openDS[x] simulated car.
+The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017[10]. We implemented an Android client[11] that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of a openDS[12] simulated car.
 
 **iPhone demo**<br>
-We also tested to an iPhone client that listened to the speed signal in a similar fashion. This client was written in swift x.x.
+We also tested to an iPhone client[13] that listened to the speed signal in a similar fashion. This client was written in Swift x.x.
 
 **HTML5 demo**<br>
-We used a test client that were written in Javascript to demonstrate the getVSS request. 
+We used a test client[14] that were written in HTML5Javascript to demonstrate the getVSS request. 
 
 **Qt test client**<br>
-Qt test client that were executed on the pc in Linux/Windows and Mac OS. 
+Qt test client[15] that were executed on the pc in Linux/Windows and Mac OS. 
 
 The ability to address the server from all these different clients executed on a number of different devices, demonstrates the interoperability of the web socket protocol and gives credit to the VIS specification. 
 
@@ -181,5 +181,17 @@ T.B.A
 [8] https://jwt.io
 
 [9] https://tools.ietf.org/html/rfc6455
+
+[10] Genivi
+
+[11] Android sources
+
+[12] openDS
+
+[13] iPhone client sources
+
+[14] HTML5 sources
+
+[15] Qt test client sources
 
 
