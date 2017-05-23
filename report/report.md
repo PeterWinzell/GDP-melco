@@ -112,6 +112,8 @@ The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE)
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
 
 **Get examples:**
+![get](getvalues.png)<br>
+
 <br>
 <p> <div>
 client:  {
