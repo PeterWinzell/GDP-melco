@@ -113,45 +113,45 @@ The implementation of any api should follow a consistent and easy to use data pr
 
 Get examples:<br>
 <p>
-client -> {
+client:  {
 	"action": "get",
 	"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
-	"requestId": "8756"
-}
-receive <- {
+	"requestId": "8756"}
+	
+receive: {
 	"action": "get",
 	"requestId": "8756",
-	 **"value": 2372**
+	 <strong> "value": 2372 </strong>
 	"timestamp": <DOMTimeStamp>
 }
-</p>
+<br>
 
-<p>
-client -> {
+client: {
 	"action": "get",
 	"path": "Signal.Body.Trunk",
 	"requestId": "9078"
 }
-receive <- {
+receive:  {
 	"action": "get",
 	"requestId": "9078",
-	**"value": { "Signal.Body.Trunk.IsLocked": false, "Signal.Body.Trunk.IsOpen": true },**
+	<strong> "value": { "Signal.Body.Trunk.IsLocked": false, "Signal.Body.Trunk.IsOpen": true }, </strong>
 	"timestamp": <DOMTimeStamp>
 }
-</p>
+<br>
 
-</p>
-client -> {
+client: {
 	"action": "get",
 	"path": "Signal.Cabin.Door.*.IsLocked",
 	"requestId": "4523"
 }
-receive <- {
+receive: {
 	"action": "get",
 	"requestId": "4523",
-	**"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },{"Signal.Cabin.Door.Row1.Left.IsLocked" : true },{"Signal.Cabin.Door.Row2.Right.IsLocked" : false },{"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],**
+	<strong> "value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },{"Signal.Cabin.Door.Row1.Left.IsLocked" : true },{"Signal.Cabin.Door.Row2.Right.IsLocked" : false },{"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],</strong>
 	"timestamp": <DOMTimeStamp>
 }
+<br>
+
 </p>
 
 
