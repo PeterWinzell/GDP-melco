@@ -121,7 +121,9 @@ client -> {
 receive <- {
 	"action": "get",
 	"requestId": "8756",
-	 **´ "value": 2372 ´**´
+```
+	 **"value": 2372**
+```json 
 	"timestamp": <DOMTimeStamp>
 }
 
