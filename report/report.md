@@ -125,12 +125,15 @@ So, from the picture we see that the values from a ***get*** request are deliver
 This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload. The specification have a similar issue with the ***set*** request.
 
 **Wss and ws**
+
 Throughout the development we used a self-signed certificate to be able to run the web socket secure protocol. For practical reasons with some of the test clients we also executed the server in the ws mode - this does not affect the actual code on the server side.
 
-** **
-The use of the static server name xxxxx which is part of the specification was not implemented and should be considered a deviation from the specification.
+**wwwivi**
+
+The use of the static server name wss://wwwivi was not used and should be considered a deviation from the specification.
 
 **Authorization**
+
 We partly implemented the authorization part of the specification - omitting the device token from the implementation.
 
 
