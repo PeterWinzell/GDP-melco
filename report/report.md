@@ -111,22 +111,24 @@ The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE)
 
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
 
-```json
+
+<p>
 client -> {
 	"action": "get",
 	"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
 	"requestId": "8756"
-	}
+}
 
 receive <- {
 	"action": "get",
 	"requestId": "8756",
-```
 	 **"value": 2372**
-```json 
 	"timestamp": <DOMTimeStamp>
 }
 
+</p>
+
+<p>
 client -> {
 	"action": "get",
 	"path": "Signal.Body.Trunk",
@@ -136,27 +138,29 @@ client -> {
 receive <- {
 	"action": "get",
 	"requestId": "9078",
-	"value": { "Signal.Body.Trunk.IsLocked": false,
-		   "Signal.Body.Trunk.IsOpen": true },
+	**"value": { "Signal.Body.Trunk.IsLocked": false, "Signal.Body.Trunk.IsOpen": true },**
 	"timestamp": <DOMTimeStamp>
 }
-	
+
+</p>
+
+</p>
 client -> {
 	"action": "get",
 	"path": "Signal.Cabin.Door.*.IsLocked",
 	"requestId": "4523"
 }
 
+<p>
+
 receive <- {
 	"action": "get",
 	"requestId": "4523",
-	"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
-		   {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
-		   {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
-		   {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],
+	**"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },{"Signal.Cabin.Door.Row1.Left.IsLocked" : true },{"Signal.Cabin.Door.Row2.Right.IsLocked" : false },{"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],**
 	"timestamp": <DOMTimeStamp>
 }
-```
+
+</p>
 
 
 # Demo applications
