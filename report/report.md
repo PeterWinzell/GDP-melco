@@ -114,50 +114,15 @@ The implementation of any api should follow a consistent and easy to use data pr
 **Get examples:**
 ![get](getvalues.png)<br>
 
-<br>
-<p> <div>
-client:  {
-	"action": "get",
-	"path": "Signal.Drivetrain.InternalCombustionEngine.RPM",
-	"requestId": "8756"}
-	
-receive: {
-	"action": "get",
-	"requestId": "8756",
-	 <strong> "value": 2372 </strong>
-	"timestamp": <DOMTimeStamp>
-}
+So, from the picture we see that the values from a ***get*** request are delivered in three different ways. This complicates the logic not only on the client side but also on the server side. We need to apply more logic to the code which could be avoided by simply alway returning the values:
 
-</div><div>
-client: {
-	"action": "get",
-	"path": "Signal.Body.Trunk",
-	"requestId": "9078"
-}
-
-receive:  {
-	"action": "get",
-	"requestId": "9078",
-	<strong> "value": { "Signal.Body.Trunk.IsLocked": false, "Signal.Body.Trunk.IsOpen": true }, </strong>
-	"timestamp": <DOMTimeStamp>
-}
-
-</div><div>
-client: {
-	"action": "get",
-	"path": "Signal.Cabin.Door.*.IsLocked",
-	"requestId": "4523"
-}
-
-receive: {
-	"action": "get",
-	"requestId": "4523",
-	<strong> "value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },{"Signal.Cabin.Door.Row1.Left.IsLocked" : true },{"Signal.Cabin.Door.Row2.Right.IsLocked" : false },{"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],</strong>
-	"timestamp": <DOMTimeStamp>
-}
-
-</div>
-</p>
+```json
+"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
+	   {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+	   {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ]
+```
+This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload.
 
 
 # Demo applications
