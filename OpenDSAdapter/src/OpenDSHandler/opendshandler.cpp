@@ -54,7 +54,7 @@ OpenDSHandler::OpenDSHandler(QObject *parent) : QObject(parent)
             m_getValues.insert(providerPath, "");
         }
 
-        // Fill the "get" lookup table
+        // Fill the "set" lookup table
         if (settings->value(set).toBool())
         {
             m_lookupSetProvider.insert(vssPath, providerPath);
@@ -109,22 +109,27 @@ void OpenDSHandler::xmlParser(QString xmlData)
     //Parse data
     foreach (QString providerPath, m_lookupGetProvider)
     {
-        // Get only the element name i.e. the last part of the path.
-        // For example:
-        // full path: /root/thisVehicle/exterior/engineCompartment/engine/Properties/actualRpm
-        // element name: actualRpm
-        //
-        QString elementName = providerPath.mid(providerPath.lastIndexOf("/") + 1);
-
-        QDomNodeList xmlValue=doc.elementsByTagName(elementName);
-        QString value = xmlValue.at(0).toElement().text();
-
-        //qDebug() << "xmlParser : " << elementName;
-
-        if (!value.isEmpty())
+        if (!providerPath.isEmpty())
         {
-            //qDebug() << "xmlParser : value = " << value;
-            emit valueChanged(providerPath, value);
+            // Get only the element name i.e. the last part of the path.
+            // For example:
+            // full path: /root/thisVehicle/exterior/engineCompartment/engine/Properties/actualRpm
+            // element name: actualRpm
+            //
+            qDebug() << "xmlParser : providerPath" << providerPath;
+
+            QString elementName = providerPath.mid(providerPath.lastIndexOf("/") + 1);
+
+            QDomNodeList xmlValue=doc.elementsByTagName(elementName);
+            QString value = xmlValue.at(0).toElement().text();
+
+            qDebug() << "xmlParser elementName: " << elementName;
+
+            if (!value.isEmpty())
+            {
+                qDebug() << "xmlParser : value = " << value;
+                emit valueChanged(providerPath, value);
+            }
         }
     }
 }
