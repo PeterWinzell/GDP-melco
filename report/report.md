@@ -111,7 +111,8 @@ The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE)
 
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
 
-Get examples:<br>
+**Get examples:**
+<br>
 <p>
 client:  {
 	"action": "get",
@@ -131,6 +132,7 @@ client: {
 	"path": "Signal.Body.Trunk",
 	"requestId": "9078"
 }
+
 receive:  {
 	"action": "get",
 	"requestId": "9078",
@@ -144,13 +146,13 @@ client: {
 	"path": "Signal.Cabin.Door.*.IsLocked",
 	"requestId": "4523"
 }
+
 receive: {
 	"action": "get",
 	"requestId": "4523",
 	<strong> "value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },{"Signal.Cabin.Door.Row1.Left.IsLocked" : true },{"Signal.Cabin.Door.Row2.Right.IsLocked" : false },{"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ],</strong>
 	"timestamp": <DOMTimeStamp>
 }
-<br>
 
 </p>
 
