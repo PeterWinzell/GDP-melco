@@ -6,25 +6,37 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>W3CTest Socket Client Test</title>
+        <title>W3C Vehicle Information Service Specification: getVSS</title>
     </head>
     <body>
-        <h1>W3CTest Socket Client</h1>
-        <p>
-            <button onClick="initWebSocket();">Connect</button>
-            <button onClick="stopWebSocket();">Disconnect</button>
-            <button onClick="checkSocket();">State</button>
-.        </p>
-.        <p>
- .           <textarea id="debugTextArea" style="width:400px;height:200px;"></textarea>
-        </p>
-        <p>
-            <input type="text" id="inputText" onkeydown="if(event.keyCode==13)sendMessage();"/>
-            <button onClick="sendMessage();">Send</button>
-        </p>
+    	<div style="background-color:#d3d3d3">
+        <h1> W3C reference implementation, HTML5 test</h1>
+        	<p>
+            	<button onClick="initWebSocket();">Connect </button>
+            	<button onClick="stopWebSocket();">Disconnect</button>
+            	<button onClick="checkSocket();">State</button>
+        	</p>
+       
+        	<p>
+        		json viss request:<br>
+            	<input type="text" value='{"action":"getVSS","path":"","requestId":"345"}' 
+            	style="width: 400px; padding: 2px; border: 1px solid black"id="inputText" onkeydown="if(event.keyCode==13)sendMessage();"/>
+            	<button onClick="sendMessage();">Send</button>
+        	</p>
+			<br>
+			<p>
+            	 <textarea id="debugTextArea" background-color:#cC0c0c0 style="width:600px;height:600px;"></textarea>
+        	</p>
+       		<br>
+       		<br>
+        	
+        </div>
 
         <script type="text/javascript">
+        	<!--var JSONFormatter = require('../../../../dist/json-formatter.js').default;-->
+        	
             var debugTextArea = document.getElementById("debugTextArea");
+            
             function debug(message) {
                 debugTextArea.value += message + "\n";
                 debugTextArea.scrollTop = debugTextArea.scrollHeight;
@@ -40,7 +52,7 @@ and open the template in the editor.
                 }
             }
 
-            var wsUri = "wss://169.254.239.76:8080";
+            var wsUri = "ws://192.168.0.10:8080";
             var websocket = null;
 
             function initWebSocket() {
