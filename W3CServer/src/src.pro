@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     request-handler/unsubnotifier.cpp \
     request-handler/statushandler.cpp \
     VSSSignalinterface/websocketbroker.cpp \
-    errors/errorresponse.cpp
+    errors/errorresponse.cpp \
+    authorization/authorizationmanager.cpp
 
 HEADERS += \
     w3cserver.h \
