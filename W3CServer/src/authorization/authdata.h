@@ -18,30 +18,32 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef AUTHORIZATIONMANAGER_H
-#define AUTHORIZATIONMANAGER_H
+#ifndef AUTHDATA_H
+#define AUTHDATA_H
 
 #include <QObject>
-#include <QWebSocket>
-#include <QList>
 
-class AuthorizationManager : public QObject
+class AuthData : public QObject
 {
     Q_OBJECT
 public:
-    explicit AuthorizationManager(QObject *parent = 0);
-    bool insertAuthData(QWebSocket* , QJsonObject& obj);
-    bool isAuthorized(QWebSocket*,QJsonObject actions);
-    bool deleteAuthData(QWebSocket* , QJsonObject& obj);
-    QList<QJsonObject>* getAuthData(QWebSocket* thesocket);
-signals:
+    AuthData(QString path,QString actions,quint64 validFrom,quint64 validTo);
 
-public slots:
-
+    /**
+     * @brief isAuthApproved is the AuthData object authorizating path and actions
+     * @param path, tree path
+     * @param actions, actions such as GET,SET,SUBSCRIBE
+     * @return true if approved
+     */
+    bool isAuthApproved(QString path,QString actions);
 private:
-    typedef QList<QJsonObject*> Alist;
-    QMultiMap<QWebSocket *,Alist> m_authDataTable;
+    //returns the maximum sequence pattern match of path1 and path2
+    QString findMaxMatch(QString path1,QString path2);
 
+    QString m_path;
+    QString m_actions;
+    quint64 m_validFrom;
+    quint64 m_validTo;
 };
 
-#endif // AUTHORIZATIONMANAGER_H
+#endif // AUTHDATA_H

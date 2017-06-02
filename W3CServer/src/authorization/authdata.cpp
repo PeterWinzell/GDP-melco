@@ -18,30 +18,31 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef AUTHORIZATIONMANAGER_H
-#define AUTHORIZATIONMANAGER_H
+#include "authdata.h"
 
-#include <QObject>
-#include <QWebSocket>
-#include <QList>
-
-class AuthorizationManager : public QObject
+AuthData::AuthData(QString path,QString actions,quint64 validFrom,quint64 validTo):
+m_path(path),m_actions(actions),m_validFrom(validFrom),m_validTo(validTo)
 {
-    Q_OBJECT
-public:
-    explicit AuthorizationManager(QObject *parent = 0);
-    bool insertAuthData(QWebSocket* , QJsonObject& obj);
-    bool isAuthorized(QWebSocket*,QJsonObject actions);
-    bool deleteAuthData(QWebSocket* , QJsonObject& obj);
-    QList<QJsonObject>* getAuthData(QWebSocket* thesocket);
-signals:
+}
 
-public slots:
 
-private:
-    typedef QList<QJsonObject*> Alist;
-    QMultiMap<QWebSocket *,Alist> m_authDataTable;
+bool AuthData::isAuthApproved(QString path,QString actions)
+{
+    QString matchedTreePattern = findMaxMatch(m_path,path);
 
-};
 
-#endif // AUTHORIZATIONMANAGER_H
+    return true;
+}
+
+
+QString AuthData::findMaxMatch(QString path1, QString path2)
+{
+    QString matchS="";
+    int i = 0;
+    while ( (i < path1.length() && i < path2.length()) && (path1.at(i) == path2.at(i)) )
+    {
+        matchS.append(path1.at(i));
+        i++;
+    }
+    return matchS;
+}

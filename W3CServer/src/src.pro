@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     request-handler/statushandler.cpp \
     VSSSignalinterface/websocketbroker.cpp \
     errors/errorresponse.cpp \
-    authorization/authorizationmanager.cpp
+    authorization/authorizationmanager.cpp \
+    authorization/authdata.cpp
 
 HEADERS += \
     w3cserver.h \
@@ -52,7 +53,8 @@ HEADERS += \
     request-handler/statushandler.h \
     VSSSignalinterface/websocketbroker.h \
     authorization/authorizationmanager.h \
-    errors/errorresponse.h
+    errors/errorresponse.h \
+    authorization/authdata.h
 
 target.path = /home/pi
 INSTALLS += target
