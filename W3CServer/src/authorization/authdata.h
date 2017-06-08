@@ -40,6 +40,13 @@ private:
     //returns the maximum sequence pattern match of path1 and path2
     QString findMaxMatch(QString path1,QString path2);
 
+    // is the auththree === authbranch.
+    bool isExactMatch(QString authtree, QString authbranch);
+    // is it a branch match ? authbranch is a genuine subset of authtree
+    bool isBranchMatch(QString authtree,QString authbranch);
+    // is the action authorized
+    bool actionMember(QString action);
+
     QString m_path;
     QString m_actions;
     quint64 m_validFrom;

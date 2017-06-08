@@ -26,12 +26,9 @@ m_path(path),m_actions(actions),m_validFrom(validFrom),m_validTo(validTo)
 }
 
 
-bool AuthData::isAuthApproved(QString path,QString actions)
+bool AuthData::isAuthApproved(QString path,QString action)
 {
-    QString matchedTreePattern = findMaxMatch(m_path,path);
-
-
-    return true;
+    return actionMember(action) && (isExactMatch(m_path,path) || isBranchMatch(m_path,path));
 }
 
 
@@ -45,4 +42,26 @@ QString AuthData::findMaxMatch(QString path1, QString path2)
         i++;
     }
     return matchS;
+}
+
+bool AuthData::isExactMatch(QString authtree,QString authbranch)
+{
+    return (authtree == authbranch);
+}
+
+bool AuthData::isBranchMatch(QString authtree, QString authbranch)
+{
+    QString matchS = findMaxMatch(authtree,authbranch);
+    int auth_three_length = authtree.length();
+    int matchs_length = matchS.length();
+
+    QChar lastchar = authtree.at(auth_three_length - 1 );
+
+    return (lastchar == '*' && matchs_length == (auth_three_length - 1));
+
+}
+
+bool AuthData::actionMember(QString action)
+{
+    return m_actions.contains(action);
 }
