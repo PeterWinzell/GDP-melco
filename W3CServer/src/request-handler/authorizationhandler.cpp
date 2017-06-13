@@ -21,6 +21,7 @@
 #include "authorizationhandler.h"
 #include "jwt-utility/visstokenvalidator.h"
 #include "errors/errorresponse.h"
+#include "authorization/authdata.h"
 #include <QDebug>
 
 AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
@@ -66,8 +67,9 @@ QString AuthorizationHandler::AddToAuthManager(QString zePayload)
     QJsonDocument jsonDoc(response);
     QString message = jsonDoc.toJson();
 
-    //TODO: Need to add in some format to the authmanager
-    // Signal path and token validation data...
+    // create authData object and add to managerclass.
+    AuthData* authdata = new AuthData(path,actions,validFrom,validTo);
+
 
     return message;
 }

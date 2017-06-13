@@ -18,7 +18,9 @@
 *
 *
 ***************************************************************************************************************/
+#include <QDateTime>
 #include "authdata.h"
+
 
 AuthData::AuthData(QString path,QString actions,quint64 validFrom,quint64 validTo):
 m_path(path),m_actions(actions),m_validFrom(validFrom),m_validTo(validTo)
@@ -28,7 +30,7 @@ m_path(path),m_actions(actions),m_validFrom(validFrom),m_validTo(validTo)
 
 bool AuthData::isAuthApproved(QString path,QString action)
 {
-    return actionMember(action) && (isExactMatch(m_path,path) || isBranchMatch(m_path,path));
+    return isValid() && actionMember(action) && (isExactMatch(m_path,path) || isBranchMatch(m_path,path));
 }
 
 
@@ -64,4 +66,10 @@ bool AuthData::isBranchMatch(QString authtree, QString authbranch)
 bool AuthData::actionMember(QString action)
 {
     return m_actions.contains(action);
+}
+
+bool AuthData::isValid()
+{
+    quint64 currentT = QDateTime::currentMSecsSinceEpoch();
+    return (m_validFrom <= currentT) && (currentT < m_validTo);
 }

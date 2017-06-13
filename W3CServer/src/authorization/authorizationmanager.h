@@ -24,13 +24,14 @@
 #include <QObject>
 #include <QWebSocket>
 #include <QList>
+#include "authdata.h"
 
 class AuthorizationManager : public QObject
 {
     Q_OBJECT
 public:
     explicit AuthorizationManager(QObject *parent = 0);
-    bool insertAuthData(QWebSocket* , QJsonObject& obj);
+    bool insertAuthData(QWebSocket* , AuthData& obj);
     bool isAuthorized(QWebSocket*,QJsonObject actions);
     bool deleteAuthData(QWebSocket* , QJsonObject& obj);
     QList<QJsonObject>* getAuthData(QWebSocket* thesocket);
@@ -39,8 +40,8 @@ signals:
 public slots:
 
 private:
-    typedef QList<QJsonObject*> Alist;
-    QMultiMap<QWebSocket *,Alist> m_authDataTable;
+    typedef QList<AuthData*> AuthList;
+    QMultiMap<QWebSocket *,AuthList> m_authDataTable;
 
 };
 

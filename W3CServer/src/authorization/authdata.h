@@ -23,18 +23,17 @@
 
 #include <QObject>
 
+/**
+ * @brief The AuthData class
+ * Used to match client requests against current authorization data.
+ * Actions that are authorize are GET,SET,SUBSCRIBE
+ */
 class AuthData : public QObject
 {
     Q_OBJECT
 public:
     AuthData(QString path,QString actions,quint64 validFrom,quint64 validTo);
 
-    /**
-     * @brief isAuthApproved is the AuthData object authorizating path and actions
-     * @param path, tree path
-     * @param actions, actions such as GET,SET,SUBSCRIBE
-     * @return true if approved
-     */
     bool isAuthApproved(QString path,QString actions);
 private:
     //returns the maximum sequence pattern match of path1 and path2
@@ -46,6 +45,9 @@ private:
     bool isBranchMatch(QString authtree,QString authbranch);
     // is the action authorized
     bool actionMember(QString action);
+
+    // checks if currenttime is within [validFrom,validTo]
+    bool isValid();
 
     QString m_path;
     QString m_actions;
