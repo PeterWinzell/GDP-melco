@@ -26,22 +26,33 @@
 #include <QList>
 #include "authdata.h"
 
+
+
 class AuthorizationManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit AuthorizationManager(QObject *parent = 0);
-    bool insertAuthData(QWebSocket* , AuthData& obj);
-    bool isAuthorized(QWebSocket*,QJsonObject actions);
-    bool deleteAuthData(QWebSocket* , QJsonObject& obj);
-    QList<QJsonObject>* getAuthData(QWebSocket* thesocket);
+    static AuthorizationManager* getInstance();
+
+    void insertAuthData(QWebSocket* ,AuthData* obj);
+    bool isAuthorized(QWebSocket * thesocket,QString path,QString actions);
+    bool deleteAuthData();
+    void connectionClosed(QWebSocket* aSocket);
+
+    QList<AuthData*> getAuthData(QWebSocket* thesocket);
 signals:
 
 public slots:
 
 private:
-    typedef QList<AuthData*> AuthList;
-    QMultiMap<QWebSocket *,AuthList> m_authDataTable;
+    AuthorizationManager(QObject *parent = 0);
+    // There can be only one accces at a time
+    // static QMutex m_mutex;
+    // keep track of authorization data
+    static AuthorizationManager * m_instance;
+    static QMutex m_mutex;
+
+    QMultiMap<QWebSocket *,QList<AuthData*>> m_authDataTable;
 
 };
 

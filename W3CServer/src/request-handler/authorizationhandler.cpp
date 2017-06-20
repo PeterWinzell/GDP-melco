@@ -22,6 +22,7 @@
 #include "jwt-utility/visstokenvalidator.h"
 #include "errors/errorresponse.h"
 #include "authorization/authdata.h"
+#include "authorization/authorizationmanager.h"
 #include <QDebug>
 
 AuthorizationHandler::AuthorizationHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,
@@ -68,8 +69,9 @@ QString AuthorizationHandler::AddToAuthManager(QString zePayload)
     QString message = jsonDoc.toJson();
 
     // create authData object and add to managerclass.
-    AuthData* authdata = new AuthData(path,actions,validFrom,validTo);
-
+    AuthData authdata(path,actions,validFrom,validTo);
+    AuthorizationManager* authMan = AuthorizationManager::getInstance();
+    authMan -> insertAuthData(m_pClient -> getSocket(),&authdata);
 
     return message;
 }
