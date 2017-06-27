@@ -54,7 +54,8 @@ HEADERS += \
     VSSSignalinterface/websocketbroker.h \
     authorization/authorizationmanager.h \
     errors/errorresponse.h \
-    authorization/authdata.h
+    authorization/authdata.h \
+    types.h
 
 target.path = /home/pi
 INSTALLS += target

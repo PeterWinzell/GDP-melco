@@ -24,7 +24,7 @@ void GetHandler::processRequest()
 
     QJsonArray values;
 
-   // AuthorizationManager() -> getInstance
+
     int error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
     if(error == 0)
     {

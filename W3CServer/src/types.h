@@ -18,43 +18,12 @@
 *
 *
 ***************************************************************************************************************/
-#ifndef AUTHORIZATIONMANAGER_H
-#define AUTHORIZATIONMANAGER_H
+#ifndef TYPES_H
+#define TYPES_H
 
-#include <QObject>
-#include <QWebSocket>
-#include <QList>
-#include "authdata.h"
-#include "../types.h"
+// typedefs used in by auth
+typedef QList<AuthData*> AuthDataList;
+typedef QMultiMap<QWebSocket*,AuthDataList> AuthConnectionDataLists;
 
 
-
-class AuthorizationManager : public QObject
-{
-    Q_OBJECT
-public:
-    static AuthorizationManager* getInstance();
-
-    void insertAuthData(QWebSocket* ,AuthData* obj);
-    bool isAuthorized(QWebSocket * thesocket,QString path,QString actions);
-    bool deleteAuthData();
-    void connectionClosed(QWebSocket* aSocket);
-
-    AuthDataList getAuthData(QWebSocket* thesocket);
-signals:
-
-public slots:
-
-private:
-    AuthorizationManager(QObject *parent = 0);
-    // There can be only one accces at a time
-    // static QMutex m_mutex;
-    // keep track of authorization data
-    static AuthorizationManager * m_instance;
-    static QMutex m_mutex;
-
-    AuthConnectionDataLists m_authDataTable;
-
-};
-
-#endif // AUTHORIZATIONMANAGER_H
+#endif // TYPES_H

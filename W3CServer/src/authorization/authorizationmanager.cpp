@@ -40,29 +40,31 @@ AuthorizationManager::AuthorizationManager(QObject *parent) : QObject(parent)
 
 }
 
-QList<AuthData*> AuthorizationManager::getAuthData(QWebSocket *thesocket)
+AuthDataList AuthorizationManager::getAuthData(QWebSocket *thesocket)
 {
-    QList<AuthData*> list = m_authDataTable.value(thesocket);
-    QList<AuthData*> list2;
-    if (list.isEmpty())
-    {
-        m_authDataTable.insert(thesocket,list2);
+    AuthConnectionDataLists::iterator it =  m_authDataTable.find(thesocket);
+
+    if (it == m_authDataTable.end()){
+        AuthDataList aList;
+        m_authDataTable.insert(thesocket,aList);
+        return aList;
     }
 
-    return list2;
+    return it.value();
+
 }
 
 void AuthorizationManager::insertAuthData(QWebSocket * socket, AuthData* obj)
 {
     QMutexLocker mutexlock(&m_mutex);
-    QList<AuthData*> list = getAuthData(socket);
+    AuthDataList list = getAuthData(socket);
     list.append(obj);
 }
 
 bool AuthorizationManager::isAuthorized(QWebSocket * thesocket,QString path,QString actions)
 {
     QMutexLocker mutexlock(&m_mutex);
-    QList<AuthData*> list = getAuthData(thesocket);
+    AuthDataList list = getAuthData(thesocket);
 
     bool isAuth = false;
     if (list.isEmpty())
@@ -87,7 +89,7 @@ void AuthorizationManager::connectionClosed(QWebSocket* aSocket)
 {
     QMutexLocker mutexlock(&m_mutex);
 
-    QList<AuthData*> list = getAuthData(aSocket);
+    AuthDataList list = getAuthData(aSocket);
     if (!list.isEmpty())
     {
         qDeleteAll(list);
