@@ -20,7 +20,79 @@
 ***************************************************************************************************************/
 #include "authorizationmanager.h"
 
+//Initialize static members
+QMutex AuthorizationManager::m_mutex;
+AuthorizationManager* AuthorizationManager::m_instance = nullptr;
+
+//Singleton pattern
+AuthorizationManager* AuthorizationManager::getInstance()
+{
+    QMutexLocker mutexlock(&m_mutex);
+    if (m_instance == nullptr)
+    {
+        m_instance = new AuthorizationManager();
+     }
+    return m_instance;
+}
+
 AuthorizationManager::AuthorizationManager(QObject *parent) : QObject(parent)
 {
 
+}
+
+AuthDataList AuthorizationManager::getAuthData(QWebSocket *thesocket)
+{
+    AuthConnectionDataLists::iterator it =  m_authDataTable.find(thesocket);
+
+    if (it == m_authDataTable.end()){
+        AuthDataList aList;
+        m_authDataTable.insert(thesocket,aList);
+        return aList;
+    }
+
+    return it.value();
+
+}
+
+void AuthorizationManager::insertAuthData(QWebSocket * socket, AuthData* obj)
+{
+    QMutexLocker mutexlock(&m_mutex);
+    AuthDataList list = getAuthData(socket);
+    list.append(obj);
+}
+
+bool AuthorizationManager::isAuthorized(QWebSocket * thesocket,QString path,QString actions)
+{
+    QMutexLocker mutexlock(&m_mutex);
+    AuthDataList list = getAuthData(thesocket);
+
+    bool isAuth = false;
+    if (list.isEmpty())
+        return isAuth;
+    int i = 0;
+    while ( (isAuth == false) && (i < list.size()))
+    {
+        AuthData* data = list.at(i++);
+        isAuth = data -> isAuthApproved(path,actions);
+    }
+
+    return isAuth;
+}
+
+bool AuthorizationManager::deleteAuthData()
+{
+    //garbage_collect expired auth data
+
+}
+
+void AuthorizationManager::connectionClosed(QWebSocket* aSocket)
+{
+    QMutexLocker mutexlock(&m_mutex);
+
+    AuthDataList list = getAuthData(aSocket);
+    if (!list.isEmpty())
+    {
+        qDeleteAll(list);
+    }
+    m_authDataTable.remove(aSocket);
 }
