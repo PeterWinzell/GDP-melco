@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QWebSocket>
 #include <QList>
+#include <QMutex>
 #include "authdata.h"
 #include "../types.h"
 

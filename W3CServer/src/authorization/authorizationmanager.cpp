@@ -18,6 +18,7 @@
 *
 *
 ***************************************************************************************************************/
+#include <QMutexLocker>
 #include "authorizationmanager.h"
 
 //Initialize static members
