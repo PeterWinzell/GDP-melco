@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     //the default settings file from resources
     if(!checkFile->isFile())
     {
-        INFO("Server","No settings file found, trying to copy defualt settings file...");
+        INFO("Server","No settings file found, trying to copy default settings file...");
 
         if(QDir().mkpath(checkFile->absolutePath()))
         {
