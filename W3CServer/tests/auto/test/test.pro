@@ -32,8 +32,9 @@ SOURCES += main.cpp \
     ../../../src/request-handler/statushandler.cpp \
     ../../../src/messaging/websocketwrapper.cpp \
     ../../../src/VSSSignalinterface/websocketbroker.cpp \
-    ../../../src/errors/errorresponse.cpp
-
+    ../../../src/errors/errorresponse.cpp \
+    ../../../src/authorization/authdata.cpp \
+    ../../../src/authorization/authorizationmanager.cpp
 HEADERS += \
     ../../../src/w3cserver.h \
     ../../../src/request-handler/requesthandler.h \
@@ -54,7 +55,10 @@ HEADERS += \
     ../../../src/messaging/websocketwrapper.h \
     ../../../src/VSSSignalinterface/vsssignalinterface.h \
     ../../../src/VSSSignalinterface/websocketbroker.h \
-    ../../../src/errors/errorresponse.h
+    ../../../src/errors/errorresponse.h \
+    ../../../src/types.h \
+    ../../../src/authorization/authdata.h \
+    ../../../src/authorization/authorizationmanager.h
 
 INCLUDEPATH += $$PWD/../../../src/messaging
 INCLUDEPATH += $$PWD/../../../src/VSSSignalinterface
