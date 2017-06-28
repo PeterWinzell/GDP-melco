@@ -22,7 +22,6 @@ public:
     explicit W3CServer(quint16 port,bool usesecureprotocol = false, QObject *parent = Q_NULLPTR);
     ~W3CServer();
 
-    //static int getNumberOfClients() {return m_nrOfClients; }
     static int m_nrOfClients;
 Q_SIGNALS:
     void closed();
@@ -34,12 +33,14 @@ private  Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
     void closingDown();
 
+    void insertDefaultAuthObject(QWebSocket* aSocket);
 private:
     void startRequestProcess(WebSocketWrapper* sw, const QString& message);
     QWebSocketServer *m_pWebSocketServer;
     QMap<QWebSocket *,QMutex*> m_clients;
     QSharedPointer<VSSSignalInterface> m_vsssInterface;
     bool m_secure;
+    bool m_authmanagement_off;
 
 };
 
