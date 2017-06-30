@@ -27,7 +27,7 @@ m_path(path),m_actions(actions),m_validFrom(validFrom),m_validTo(validTo)
 {
 }
 
-// return a default auth object that allows all requests.
+// return a default auth object that allows all requests from Vehicle.*.
 AuthData* AuthData::getDefaultAuthObject()
 {
     QString actions   = "GET,SET,GETVSS,SUBSCRIBE,UNSUBSCRIBE,USUBSCRIBEALL";

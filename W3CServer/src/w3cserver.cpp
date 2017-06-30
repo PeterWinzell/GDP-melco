@@ -173,7 +173,11 @@ void W3CServer::socketDisconnected()
     //remove from client list and delete from heap
     if (zeClient)
     {
-        m_clients.remove(zeClient); //TODO: do we need to call delete in mutex object here ?
+        //remove all auth data tied to this socket
+        AuthorizationManager* authMan = AuthorizationManager::getInstance();
+        authMan -> connectionClosed(zeClient);
+
+        m_clients.remove(zeClient);
         zeClient->deleteLater();
         W3CServer::m_nrOfClients--;
     }

@@ -83,7 +83,7 @@ bool AuthorizationManager::isAuthorized(QWebSocket * thesocket,QString path,QStr
 bool AuthorizationManager::deleteAuthData()
 {
     //garbage_collect expired auth data
-
+    return true;
 }
 
 void AuthorizationManager::connectionClosed(QWebSocket* aSocket)
