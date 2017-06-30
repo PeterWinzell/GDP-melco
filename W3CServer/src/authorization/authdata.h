@@ -35,6 +35,7 @@ public:
     AuthData(QString path,QString actions,quint64 validFrom,quint64 validTo);
 
     bool isAuthApproved(QString path,QString actions);
+    static AuthData*  getDefaultAuthObject();
 private:
     //returns the maximum sequence pattern match of path1 and path2
     QString findMaxMatch(QString path1,QString path2);

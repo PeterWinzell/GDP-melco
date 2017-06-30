@@ -134,6 +134,8 @@ void W3CServer::onNewConnection()
 void W3CServer::insertDefaultAuthObject(QWebSocket* aSocket)
 {
     AuthorizationManager* authMan = AuthorizationManager::getInstance();
+    AuthData* defAuth = AuthData::getDefaultAuthObject();
+    authMan->insertAuthData(aSocket,defAuth);
 }
 
 void W3CServer::processTextMessage(const QString& message)
