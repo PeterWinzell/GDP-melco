@@ -153,7 +153,7 @@ void W3CServer::processTextMessage(const QString& message)
             insertDefaultAuthObject(zeClient);
         }
         else{
-            DEBUG("Server", "authorization managent is used");
+            DEBUG("Server", "authorization management is used");
         }
         QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
         startRequestProcess(socketWrapper, message);

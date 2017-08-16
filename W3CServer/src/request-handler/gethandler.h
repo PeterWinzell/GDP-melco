@@ -10,6 +10,7 @@ public:
     explicit GetHandler(QObject *parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest,WebSocketWrapper* client=0);
     virtual ~GetHandler();
     void processRequest();
+    int isAuthorized();
 };
 
 #endif // GETHANDLER_H
