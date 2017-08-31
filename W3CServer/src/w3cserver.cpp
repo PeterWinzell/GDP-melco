@@ -19,6 +19,8 @@
 #include "VSSSignalinterface/vsssignalinterface.h"
 #include "VSSSignalinterface/websocketbroker.h"
 #include "messaging/websocketwrapper.h"
+#include "authorization/authdata.h"
+#include "authorization/authorizationmanager.h"
 
 #include "logger.h"
 
@@ -89,6 +91,10 @@ W3CServer::W3CServer(quint16 port,bool usesecureprotocol, QObject *parent) : QOb
     QString vssName = settings->value("vss_name").toString();
     QString vssDir = settings->value("vss_dir").toString();
     QString signal_broker_url = settings->value("signal_broker_url").toString();
+    settings -> endGroup();
+    // set the current authorization level
+    settings->beginGroup("Authorization");
+    m_authmanagement_off = settings -> value("everything_goes").toBool();
     settings->endGroup();
 
     m_vsssInterface = QSharedPointer<WebSocketBroker>(new WebSocketBroker(vssDir, vssName, signal_broker_url));
@@ -125,6 +131,13 @@ void W3CServer::onNewConnection()
     W3CServer::m_nrOfClients++;
 }
 
+void W3CServer::insertDefaultAuthObject(QWebSocket* aSocket)
+{
+    AuthorizationManager* authMan = AuthorizationManager::getInstance();
+    AuthData* defAuth = AuthData::getDefaultAuthObject();
+    authMan->insertAuthData(aSocket,defAuth);
+}
+
 void W3CServer::processTextMessage(const QString& message)
 {
     DEBUG("Server","Message received");
@@ -135,6 +148,13 @@ void W3CServer::processTextMessage(const QString& message)
     {
         // we need a mutex per client .
         QMutex* mutex = m_clients.find(zeClient).value();
+        if (m_authmanagement_off){
+            DEBUG("Server","authorization management is not used");
+            insertDefaultAuthObject(zeClient);
+        }
+        else{
+            DEBUG("Server", "authorization management is used");
+        }
         QPointer<WebSocketWrapper> socketWrapper = new WebSocketWrapper(zeClient, mutex);
         startRequestProcess(socketWrapper, message);
     }
@@ -153,7 +173,11 @@ void W3CServer::socketDisconnected()
     //remove from client list and delete from heap
     if (zeClient)
     {
-        m_clients.remove(zeClient); //TODO: do we need to call delete in mutex object here ?
+        //remove all auth data tied to this socket
+        AuthorizationManager* authMan = AuthorizationManager::getInstance();
+        authMan -> connectionClosed(zeClient);
+
+        m_clients.remove(zeClient);
         zeClient->deleteLater();
         W3CServer::m_nrOfClients--;
     }

@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include "errors/errorresponse.h"
+#include "authorization/authorizationmanager.h"
 
 GetHandler::GetHandler(QObject* parent, QSharedPointer<VSSSignalInterface> signalInterface, QSharedPointer<VISSRequest> vissrequest, WebSocketWrapper *client):
     RequestHandler(parent, signalInterface, vissrequest,client)
@@ -15,6 +16,16 @@ GetHandler::~GetHandler()
     TRACE("Server", "< GetHandler > destroyed.");
 }
 
+int GetHandler::isAuthorized()
+{
+    AuthorizationManager* aMan = AuthorizationManager::getInstance();
+    bool auth = aMan ->isAuthorized(m_pClient ->getSocket(),m_pVissrequest->getSignalPath(),"GET");
+    if (auth)
+        return 0;
+    return 401;
+}
+
+
 void GetHandler::processRequest()
 {
     DEBUG("Server", "Processing < Get > request.");
@@ -24,8 +35,12 @@ void GetHandler::processRequest()
 
     QJsonArray values;
 
+    int error = isAuthorized(); //TODO: move to parent implementation of processRequest right now pure virtual func.
+    if (error == 0) // We are authorized to go ahead and process the request
+    {
+        error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
+    }
 
-    int error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);
     if(error == 0)
     {
         // There are several branches, keep whole array as it is.

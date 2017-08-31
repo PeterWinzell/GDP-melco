@@ -97,6 +97,8 @@ QString ErrorResponse::getErrorMessage(ErrorReason code){
             return "The specified data path does not exist.";
         case ErrorReason::gateway_timeout:
             return "The server did not receive a timely response from an upstream server it needed to access in order to complete the request.";
+        case ErrorReason::user_token_invalid:
+            return "The user token is invalid or missing";
         //TODO: fyll på den som är flitig...
         default:
             return "Error is unknown";

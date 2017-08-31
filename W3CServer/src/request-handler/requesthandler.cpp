@@ -52,6 +52,10 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
 
 }
 
+int RequestHandler::isAuthorized(){
+    return 0;
+}
+
 RequestHandler::~RequestHandler()
 {
     if (m_pClient != Q_NULLPTR)
@@ -59,3 +63,5 @@ RequestHandler::~RequestHandler()
         m_pClient->deleteLater();
     }
 }
+
+

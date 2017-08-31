@@ -27,6 +27,18 @@ m_path(path),m_actions(actions),m_validFrom(validFrom),m_validTo(validTo)
 {
 }
 
+// return a default auth object that allows all requests from Vehicle.*.
+AuthData* AuthData::getDefaultAuthObject()
+{
+    QString actions   = "GET,SET,GETVSS,SUBSCRIBE,UNSUBSCRIBE,USUBSCRIBEALL";
+    QString path      = "Vehicle.*";
+    quint64 validFrom = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    quint64 validTo   = QDateTime::currentDateTime().addDays(365).toMSecsSinceEpoch();
+
+    AuthData* obj = new AuthData(path,actions,validFrom,validTo);
+
+    return obj;
+}
 
 bool AuthData::isAuthApproved(QString path,QString action)
 {

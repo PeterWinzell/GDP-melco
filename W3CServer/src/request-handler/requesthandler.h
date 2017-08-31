@@ -21,7 +21,7 @@ public:
     virtual ~RequestHandler();
 
     virtual void processRequest()=0;
-
+    virtual int isAuthorized();
 signals:
 
 public slots:
