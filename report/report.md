@@ -96,7 +96,7 @@ void ProcessRequestTask::run()
 ```
 *Example 3, process requests*<br>
 
-This is the basic and simple principle behind the client-server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. For the southbound interface we have chosen to implement a getSignal, setSignal protocol based on tcp-sockets. The socket implementation could be replaced by any other inter-process data commincation channel such as VSI[[6]](https://github.com/GENIVI/vehicle_signal_interface/blob/master/README.md) shared memory b-tree , CommonAPI[[7]](http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf) or any valid ipc. The actual signal retrieval is done by a SignalBroker which is executed in its own process. We have chosen this design for mainly one reason to keep the server independent of signal provider. The get,set protocol can be directly mapped to a signal provider within the server if needed. 
+This is the basic and simple principle behind the client-server implementation. However, apart from this the implementation does involve a bit more logic that allows the server to handle multiple clients, multiple requests and authorization management. For the southbound interface we have chosen to implement a getSignal, setSignal protocol based on web sockets. The socket implementation could be replaced by any other inter-process data commincation channel such as VSI[[6]](https://github.com/GENIVI/vehicle_signal_interface/blob/master/README.md) shared memory b-tree , CommonAPI[[7]](http://docs.projects.genivi.org/ipc.common-api-tools/3.1.2/pdf/CommonAPICppUserGuide.pdf) or any valid ipc. The actual signal retrieval is done by a SignalBroker which is executed in its own process. We have chosen this design for mainly one reason and that is to keep the server independent of signal provider. The get,set protocol can be directly mapped to a signal provider within the server if needed. 
 
 Authorization and authentication is defined and managed by tokens. This implementation uses jason web tokens[[8]](https://jwt.io) - the VIS does not specify which type of authorization token. 
 
@@ -110,6 +110,8 @@ The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE)
 # Implementation stories, deviations
 
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
+
+Since the server is highly dependant on multiple threading it is recommended that a threading pool is used to reduce memory consumption. This is always a constraint that needs to be adressed on IVI systems. 
 
 **Get examples:**
 ![get](getvalues.png)<br>
@@ -138,13 +140,13 @@ We partly implemented the authorization part of the specification - omitting the
 The real power and benefits of the VIS specification starts to show when you start writing applications - any application framework that are able to speak wss[[9]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , in a different ECU on the vehicle network, but it can also be running in a smart phone, tablet, or roadside infrastructure, somewhere in the cloud or even inside another vehicle. There are actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the w3C specification. This is something that needs to be adressed by each OEM, and perhaps even be regulated on a state level in order to achieve real and secure standards.
 
 **Android demo**<br>
-The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017[10]. We implemented an Android client[11] that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of a openDS[12] simulated car.
+The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017[10]. We implemented an Android client[11] that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of an openDS[12] simulated car.
 
 **iPhone demo**<br>
 We also tested to an iPhone client[13] that listened to the speed signal in a similar fashion. This client was written in Swift x.x.
 
 **HTML5 demo**<br>
-We used a test client[14] that were written in HTML5Javascript to demonstrate the getVSS request. 
+We used a test client[14] that were written in HTML5/Javascript to demonstrate the getVSS(getMetaData) request. 
 
 **Qt test client**<br>
 Qt test client[15] that were executed on the pc in Linux/Windows and Mac OS. 
@@ -162,7 +164,8 @@ We are running two separate test suites where we have developed one of these and
 We are also testing our implementation against a javascript/html based test client. T.B.A test client under development.
 
 # Future work
-T.B.A
+This implementation will be ported to Android Embedded Oreo for a Melco pre POC study. The work can be followed on github:
+
 # References
 [1] https://www.w3.org/blog/auto/2017/01/04/vehicle-data-interfaces/
 
