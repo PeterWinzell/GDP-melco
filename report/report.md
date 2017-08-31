@@ -1,5 +1,5 @@
 # Author
-Peter Winzell MSc, Mitsubishi Electric, Gothenburg office. 2017-23-05, draft version.
+Peter Winzell MSc, Mitsubishi Electric, Gothenburg office. 2017-31-08, v1.
 
 # Abstract
 
@@ -143,7 +143,7 @@ The real power and benefits of the VIS specification starts to show when you sta
 The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017[10]. We implemented an Android client[11] that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of an openDS[12] simulated car.
 
 **iPhone demo**<br>
-We also tested to an iPhone client[13] that listened to the speed signal in a similar fashion. This client was written in Swift x.x.
+We also tested to an iPhone client[13] that listened to the speed signal in a similar fashion. This client was written in Swift.
 
 **HTML5 demo**<br>
 We used a test client[14] that were written in HTML5/Javascript to demonstrate the getVSS(getMetaData) request. 
@@ -151,7 +151,7 @@ We used a test client[14] that were written in HTML5/Javascript to demonstrate t
 **Qt test client**<br>
 Qt test client[15] that were executed on the pc in Linux/Windows and Mac OS. 
 
-The ability to address the server from all these different clients executed on a number of different devices, demonstrates the interoperability of the web socket protocol and gives credit to the VIS specification. 
+The ability to address the server from all these different clients, executed on a number of different devices, demonstrates the interoperability of the web socket protocol and gives credit to the VIS specification. 
 
 # Tests
 
