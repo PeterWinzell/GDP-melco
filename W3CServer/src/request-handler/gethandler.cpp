@@ -35,7 +35,7 @@ void GetHandler::processRequest()
 
     QJsonArray values;
 
-    int error = isAuthorized(); //TODO: move to parent implementation of processRequest ??
+    int error = isAuthorized(); //TODO: move to parent implementation of processRequest right now pure virtual func.
     if (error == 0) // We are authorized to go ahead and process the request
     {
         error = m_pSignalInterface->getSignalValue(m_pVissrequest->getSignalPath(), values);

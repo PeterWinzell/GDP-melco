@@ -52,7 +52,7 @@ and open the template in the editor.
                 }
             }
 
-            var wsUri = "ws://localhost:1234";
+            var wsUri = "ws://10.0.2.15:1234";
             var websocket = null;
 
             function initWebSocket() {
