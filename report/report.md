@@ -200,25 +200,21 @@ var wsUri = "ws://localhost:1234";
 ```
 
 **Qt test client**<br>
-Qt test client[15] that were executed on the pc in Linux/Windows and Mac OS. 
-
-The ability to address the server from all these different clients, executed on a number of different devices, demonstrates the interoperability of the web socket protocol and gives credit to the VIS specification. 
+The ability to address the server from all these different clients, executed on a number of different devices, demonstrates the interoperability of the web socket protocol and gives credit to the VIS specification. The sources and operations can be found here:[[15]](https://github.com/PeterWinzell/GDP-melco/tree/master/W3CQtTestClient).
 
 # Tests
 
-We are running two separate test suites where we have developed one of these and this is a Qt test client where we are able to test server performance. This test client is available and should be configurable for any implementation. The client is also a Qt application.
+We are running two separate test suites where we have developed one of these, and this is a Qt test client constructed not only to test the implementation from a specification, but also to test performance. This test client is available and should be configurable for any implementation. The client is also a Qt application.
 
 <table border="1"><tr><th>Client id</th><th>Test case</th><th>Started</th><th>Ended</th><th>Outcome</th></tr><tr><td>1</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>1</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>1</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>2</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>2</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>2</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>4</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>4</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>4</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>7</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>7</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>7</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>5</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>5</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>5</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>9</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>9</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>9</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>3</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>3</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>3</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>6</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>6</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>6</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>10</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>10</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>10</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>8</td><td>Status</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:39 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>8</td><td>Subscribe / Unsubscribe</td><td>fre mars 31 04:24:39 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr><tr><td>8</td><td>Status</td><td>fre mars 31 04:24:49 2017</td><td>fre mars 31 04:24:49 2017</td><td bgcolor="#32cb00">passed</td></tr></table>
 
 *Test results from W3CClient*<br>
 
-We are also testing our implementation against a javascript/html based test client. T.B.A test client under development.
-
 # Future, ongoing work
 
 This implementation will be ported to Android Embedded Oreo for a Melco POC study. The work can be followed on github:https://github.com/MEAE-GOT/VISAndroid
 
-The W3C VIS specification contains a json schema[[16]](https://w3c.github.io/automotive/vehicle_data/vehicle_information_service.html), and to be able to validate VIS requests the following extension of the schema was introduced:
+The W3C VIS specification contains a json schema[[16]](https://w3c.github.io/automotive/vehicle_data/vehicle_information_service.html), and to be able to validate VIS requests the following extension to the schema was introduced:
 
 ```json
 
@@ -474,7 +470,7 @@ public static boolean ValidateRequest(String json) {
 
 [14] https://github.com/PeterWinzell/GDP-melco/blob/master/W3CTestClient/public_html/index.html
 
-[15] Qt test client sources
+[15] https://github.com/PeterWinzell/GDP-melco/tree/master/W3CQtTestClient
 
 [16] https://w3c.github.io/automotive/vehicle_data/vehicle_information_service.html
 
