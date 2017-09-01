@@ -164,6 +164,40 @@ class SocketIOManager: WebSocketDelegate{
 ```    
 **HTML5 demo**<br>
 We used a test client[14] that were written in HTML5/Javascript to demonstrate the getVSS(getMetaData) request. 
+This can be used to test any request against the server.
+
+Code Snippet:
+
+```javascript
+...
+var wsUri = "ws://localhost:1234";
+            var websocket = null;
+            function initWebSocket() {
+                try {
+                    if (typeof MozWebSocket == 'function')
+                        WebSocket = MozWebSocket;
+                    if ( websocket && websocket.readyState == 1 )
+                        websocket.close();
+                    websocket = new WebSocket( wsUri );
+                    websocket.onopen = function (evt) {
+                        debug("CONNECTED");
+                    };
+                    websocket.onclose = function (evt) {
+                        debug("DISCONNECTED");
+                    };
+                    websocket.onmessage = function (evt) {
+                        console.log( "Message received :", evt.data );
+                        debug( evt.data );
+                    };
+                    websocket.onerror = function (evt) {
+                        debug('ERROR: ' + evt.data);
+                    };
+                } catch (exception) {
+                    debug('ERROR: ' + exception);
+                }
+            }
+...	    
+```
 
 **Qt test client**<br>
 Qt test client[15] that were executed on the pc in Linux/Windows and Mac OS. 
