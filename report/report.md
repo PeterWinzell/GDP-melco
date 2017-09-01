@@ -349,14 +349,14 @@ The W3C VIS specification contains a json schema[[16]](https://w3c.github.io/aut
 }
 ```
 
-The following code sample can be used for an Android/java based system:
+The following code snippet can be used in an Android/java based system:
 
 ```java
 ...
- private static JsonSchema schema;
-	public static boolean SetJsonSchema(InputStream is){
-        try {
-            JsonNode fstabSchema = JsonLoader.fromReader(new InputStreamReader(is));
+private static JsonSchema schema;
+public static boolean SetJsonSchema(InputStream is){
+	try {
+     	    JsonNode fstabSchema = JsonLoader.fromReader(new InputStreamReader(is));
             JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
             schema = factory.getJsonSchema(fstabSchema);
 
@@ -368,24 +368,25 @@ The following code sample can be used for an Android/java based system:
             //e.printStackTrace();
             return false;
         }
-    }    
+}    
     
 public static boolean ValidateRequest(String json) {
-		try {
-			JsonNode node = JsonLoader.fromString(json);
-			ProcessingReport report = schema.validate(node);
+	try {
+	    JsonNode node = JsonLoader.fromString(json);
+	    ProcessingReport report = schema.validate(node);
 
-			return report.isSuccess();
+	    return report.isSuccess();
 
-		} catch (IOException e) {
-			e.printStackTrace();
-            return false;
-		}
-		catch (ProcessingException e) {
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+            	return false;
+	    }
+	    catch (ProcessingException e) {
 			//e.printStackTrace();
-            return false;
-		}
+            	return false;
+	    }
 	}
+}
 
 ...
 ```
