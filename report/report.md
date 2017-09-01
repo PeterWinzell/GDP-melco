@@ -1,5 +1,5 @@
 # Author
-Peter Winzell MSc, Mitsubishi Electric, Gothenburg office. 2017-31-08, v1.
+Peter Winzell MSc, Mitsubishi Electric, Gothenburg office. 2017-01-09, v1.0.1
 
 # Abstract
 
