@@ -163,11 +163,196 @@ We are running two separate test suites where we have developed one of these and
 
 We are also testing our implementation against a javascript/html based test client. T.B.A test client under development.
 
-# Future work
+# Future, ongoing work
+
 This implementation will be ported to Android Embedded Oreo for a Melco pre POC study. The work can be followed on github:
-Request validation against a json schema was added as a first step here according to the following sample code:
+
+The W3C VIS specification contains a schema[] and to validate requests the following extension of the schema was introduced. This means that VIS requests can be validated against its own JSON schema:
+
+```json
+
+{
+  "additionalProperties":false,
+  "oneOf": [
+    {
+      "title": "Get Request",
+      "type": "object",
+      "properties": {
+        "action": 		{"enum": ["get"]},
+        "path": 		{"type": "string"},
+        "requestId": 	{"type": "string"}
+      },
+      "required" : ["action","path", "requestId"]
+    },
+    {
+      "title": "Set Request",
+      "type": "object",
+      "properties": {
+        "action": 		{"enum": ["set"]},
+        "path": 		{"type": "string"},
+        "value": 		{"type": ["string","object", "array"]},
+        "requestId": 	{"type": "string"}
+      },
+      "required" : ["action", "path", "value", "requestId"]
+    },
+    {
+      "title": "Authorize Request",
+      "type": "object",
+      "properties": {
+        "action": 		{"enum": ["authorize"]},
+        "tokens": 		{"type": "object"},
+        "requestId": 	{"type": "string"}
+      },
+      "required" : ["action", "tokens", "requestId"]
+    },
+    {
+      "title": "GetVSS Request",
+      "type": "object",
+      "properties": {
+        "action": 		{"enum": ["getVSS"]},
+        "path": 		{"type": "string"},
+        "requestId": 	{"type": "string"}
+      },
+      "required" : ["action", "path", "requestId"]
+    },
+    {
+      "title": "Subscribe Request",
+      "type": "object",
+      "properties": {
+        "action": 		{"enum": ["subscribe"]},
+        "path": 		{"type": "string"},
+        "filters": 		{"type": "object"},
+        "requestId": 	{"type": "string"}
+      },
+      "required" : ["action", "path", "requestId"]
+    },
+    {
+      "title": "Unsubscribe Request",
+      "type": "object",
+      "properties": {
+        "action": 			{"enum": ["unsubscribe"]},
+        "subscriptionId": 	{"type": "string"},
+        "requestId": 		{"type": "string"}
+      },
+      "required" : ["action", "subscriptionId", "requestId"]
+    },
+    {
+      "title": "UnsubscribeAll Request",
+      "type": "object",
+      "properties": {
+        "action": 		{"enum": ["unsubscribeAll"]},
+        "requestId": 	{"type": "string"}
+      },
+      "required" : ["action", "requestId"]
+    }
+  ],
+  "properties": {
+    "action": {
+      "type" : "string"
+    },
+    "path": {
+      "type" : "string"
+    },
+    "requestId": {
+      "type" : "string"
+    },
+    "value": {
+      "type" : ["string","object", "array"]
+    },
+    "subscriptionId": {
+      "type" : "string"
+    },
+    "filters": {
+      "type" : "object"
+    },
+    "tokens": {
+      "type" : "object"
+    }
+  },
+
+  "definitions": {
+    "action": {
+      "enum": [ "authorize", "getVSS", "get", "set", "subscribe", "subscription", "unsubscribe", "unsubscribeAll"],
+      "description": "The type of action requested by the client or delivered by the server"
+    },
+    "requestId": {
+      "description": "Returned by the server in the response and used by the client to  link the request and response messages.",
+      "type": "string"
+    },
+    "path": {
+      "description": "The path to the desired vehicle signal(s), as defined by the Vehicle Signal Specification (VSS).",
+      "type": "string"
+    },
+    "value": {
+      "description": "The path to the desired vehicle signal(s), as defined by the Vehicle Signal Specification (VSS).",
+      "type": "string"
+    },
+    "timestamp": {
+      "description": "The Coordinated Universal Time (UTC) time that the server returned the response (expressed as number of lliseconds).",
+      "type": "integer"
+    },
+    "filters": {
+      "description": "May be specified in order to throttle the demands of subscriptions on the server.",
+      "type": ["object", "null"],
+      "properties": {
+        "interval": {
+          "description": "The subscription will provide notifications with a period equal to this field's value.",
+          "type": "integer"
+        },
+        "range": {
+          "description": "The subscription will provide notifications only when within a given range.",
+          "type": "object",
+          "properties":{
+            "below": {
+              "description": "The subscription will provide notifications when the value is less or equal to this field's value.",
+              "type": "integer"
+            },
+            "above": {
+              "description": "The subscription will provide notifications when the value is greater than or equal to this field's value.",
+              "type": "integer"
+            }
+          }
+        },
+        "minChange": {
+          "description": "The subscription will provide notifications when a value has changed by the amount specified in this field.",
+          "type": "integer"
+        }
+      }
+    },
+    "subscriptionId":{
+      "description": "Integer handle value which is used to uniquely identify the subscription.",
+      "type": "string"
+    },
+    "vss":{
+      "description": "Metadata describing the potentially available VSS tree.",
+      "type": "object"
+    },
+    "error": {
+      "description": "Server response for error cases",
+      "type": "object",
+      "properties": {
+        "number": {
+          "description": "HTTP Status Code Number",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "Pre-defined string value that can be used to distinguish between errors that have the same code",
+          "type": "string"
+        },
+        "message": {
+          "description": "Message text describing the cause in more detail",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+```
+
+The following code sample can be used for an Android based system:
 
 ```java
+...
  private static JsonSchema schema;
 	public static boolean SetJsonSchema(InputStream is){
         try {
@@ -183,8 +368,29 @@ Request validation against a json schema was added as a first step here accordin
             //e.printStackTrace();
             return false;
         }
-    }
+    }    
+    
+public static boolean ValidateRequest(String json) {
+		try {
+			JsonNode node = JsonLoader.fromString(json);
+			ProcessingReport report = schema.validate(node);
+
+			return report.isSuccess();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+            return false;
+		}
+		catch (ProcessingException e) {
+			//e.printStackTrace();
+            return false;
+		}
+	}
+
+...
 ```
+
+
 
 
 # References
