@@ -165,7 +165,7 @@ We are also testing our implementation against a javascript/html based test clie
 
 # Future, ongoing work
 
-This implementation will be ported to Android Embedded Oreo for a Melco POC study. The work can be followed on github:
+This implementation will be ported to Android Embedded Oreo for a Melco POC study. The work can be followed on github:https://github.com/MEAE-GOT/VISAndroid
 
 The W3C VIS specification contains a json schema[[16]](https://w3c.github.io/automotive/vehicle_data/vehicle_information_service.html), and to be able to validate VIS requests the following extension of the schema was introduced:
 
