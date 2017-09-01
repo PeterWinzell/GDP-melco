@@ -167,7 +167,7 @@ We are also testing our implementation against a javascript/html based test clie
 
 This implementation will be ported to Android Embedded Oreo for a Melco pre POC study. The work can be followed on github:
 
-The W3C VIS specification contains a schema[] and to validate requests the following extension of the schema was introduced. This means that VIS requests can be validated against its own JSON schema:
+The W3C VIS specification contains a schema[16] and to validate requests the following extension of the schema was introduced. This means that VIS requests can be validated against its own JSON schema:
 
 ```json
 
@@ -423,5 +423,7 @@ public static boolean ValidateRequest(String json) {
 [14] HTML5 sources
 
 [15] Qt test client sources
+
+[16] https://w3c.github.io/automotive/vehicle_data/vehicle_information_service.html
 
 
