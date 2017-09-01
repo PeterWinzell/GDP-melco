@@ -111,7 +111,7 @@ The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE)
 
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
 
-Since the server is highly dependant on multiple threading it is recommended that a threading pool is used to reduce memory consumption. This is always a constraint that needs to be adressed on IVI systems. 
+Since the server is highly dependant on multi-threading, it is recommended that a threading pool is used to reduce memory consumption. This is always a constraint that needs to be adressed on IVI systems. 
 
 **Get examples:**
 ![get](getvalues.png)<br>
