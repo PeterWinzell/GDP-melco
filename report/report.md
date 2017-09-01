@@ -349,7 +349,7 @@ The W3C VIS specification contains a json schema[[16]](https://w3c.github.io/aut
 }
 ```
 
-The following code snippet can be used in an Android/java based system:
+The following code snippet can be used in an Android/java based system for validating VIS requests:
 
 ```java
 ...
