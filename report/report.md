@@ -165,6 +165,27 @@ We are also testing our implementation against a javascript/html based test clie
 
 # Future work
 This implementation will be ported to Android Embedded Oreo for a Melco pre POC study. The work can be followed on github:
+Request validation against a json schema was added as a first step here according to the following sample code:
+
+```java
+ private static JsonSchema schema;
+	public static boolean SetJsonSchema(InputStream is){
+        try {
+            JsonNode fstabSchema = JsonLoader.fromReader(new InputStreamReader(is));
+            JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+            schema = factory.getJsonSchema(fstabSchema);
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ProcessingException e) {
+            //e.printStackTrace();
+            return false;
+        }
+    }
+```
+
 
 # References
 [1] https://www.w3.org/blog/auto/2017/01/04/vehicle-data-interfaces/
