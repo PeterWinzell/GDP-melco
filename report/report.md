@@ -140,11 +140,28 @@ We partly implemented the authorization part of the specification - omitting the
 The real power and benefits of the VIS specification starts to show when you start writing applications - any application framework that are able to speak wss[[9]](https://tools.ietf.org/html/rfc6455) and is given the right to access will be able to interface the server.  This application can reside in the head unit , in a different ECU on the vehicle network, but it can also be running in a smart phone, tablet, or roadside infrastructure, somewhere in the cloud or even inside another vehicle. There are actually no limitations. The issue here is of course if we are able to expose the vehicle signals in a secure and reliable way. The security measures that needs to be addressed here are not - apart from wss protocol and token auth - in scope for the w3C specification. This is something that needs to be adressed by each OEM, and perhaps even be regulated on a state level in order to achieve real and secure standards.
 
 **Android demo**<br>
-The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017[10]. We implemented an Android client[11] that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of an openDS[12] simulated car.
+The implementation was succesfully demonstrated at the Genivi AMM meeting in Birmimham - 10 - 11 May, 2017[[10]](https://www.genivi.org). We implemented an Android client[[11]](https://github.com/PeterWinzell/vehicle-carsignal-examples/tree/master/W3CDemo_2) that subscribed to speed and rpm and that was able to toggle the parking brake and the cruise control of an openDS[[12]](https://www.opends.eu) simulated car.
 
 **iPhone demo**<br>
-We also tested to an iPhone client[13] that listened to the speed signal in a similar fashion. This client was written in Swift.
+We also tested to an iPhone client[[13]](https://github.com/PeterWinzell/vehicle-carsignal-examples/tree/master/iphoneclient/W3CDemo_2/W3CDemo_2/W3CDemo_2) that listened to the speed signal in a similar fashion. This client was written in Swift.
 
+Code snippet:
+```Swift
+class SocketIOManager: WebSocketDelegate{
+    static let sharedInstance = SocketIOManager()
+    
+    var socket: WebSocket!
+    ...
+    
+    func setURL(_ urlString: String){
+        print(urlString)
+        socket = WebSocket(url: URL(string: urlString)!)
+        socket.delegate = self
+        socket.connect()
+        
+    }
+    ...
+```    
 **HTML5 demo**<br>
 We used a test client[14] that were written in HTML5/Javascript to demonstrate the getVSS(getMetaData) request. 
 
@@ -413,13 +430,13 @@ public static boolean ValidateRequest(String json) {
 
 [9] https://tools.ietf.org/html/rfc6455
 
-[10] Genivi
+[10] https://www.genivi.org
 
-[11] Android sources
+[11] https://github.com/PeterWinzell/vehicle-carsignal-examples/tree/master/W3CDemo_2
 
-[12] openDS
+[12] https://www.opends.eu
 
-[13] iPhone client sources
+[13] https://github.com/PeterWinzell/vehicle-carsignal-examples/tree/master/iphoneclient/W3CDemo_2/W3CDemo_2/W3CDemo_2
 
 [14] HTML5 sources
 
