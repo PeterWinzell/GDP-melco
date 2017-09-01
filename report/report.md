@@ -163,7 +163,7 @@ class SocketIOManager: WebSocketDelegate{
     ...
 ```    
 **HTML5 demo**<br>
-We used a test client[14] that were written in HTML5/Javascript to demonstrate the getVSS(getMetaData) request. 
+We used a test client[[14]](https://github.com/PeterWinzell/GDP-melco/blob/master/W3CTestClient/public_html/index.html) that were written in HTML5/Javascript to demonstrate the getVSS(getMetaData) request. 
 This can be used to test any request against the server.
 
 Code Snippet:
@@ -472,7 +472,7 @@ public static boolean ValidateRequest(String json) {
 
 [13] https://github.com/PeterWinzell/vehicle-carsignal-examples/tree/master/iphoneclient/W3CDemo_2/W3CDemo_2/W3CDemo_2
 
-[14] HTML5 sources
+[14] https://github.com/PeterWinzell/GDP-melco/blob/master/W3CTestClient/public_html/index.html
 
 [15] Qt test client sources
 
