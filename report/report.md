@@ -113,6 +113,48 @@ The implementation of any api should follow a consistent and easy to use data pr
 
 Since the server is highly dependant on multi-threading, it is recommended that a threading pool is used to reduce memory consumption. This is always a constraint that needs to be adressed on IVI systems. 
 
+One particular note when using the Qt signal and slot mechanism, is to make sure that objects - like the websocket object - is called from its creating thread(main thread). In our example a socket object is created in the main thread, and a call to its send function needs to be carried out from this thread or we will have an unpredictable system that is likely to fail. So, this was done using a signal slot ***queued*** connection on the object repsonsible for all send messages. 
+
+***Signal and slot, calling sendTextMessage from correct thread***
+```C++
+class WebSocketWrapper : public QObject
+{
+    Q_OBJECT
+public:
+    explicit WebSocketWrapper(QWebSocket* socket, QMutex* mutex, QObject *parent = Q_NULLPTR);
+     ~WebSocketWrapper();
+...
+    qint64 sendTextMessage(const QString message);
+...
+signals:
+    void sendTextMessageSignal(const QString message);
+
+public slots:
+    ...
+    void sendTextMessageSlot(const QString message);
+
+private:
+    QWebSocket* m_pSocket;
+    ...
+};
+...
+connect(this, &WebSocketWrapper::sendTextMessageSignal, this, &WebSocketWrapper::sendTextMessageSlot, Qt::QueuedConnection);
+...
+qint64 WebSocketWrapper::sendTextMessage(const QString message)
+{
+    ...
+      emit sendTextMessageSignal(message);
+    ...
+}
+
+void WebSocketWrapper::sendTextMessageSlot(const QString message)
+{
+    ...
+       m_pSocket->sendTextMessage(message);
+    ...
+}
+
+
 **Get examples:**
 ![get](getvalues.png)<br>
 
