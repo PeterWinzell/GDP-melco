@@ -58,7 +58,7 @@ Figure 2 shows the flow through the server components/classes when subscribing t
 
 So, explain a bit in more detail the server will for each request parse the json and through a requesthandler factory pattern invoke a request handler for that particular request. The handler is then responsible for the request response to the client within the processRequest function.
 
-In code example 3 requests are spawned from a threadpool and a request handler factory parses the json request from the clients and returns a corresponding handler which then process the request.
+In code example 3, requests are spawned from a threadpool, and a request handler factory parses the json request from the clients and returns a corresponding handler which then process the request.
 ```C++
 void W3CServer::startRequestProcess(WebSocketWrapper* sw, const QString& message)
 {
