@@ -153,7 +153,7 @@ void WebSocketWrapper::sendTextMessageSlot(const QString message)
        m_pSocket->sendTextMessage(message);
     ...
 }
-
+```
 
 **Get examples:**
 ![get](getvalues.png)<br>
