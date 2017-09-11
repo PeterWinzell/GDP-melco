@@ -111,6 +111,19 @@ The implementation contains two separate authorization tokens: a (GET,SUBSCRIBE)
 
 The implementation of any api should follow a consistent and easy to use data protocol. The VIS specification achieves this by using the JSON data format as the carrier and a scheme that is interoperable from both the client side and the server side easy to understand and implement. We did, however, discover some minor inconsistencies in the data delivery format that  complicates data parsing and data construction, both on server side and client side.
 
+**Get examples:**
+![get](getvalues.png)<br>
+
+So, from the picture we see that the values from a ***get*** request are delivered in three different ways. This complicates the logic not only on the client side but also on the server side. We need to apply more logic to the code which could be avoided by simply alway returning the values:
+
+```json
+"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
+           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
+	   {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
+	   {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ]
+```
+This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload. The specification have a similar issue with the ***set*** request.
+
 Since the server is highly dependant on multi-threading, it is recommended that a threading pool is used to reduce memory consumption. This is always a constraint that needs to be adressed on IVI systems. 
 
 One particular note, when using the Qt signal and slot mechanism, one needs to make sure that slots are excuted from the correct thread. In our example a WebSocketWrapper object is created in the main thread - its function is to handle socket communication via QWebSocket objects also create on the main thread. So we need to make sure that ***QWebSocket->SendTextMessage*** is carried out from this thread or we will have an unpredictable system that is likely to fail. So, in this case  a slot was implemented in the WebSocketWrapper class, and a signal connected via queuedconnection within the Websocketwrapper class itself. The requesthandler objects that actually carries out this is , thus, running in their own separate threads.
@@ -155,20 +168,6 @@ void WebSocketWrapper::sendTextMessageSlot(const QString message)
     ...
 }
 ```
-
-**Get examples:**
-![get](getvalues.png)<br>
-
-So, from the picture we see that the values from a ***get*** request are delivered in three different ways. This complicates the logic not only on the client side but also on the server side. We need to apply more logic to the code which could be avoided by simply alway returning the values:
-
-```json
-"value": [ {"Signal.Cabin.Door.Row1.Right.IsLocked" : true },
-           {"Signal.Cabin.Door.Row1.Left.IsLocked" : true },
-	   {"Signal.Cabin.Door.Row2.Right.IsLocked" : false },
-	   {"Signal.Cabin.Door.Row2.Left.IsLocked" : true } ]
-```
-This way we have one data format to build on the server side, and one way to parse on the client side. The trade off is that when returning one signal leaf we add the path and some curly brackets to the returning payload. The specification have a similar issue with the ***set*** request.
-
 **Wss and ws**<br>
 Throughout the development we used a self-signed certificate to be able to run the web socket secure protocol. For practical reasons with some of the test clients we also executed the server in the ws mode - this does not affect the actual code on the server side.
 
