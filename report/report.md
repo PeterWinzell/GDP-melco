@@ -138,7 +138,8 @@ private:
     ...
 };
 ...
-connect(this, &WebSocketWrapper::sendTextMessageSignal, this, &WebSocketWrapper::sendTextMessageSlot, Qt::QueuedConnection);
+connect(this, &WebSocketWrapper::sendTextMessageSignal, this, &WebSocketWrapper::sendTextMessageSlot, 
+	Qt::QueuedConnection);
 ...
 qint64 WebSocketWrapper::sendTextMessage(const QString message)
 {
