@@ -113,7 +113,7 @@ The implementation of any api should follow a consistent and easy to use data pr
 
 Since the server is highly dependant on multi-threading, it is recommended that a threading pool is used to reduce memory consumption. This is always a constraint that needs to be adressed on IVI systems. 
 
-One particular note when using the Qt signal and slot mechanism, is to make sure that objects - like the websocket object - is called from its creating thread(main thread). In our example a socket object is created in the main thread, and a call to its send function needs to be carried out from this thread or we will have an unpredictable system that is likely to fail. So, this was done using a signal slot ***queued*** connection on the object repsonsible for all send messages. 
+One particular note, when using the Qt signal and slot mechanism, one needs to make sure that slots are excuted from the correct thread. In our example a WebSocketWrapper object is created in the main thread - its function is to handle socket communication via QWebSocket objects also create on the main thread. So we need to make sure that ***QWebSocket->SendTextMessage*** is carried out from this thread or we will have an unpredictable system that is likely to fail. So, in this case  a slot was implemented in the WebSocketWrapper class, and a signal connected via queuedconnection within the Websocketwrapper class itself. The requesthandler objects that actually carries out this is , thus, running in their own separate threads.
 
 ***Signal and slot, calling sendTextMessage from correct thread***
 ```C++
