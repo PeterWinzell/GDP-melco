@@ -37,7 +37,7 @@ void GetVSSTestCase::onTextMessageReceived(QString message)
     {
         QString actionString =jsonObject["action"].toString();
 
-        if (actionString != "getVSS")
+        if (actionString != "getMetadata")
         {
             WARNING(m_testClientId,"Received incorrect action.");
             emit finished(false);

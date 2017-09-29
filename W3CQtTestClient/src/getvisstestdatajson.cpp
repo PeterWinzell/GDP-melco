@@ -104,7 +104,7 @@ QString GetVissTestDataJson::getGetManyJson(QString& requestId)
 QString GetVissTestDataJson::getGetVssJson(QString& requestId)
 {
     QJsonObject jsonObject;
-    jsonObject.insert("action","getVSS");
+    jsonObject.insert("action","getMetadata");
     jsonObject.insert("path","Signal.Drivetrain.Transmission.Speed");
     //jsonObject.insert("path","Signal.ADAS.CruiseControl.IsActive");
     jsonObject.insert("requestId",requestId);
