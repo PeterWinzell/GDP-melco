@@ -24,6 +24,7 @@
 #include "vissrequest.h"
 #include <QWebSocket>
 #include <QMutex>
+#include <QJsonArray>
 
 class SubscribeHandler : public RequestHandler
 {
@@ -61,6 +62,7 @@ private:
     void initializeFilter();
     QString getSignalValue(QString path);
     static QMutex locking;
+    QJsonArray m_lastValues;
 };
 
 #endif // SUBSCRIBEHANDLER_H
