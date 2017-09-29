@@ -35,7 +35,7 @@ QSharedPointer<RequestHandler> RequestHandler::makeRequestHandler(const QString&
         case UNSUBSCRIBEALL:
             handler = QSharedPointer<UnsubscribeAllHandler>(new UnsubscribeAllHandler(nullptr,signalInterface, parsedRequest,client));
             break;
-        case GETVSS:
+        case GETMETADATA:
             handler = QSharedPointer<GetVSSHandler>(new GetVSSHandler(nullptr,signalInterface, parsedRequest,client));
             break;
         case AUTHORIZE:

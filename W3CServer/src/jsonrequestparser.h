@@ -27,7 +27,7 @@ private:
     bool validateUnsubscribeRequest(VISSRequest* request);
     bool validateUnsubscribeAllRequest(VISSRequest* request);
     bool validateAuthorizeRequest(VISSRequest* request);
-    bool validateGetVSSRequest(VISSRequest* request);
+    bool validateGetMetadataRequest(VISSRequest* request);
     bool validateStatusRequest(VISSRequest* request);
 
     bool validateAction(VISSRequest* request);

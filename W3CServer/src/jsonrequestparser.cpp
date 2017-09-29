@@ -39,8 +39,8 @@ QSharedPointer<VISSRequest> JSONRequestParser::parseJson(QString json)
         case AUTHORIZE:
             if(!validateAuthorizeRequest(request.data())) { request->invalidateRequest(); }
             break;
-        case GETVSS:
-            if(!validateGetVSSRequest(request.data())) { request->invalidateRequest(); }
+        case GETMETADATA:
+            if(!validateGetMetadataRequest(request.data())) { request->invalidateRequest(); }
             break;
         case STATUS:
             if(!validateStatusRequest(request.data())) { request->invalidateRequest(); }
@@ -217,14 +217,14 @@ bool JSONRequestParser::validateAuthorizeRequest(VISSRequest* request)
     "requestId": "3874"
     }
 */
-bool JSONRequestParser::validateGetVSSRequest(VISSRequest* request)
+bool JSONRequestParser::validateGetMetadataRequest(VISSRequest* request)
 {
     QJsonValue valueId = request->getJsonObject()["requestId"];
     QJsonValue valuePath = request->getJsonObject()["path"];
 
     bool valid = (validateId(valueId));
 
-    if(m_debug) { qDebug() << "validateAuthorizeRequest result" << (valid); }
+    if(m_debug) { qDebug() << "validateGetMetadataRequest result" << (valid); }
 
     if(!valid) { return false; }
     else
@@ -288,9 +288,9 @@ bool JSONRequestParser::validateAction(VISSRequest* request)
     {
         request->setAction(AUTHORIZE);
     }
-    else if (val == "getVSS")
+    else if (val == "getMetadata")
     {
-        request->setAction(GETVSS);
+        request->setAction(GETMETADATA);
     }
     else if (val == "status")
     {

@@ -16,7 +16,7 @@ enum vss_request
     UNSUBSCRIBE,
     UNSUBSCRIBEALL,
     AUTHORIZE,
-    GETVSS,
+    GETMETADATA,
     STATUS,
     ERROR,
 };

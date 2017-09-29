@@ -83,7 +83,7 @@ void GetVSSRequestHelper(QString jsonString)
     JSONRequestParser jsonParser;
     QSharedPointer<VISSRequest> request = jsonParser.parseJson(jsonString);
 
-    ASSERT_EQ(request->getAction(), GETVSS);
+    ASSERT_EQ(request->getAction(), GETMETADATA);
     EXPECT_EQ(request->getRequestId(), "3874");
     EXPECT_EQ(request->getSignalPath(), "Signal.Drivetrain.InternalCombustionEngine.RPM");
 
